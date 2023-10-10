@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
