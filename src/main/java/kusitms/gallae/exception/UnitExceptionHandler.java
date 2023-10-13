@@ -1,7 +1,7 @@
 package kusitms.gallae.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kusitms.gallae.global.jwt.jwtexception.JwtException;
+import kusitms.gallae.global.jwt.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

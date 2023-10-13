@@ -1,4 +1,4 @@
-package kusitms.gallae.global.jwt.jwtexception;
+package kusitms.gallae.global.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

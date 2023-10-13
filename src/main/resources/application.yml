@@ -1,0 +1,11 @@
+spring:
+  mvc:
+    log-resolved-exception: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/gallae?serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: rlaaudgus98~!
+  jpa:
+    hibernate:
+      ddl-auto: create
