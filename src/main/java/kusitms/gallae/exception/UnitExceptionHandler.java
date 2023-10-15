@@ -18,13 +18,14 @@ import java.util.Objects;
 public class UnitExceptionHandler {
     // CustomException
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(JwtException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleJwtCustomException(JwtException e, HttpServletRequest request) {
         log.error("[CustomException] url: {} | errorType: {} | errorMessage: {} | cause Exception: ",
                 request.getRequestURL(), 403, e.getMessage(), e.getCause());
 
         return ResponseEntity
                 .status(403)
-                .body(new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "JwtERROR", e.getMessage(), request.getRequestURI()));
+                .body(new ErrorResponse(LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI()));
     }
 
     // Not Support Http Method Exception
@@ -39,7 +40,8 @@ public class UnitExceptionHandler {
 
         return ResponseEntity
                 .status(400)
-                .body(new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "NotSupportMethod", e.getMessage(), request.getRequestURI()));
+                .body(new ErrorResponse(LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI()));
     }
 
     // Validation Exception
@@ -54,7 +56,8 @@ public class UnitExceptionHandler {
 
         return ResponseEntity
                 .status(401)
-                .body(new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "MethodNotVaild", e.getMessage(), request.getRequestURI()));
+                .body(new ErrorResponse(LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI()));
     }
 
     // 이외 Error
@@ -64,6 +67,7 @@ public class UnitExceptionHandler {
                 request.getRequestURL(), e.getMessage());
         return ResponseEntity
                 .status(500)
-                .body(new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Error", e.getMessage(), request.getRequestURI()));
+                .body(new ErrorResponse(LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI()));
     }
 }

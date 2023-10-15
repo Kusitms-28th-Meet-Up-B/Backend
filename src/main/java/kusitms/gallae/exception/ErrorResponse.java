@@ -16,7 +16,6 @@ public class ErrorResponse {
     )
     private LocalDateTime localDateTime;
     private int status;
-    private String code; // custom code
     private String message;
     private String requestURI;
 }
