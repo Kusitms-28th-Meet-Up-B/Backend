@@ -18,6 +18,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: 🍃 JDK 17로 설정합니다.
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
 #    - name: 🍃 application.yml 파일을 생성합니다.
 #      run: |
@@ -28,6 +33,11 @@ jobs:
 #      env:
 #        APPLICATION: ${{ secrets.APPLICATION_YML }}
 
+    - name: 🍃 gradle build를 위한 권한을 부여합니다.
+      run: chmod +x gradlew
+
+    - name: 🍃 gradle build 중입니다.
+      run: ./gradlew build -x test
 
     - name: 🍃 docker image build 후 docker hub에 push합니다.
       run: |
