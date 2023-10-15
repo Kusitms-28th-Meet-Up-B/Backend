@@ -3,9 +3,7 @@ package kusitms.gallae.domain;
 
 import jakarta.persistence.*;
 import kusitms.gallae.global.Role;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,7 +12,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
-@RequiredArgsConstructor
+@Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @ToString
 public class User {
