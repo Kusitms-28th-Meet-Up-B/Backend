@@ -68,7 +68,7 @@ jobs:
     - name: 🍃 docker hub에서 pull 후 deploy합니다.
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.DEV_HOST }}
+        host: ${{ secrets.HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.KEY }}
         port: 22
