@@ -11,7 +11,7 @@ services:
 
   green:
     container_name: green
-    image: myunghyungnero/travelmaker:latest-dev
+    image: myunghyunnero/travelmaker:latest-dev
     expose:
       - 8080
     ports:
