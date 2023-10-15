@@ -24,14 +24,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-#    - name: 🍃 application.yml 파일을 생성합니다.
-#      run: |
-#        cd ./src/main
-#        cd ./resources
-#        touch ./application.yml
-#        echo "$APPLICATION" > ./application.yml
-#      env:
-#        APPLICATION: ${{ secrets.APPLICATION_YML }}
+    - name: 🍃 application.yml 파일을 생성합니다.
+      run: |
+        cd ./src/main
+        cd ./resources
+        touch ./application.yml
+        echo "$APPLICATION" > ./application.yml
+      env:
+        APPLICATION: ${{ secrets.APPLICATION_YML }}
 
     - name: 🍃 gradle build를 위한 권한을 부여합니다.
       run: chmod +x gradlew

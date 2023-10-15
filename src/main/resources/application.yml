@@ -1,11 +1,11 @@
-#spring:
-#  mvc:
-#    log-resolved-exception: false
-#  datasource:
-#    url: jdbc:mysql://travelmaker.cljlp7wblmzg.ap-northeast-2.rds.amazonaws.com:3306/travelmaker?serverTimezone=Asia/Seoul
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: admin
-#    password: rlaaudgus98~!
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
+spring:
+  mvc:
+    log-resolved-exception: false
+  datasource:
+    url: jdbc:mysql://travelmaker.cljlp7wblmzg.ap-northeast-2.rds.amazonaws.com:3306/travelmaker?serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: travelmaker
+    password: rlaaudgus98~!
+  jpa:
+    hibernate:
+      ddl-auto: create
