@@ -1,0 +1,18 @@
+version: '3'
+services:
+
+  blue:
+    container_name: blue
+    image: myunghyunnero/travelmaker:latest-dev
+    expose:
+      - 8080
+    ports:
+      - 8082:8080
+
+  green:
+    container_name: green
+    image: myunhyunnero/travelmaker:latest-dev
+    expose:
+      - 8080
+    ports:
+      - 8081:8080
