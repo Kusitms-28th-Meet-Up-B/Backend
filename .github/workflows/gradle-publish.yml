@@ -48,7 +48,7 @@ jobs:
     - name: Setup Docker Compose Production Configuration
       run: |
         mkdir .deploy
-        cp ./scripts/deploy.sh docker-compose.yml .deploy/
+        cp /scripts/deploy.sh docker-compose.yml .deploy/
 
     - name: 🍃 deploy.sh 파일을 EC2 server로 전달합니다.
       uses: appleboy/scp-action@master
@@ -57,7 +57,7 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.KEY }}
         port: 22
-        source: "./deploy"
+        source: ./deploy
         target: "/home/ubuntu/"
         
     - name: 🍃 docker hub에서 pull 후 deploy합니다.
