@@ -23,15 +23,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Cache Gradle packages
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+#    - name: Cache Gradle packages
+#      uses: actions/cache@v2
+#      with:
+#        path: |
+#          ~/.gradle/caches
+#          ~/.gradle/wrapper
+#        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#        restore-keys: |
+#          ${{ runner.os }}-gradle-
 
     - name: 🍃 application.yml 파일을 생성합니다.
       run: |
@@ -42,11 +42,11 @@ jobs:
       env:
         APPLICATION: ${{ secrets.APPLICATION_YML }}
 
-    - name: 🍃 gradle build를 위한 권한을 부여합니다.
-      run: chmod +x gradlew
-
-    - name: 🍃 gradle build 중입니다.
-      run: ./gradlew build -x test
+#    - name: 🍃 gradle build를 위한 권한을 부여합니다.
+#      run: chmod +x gradlew
+#
+#    - name: 🍃 gradle build 중입니다.
+#      run: ./gradlew build -x test
 
     - name: 🍃 docker image build 후 docker hub에 push합니다.
       run: |
