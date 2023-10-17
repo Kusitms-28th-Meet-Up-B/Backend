@@ -3,6 +3,8 @@ package kusitms.gallae.global.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kusitms.gallae.config.BaseResponse;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,8 +24,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write(this.objectMapper.writeValueAsString(new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(), "권한이 없습니다.", request.getRequestURI())));
+        response.getWriter().write(this.objectMapper.writeValueAsString(new BaseResponse<>(BaseResponseStatus.FORBIDDEN)));
 
     }
 }
