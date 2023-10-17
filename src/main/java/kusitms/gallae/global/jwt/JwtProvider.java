@@ -43,7 +43,7 @@ public class JwtProvider{
 
     public Optional<Authentication> getAuthentication(String token) {
         if (!this.validateToken(token)) {
-            return Optional.empty();
+            throw new JwtException("토큰 재발급 받으세요");
         }
 
         Claims claims = this.getClaims(token);
