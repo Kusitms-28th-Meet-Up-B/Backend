@@ -24,21 +24,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 45, nullable = false)
-    private String username;
+    private String nickName;
 
-    @Column(length = 45, nullable = false)
     private String loginId;
 
-    @Column(length = 500, nullable = false)
-    private String passward;
+    private String loginPw;
 
-    @Column(length = 500, nullable = false)
     private String refreshToken;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM")
-    private Role role;
+    @Column(nullable = false)
+    private UserSignUpStatus signUpStatus;
 
     @CreationTimestamp
     @Column
@@ -51,7 +47,25 @@ public class User {
     @Column
     private LocalDateTime deletedAt;
 
+    public enum UserSignUpStatus{
+        MANAGER,
+        USER,
+        ADMIN
+    }
+
     public void renewRefreshToken() {
         this.refreshToken = RandomStringUtils.randomAlphanumeric(32);
+    }
+
+    public Role getRole(){
+        if(this.signUpStatus == UserSignUpStatus.USER ) {
+            return Role.USER;
+        }else if(this.signUpStatus == UserSignUpStatus.MANAGER) {
+            return Role.MANAGER;
+        }else if(this.signUpStatus == UserSignUpStatus.ADMIN) {
+            return Role.ADMIN;
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 }
