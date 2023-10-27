@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JwtTest {
@@ -21,5 +24,12 @@ public class JwtTest {
 
         //then
         Assertions.assertNotNull(jwtToken);
+    }
+
+    @Test
+    void DurationTest(){
+        LocalDateTime today = LocalDate.now().atStartOfDay();
+        LocalDateTime dateTime = LocalDate.of(2023, 10 ,31).atStartOfDay();
+        Assertions.assertEquals(Duration.between(today,dateTime).toDays(),4);
     }
 }
