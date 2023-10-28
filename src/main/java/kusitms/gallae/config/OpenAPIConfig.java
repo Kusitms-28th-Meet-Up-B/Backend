@@ -18,8 +18,8 @@ public class OpenAPIConfig {
     private final String prodUrl;
 
     public OpenAPIConfig(
-            @Value("${votogether.openapi.dev-url}") final String devUrl,
-            @Value("${votogether.openapi.prod-url}") final String prodUrl
+            @Value("${travelmaker.openapi.dev-url}") final String devUrl,
+            @Value("${travelmaker.openapi.prod-url}") final String prodUrl
     ) {
         this.devUrl = devUrl;
         this.prodUrl = prodUrl;
@@ -36,9 +36,9 @@ public class OpenAPIConfig {
         prodServer.description("운영 환경 서버 URL");
 
         final Info info = new Info()
-                .title("VoTogether API")
+                .title("TravelMaker API")
                 .version("v1.0.0")
-                .description("보투게더 API");
+                .description("TravelMaker API");
 
         return new OpenAPI()
                 .info(info)
