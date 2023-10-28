@@ -31,6 +31,8 @@ public class Program {
 
     private String location;
 
+    private String description;
+
     private LocalDateTime recruitStartDate;
 
     private LocalDateTime recruitEndDate;
