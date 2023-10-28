@@ -25,6 +25,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain SecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests()
+                .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
                 .anyRequest().permitAll().and()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
