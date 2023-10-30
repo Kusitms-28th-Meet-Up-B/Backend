@@ -3,6 +3,8 @@ package kusitms.gallae.dto.program;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProgramMainRes {
 
@@ -15,5 +17,7 @@ public class ProgramMainRes {
     private Long Like;
 
     private String remainDay;
+
+    private List<String> hashTag;
 
 }
