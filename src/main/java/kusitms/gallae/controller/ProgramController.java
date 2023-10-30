@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramMainRes;
+import kusitms.gallae.dto.program.ProgramMapRes;
 import kusitms.gallae.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -75,5 +76,14 @@ public class ProgramController {
     ){
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
     }
-    
+    @Operation(summary = "프로그램 지도에 필요한 값 보내주기", description = """
+            위도,경도,사진,모집기간이 포함되어 있습니다 .
+            일단 모든 데이터 넘겨주는 걸로 했습니다...
+            지도는 첨이라..
+            """)
+    @GetMapping("/map")
+    public ResponseEntity<BaseResponse<List<ProgramMapRes>>> findProgramDetail(
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsMap()));
+    }
 }

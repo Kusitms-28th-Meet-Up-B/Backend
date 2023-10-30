@@ -33,6 +33,10 @@ public class Program {
 
     private String description;
 
+    private Float latitude;
+
+    private Float longitude;
+
     private LocalDateTime recruitStartDate;
 
     private LocalDateTime recruitEndDate;

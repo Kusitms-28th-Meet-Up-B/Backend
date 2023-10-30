@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.program.ProgramDetailRes;
+import kusitms.gallae.dto.program.ProgramMapRes;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.dto.program.ProgramMainRes;
@@ -45,6 +46,24 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    public List<ProgramMapRes> getProgramsMap(){
+        List<Program> programs = programRespository.findAll();  //나중에 수정필요
+
+        return programs.stream().map(program -> {
+            ProgramMapRes programMapRes = new ProgramMapRes();
+            programMapRes.setId(program.getId());
+            programMapRes.setProgramName(program.getProgramName());
+            programMapRes.setLongitude(program.getLongitude());
+            programMapRes.setLatitude(program.getLatitude());
+            programMapRes.setPhotoUrl(program.getPhotoUrl());
+            programMapRes.setRecruitStartDate(program.getRecruitStartDate());
+            programMapRes.setRecruitEndDate(program.getRecruitEndDate());
+            return programMapRes;
+        }).collect(Collectors.toList());
+    }
+
+
+    @Override
     public ProgramDetailRes getProgramDetail(Long id){
         Program program = programRespository.findById(id).orElse(null);
         if(program == null) {
@@ -80,4 +99,5 @@ public class ProgramServiceImpl implements ProgramService {
             return programMainRes;
         }).collect(Collectors.toList());
     }
+
 }
