@@ -37,6 +37,8 @@ public class Program {
 
     private Float longitude;
 
+    private String hashTags;
+
     private LocalDateTime recruitStartDate;
 
     private LocalDateTime recruitEndDate;

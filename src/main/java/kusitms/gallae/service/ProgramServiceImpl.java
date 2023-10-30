@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +97,8 @@ public class ProgramServiceImpl implements ProgramService {
             programMainRes.setPhotoUrl(program.getPhotoUrl());
             String strRemainDay = DurationCalcurator.getDuration(program.getRecruitEndDate());
             programMainRes.setRemainDay(strRemainDay);
+            programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
+                    .collect(Collectors.toList()));
             return programMainRes;
         }).collect(Collectors.toList());
     }
