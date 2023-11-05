@@ -27,14 +27,14 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
 
 
     public Page<Program> getDynamicSearch(ProgramSearchReq programSearchReq){
-        OrderSpecifier[] orderSpecifiers = createOrderSpecifier(programSearchReq);
         List<Program> programs = this.jpaQueryFactory
                 .selectFrom(program)
                 .where(createSearchCondition(programSearchReq))
-                .orderBy(orderSpecifiers)
+                .orderBy(createOrderSpecifier(programSearchReq))
                 .offset(programSearchReq.getPageable().getOffset())
                 .limit(programSearchReq.getPageable().getPageSize())
                 .fetch();
+
         Long totalSize = this.jpaQueryFactory
                 .select(Wildcard.count)
                 .from(program)
@@ -70,20 +70,17 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         return booleanBuilder;
     }
 
-    private OrderSpecifier[] createOrderSpecifier(ProgramSearchReq programSearchReq) {
-        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
-        System.out.println(programSearchReq.getOrderCriteria());
-        if(programSearchReq.getOrderCriteria() == "인기순"){
-            orderSpecifiers.add(new OrderSpecifier(Order.DESC,program.programLike));
-        }else if(programSearchReq.getOrderCriteria() == "빠른마감순"){
-            orderSpecifiers.add(new OrderSpecifier(Order.ASC, program.recruitEndDate));
-        }else if(programSearchReq.getOrderCriteria() == "늦은마감순"){
-            orderSpecifiers.add(new OrderSpecifier(Order.DESC, program.recruitEndDate));
-        }else{
-            orderSpecifiers.add(new OrderSpecifier(Order.DESC,program.createdAt));
-        }
+    private OrderSpecifier<?> createOrderSpecifier(ProgramSearchReq programSearchReq) {
 
-        return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
+        if(programSearchReq.getOrderCriteria().equals("인기순")){
+            return new OrderSpecifier<>(Order.DESC,program.programLike);
+        }else if(programSearchReq.getOrderCriteria().equals("빠른마감순")){
+           return new OrderSpecifier<>(Order.ASC, program.recruitEndDate);
+        }else if(programSearchReq.getOrderCriteria().equals("늦은마감순")){
+            return new OrderSpecifier<>(Order.DESC, program.recruitEndDate);
+        }else{
+            return new OrderSpecifier<>(Order.DESC,program.createdAt);
+        }
     }
 
 }
