@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,17 +40,17 @@ public class Program {
 
     private String hashTags;
 
-    private LocalDateTime recruitStartDate;
+    private LocalDate recruitStartDate;
 
-    private LocalDateTime recruitEndDate;
+    private LocalDate recruitEndDate;
 
-    private LocalDateTime tripStartDate;
+    private LocalDate tripStartDate;
 
-    private LocalDateTime tripEndDate;
+    private LocalDate tripEndDate;
 
-    private LocalDateTime activeStartDate;
+    private LocalDate activeStartDate;
 
-    private LocalDateTime activeEndDate;
+    private LocalDate activeEndDate;
 
     private String contact;
 

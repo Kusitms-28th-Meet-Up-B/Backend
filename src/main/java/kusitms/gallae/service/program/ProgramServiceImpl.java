@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,7 +119,9 @@ public class ProgramServiceImpl implements ProgramService {
             programMainRes.setProgramName(program.getProgramName());
             programMainRes.setLike(program.getProgramLike());
             programMainRes.setPhotoUrl(program.getPhotoUrl());
-            String strRemainDay = DurationCalcurator.getDuration(program.getRecruitEndDate());
+            LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            String strRemainDay = DurationCalcurator.getDuration(localDate);
             programMainRes.setRemainDay(strRemainDay);
             programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
                     .collect(Collectors.toList()));

@@ -1,5 +1,6 @@
 package kusitms.gallae.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
@@ -10,12 +11,14 @@ import kusitms.gallae.dto.program.*;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -122,19 +125,23 @@ public class ProgramController {
 
             @Parameter(description = "모집 시작 날짜 ", example = "2023-11-01")
             @RequestParam(value = "recruitStartDate", required = false)
-            LocalDateTime recruitStartDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate recruitStartDate,
 
             @Parameter(description = "모집 마감 날짜", example = "2023-11-01")
             @RequestParam(value = "recruitEndDate", required = false)
-            LocalDateTime recruitEndDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate recruitEndDate,
 
             @Parameter(description = "활동 시작 날짜", example = "2023-11-01")
             @RequestParam(value = "activeStartDate", required = false)
-            LocalDateTime activeStartDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate activeStartDate,
 
             @Parameter(description = "활동 마감 날짜", example = "2023-11-01")
             @RequestParam(value = "activeEndDate", required = false)
-            LocalDateTime activeEndDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate activeEndDate,
 
             @Parameter(description = "페이지 번호")
             @Positive(message = "must be greater than 0")
