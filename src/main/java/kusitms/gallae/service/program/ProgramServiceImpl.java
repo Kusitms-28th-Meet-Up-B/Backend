@@ -81,8 +81,13 @@ public class ProgramServiceImpl implements ProgramService {
             programMapRes.setLongitude(program.getLongitude());
             programMapRes.setLatitude(program.getLatitude());
             programMapRes.setPhotoUrl(program.getPhotoUrl());
-            programMapRes.setRecruitStartDate(program.getRecruitStartDate());
-            programMapRes.setRecruitEndDate(program.getRecruitEndDate());
+            LocalDate startLocalDate = LocalDate.of(program.getRecruitStartDate().getYear(),
+                    program.getRecruitStartDate().getMonth(),program.getRecruitStartDate().getDayOfMonth());
+            programMapRes.setRecruitStartDate(startLocalDate);
+            LocalDate endLocalDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            programMapRes.setRecruitEndDate(endLocalDate);
+
             return programMapRes;
         }).collect(Collectors.toList());
     }

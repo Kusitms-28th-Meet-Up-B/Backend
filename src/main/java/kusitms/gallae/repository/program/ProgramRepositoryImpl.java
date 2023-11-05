@@ -72,7 +72,7 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
 
     private OrderSpecifier[] createOrderSpecifier(ProgramSearchReq programSearchReq) {
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
-
+        System.out.println(programSearchReq.getOrderCriteria());
         if(programSearchReq.getOrderCriteria() == "인기순"){
             orderSpecifiers.add(new OrderSpecifier(Order.DESC,program.programLike));
         }else if(programSearchReq.getOrderCriteria() == "빠른마감순"){
