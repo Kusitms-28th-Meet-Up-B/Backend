@@ -17,7 +17,7 @@ public interface ProgramService {
 
     ProgramPageMainRes getProgramsByProgramType(String programType , Pageable pageable);
 
-
+    ProgramPageMainRes getProgramsByProgramName(String programName , Pageable pageable);
 
     List<ProgramMainRes> getBestPrograms();
 

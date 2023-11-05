@@ -44,6 +44,15 @@ public class ProgramServiceImpl implements ProgramService {
         return programPageMainRes;
     }
 
+    public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
+        Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
+        List<Program> pageToListNewPrograms = programs.getContent();
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
+    }
+
     @Override
     public List<ProgramMainRes> getBestPrograms(){
         List<Program> programs = programRespository.findTop4ByOrderByProgramLikeDesc();

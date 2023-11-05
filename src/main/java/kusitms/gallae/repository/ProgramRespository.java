@@ -14,6 +14,8 @@ public interface ProgramRespository extends JpaRepository<Program, Long> {
 
     Page<Program> findAllByProgramTypeOrderByCreatedAtDesc(String programType , Pageable pageable);
 
+    Page<Program> findProgramByProgramNameContaining(String programName, Pageable pageable);
+
     List<Program> findTop4ByOrderByCreatedAtDesc();
 
     List<Program> findTop4ByOrderByProgramLikeDesc();

@@ -62,6 +62,28 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByProgramType(programType,pageRequest)));
     }
 
+    @GetMapping("/serach")
+    public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByProgramName(
+            @Parameter(description = "프로그램 이름", example = "test")
+            @RequestParam(value = "programName", required = true)
+            String programName,
+
+            @Parameter(description = "페이지 번호")
+            @Positive(message = "must be greater than 0")
+            @RequestParam(value = "page", defaultValue = "0")
+            Integer pageNumber,
+
+            @Parameter(description = "페이징 사이즈 (최대 100)")
+            @Min(value = 1, message = "must be greater than or equal to 1")
+            @Max(value = 100, message = "must be less than or equal to 100")
+            @RequestParam(value = "size", defaultValue = "20")
+            Integer pagingSize
+    ) {
+
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByProgramName(programName,pageRequest)));
+    }
+
     @Operation(summary = "인기 많은 프로그램들", description = """
             찜수가 가장 높은 프로그램들을 상위 4개를 반환합니다.
             """)
