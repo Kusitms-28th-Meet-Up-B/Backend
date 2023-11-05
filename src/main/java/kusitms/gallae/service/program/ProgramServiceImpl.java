@@ -1,22 +1,20 @@
-package kusitms.gallae.service;
+package kusitms.gallae.service.program;
 
 
 import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.dto.program.ProgramDetailRes;
-import kusitms.gallae.dto.program.ProgramMapRes;
-import kusitms.gallae.dto.program.ProgramPageMainRes;
+import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
-import kusitms.gallae.dto.program.ProgramMainRes;
-import kusitms.gallae.repository.ProgramRespository;
+import kusitms.gallae.repository.program.ProgramRepositoryImpl;
+import kusitms.gallae.repository.program.ProgramRespository;
+import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 public class ProgramServiceImpl implements ProgramService {
     private final ProgramRespository programRespository;
+
+    private final ProgramRepositoryImpl programRepositoryImpl;
 
     @Override
     public List<ProgramMainRes> getRecentPrograms(){
@@ -46,6 +46,16 @@ public class ProgramServiceImpl implements ProgramService {
 
     public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
         Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
+        List<Program> pageToListNewPrograms = programs.getContent();
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
+    }
+
+    @Override
+    public ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq) {
+        Page<Program> programs = programRepositoryImpl.getDynamicSearch(programSearchReq);
         List<Program> pageToListNewPrograms = programs.getContent();
         ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
         programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));

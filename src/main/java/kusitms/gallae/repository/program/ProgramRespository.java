@@ -1,4 +1,4 @@
-package kusitms.gallae.repository;
+package kusitms.gallae.repository.program;
 
 import kusitms.gallae.domain.Program;
 import org.springframework.data.domain.Page;
