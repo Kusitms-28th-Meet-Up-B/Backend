@@ -6,6 +6,7 @@ import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramMapRes;
+import kusitms.gallae.dto.program.ProgramPageMainRes;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.dto.program.ProgramMainRes;
@@ -34,10 +35,13 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public List<ProgramMainRes> getProgramsByProgramType(String programType, Pageable pageable) {
+    public ProgramPageMainRes getProgramsByProgramType(String programType, Pageable pageable) {
         Page<Program> programs = programRespository.findAllByProgramTypeOrderByCreatedAtDesc(programType , pageable);
         List<Program> pageToListNewPrograms = programs.getContent();
-        return getProgramMainRes(pageToListNewPrograms);
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
     }
 
     @Override

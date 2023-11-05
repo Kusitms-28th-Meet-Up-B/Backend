@@ -9,6 +9,7 @@ import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramMainRes;
 import kusitms.gallae.dto.program.ProgramMapRes;
+import kusitms.gallae.dto.program.ProgramPageMainRes;
 import kusitms.gallae.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -40,14 +41,14 @@ public class ProgramController {
             여행지원사업, 여행공모전, 여행대외활동 세가지 유형별로 프로그램들을 반환합니다.
             """)
     @GetMapping("/type")
-    public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findProgramsByProgramType(
+    public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByProgramType(
             @Parameter(description = "프로그램 유형", example = "여행지원사업, 여행공모전, 여행대외활동")
             @RequestParam(value = "programType", required = true)
             String programType,
 
             @Parameter(description = "페이지 번호")
             @Positive(message = "must be greater than 0")
-            @RequestParam(value = "page", defaultValue = "1")
+            @RequestParam(value = "page", defaultValue = "0")
             Integer pageNumber,
 
             @Parameter(description = "페이징 사이즈 (최대 100)")

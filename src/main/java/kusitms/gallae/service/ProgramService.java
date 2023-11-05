@@ -3,6 +3,7 @@ package kusitms.gallae.service;
 import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramMainRes;
 import kusitms.gallae.dto.program.ProgramMapRes;
+import kusitms.gallae.dto.program.ProgramPageMainRes;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -14,9 +15,13 @@ public interface ProgramService {
 
     List<ProgramMainRes> getRecentPrograms();
 
-    List<ProgramMainRes> getProgramsByProgramType(String programType , Pageable pageable);
+    ProgramPageMainRes getProgramsByProgramType(String programType , Pageable pageable);
+
+
 
     List<ProgramMainRes> getBestPrograms();
 
     List<ProgramMapRes> getProgramsMap();
+
+
 }
