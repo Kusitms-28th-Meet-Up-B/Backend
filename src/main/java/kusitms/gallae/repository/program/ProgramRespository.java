@@ -1,4 +1,4 @@
-package kusitms.gallae.repository;
+package kusitms.gallae.repository.program;
 
 import kusitms.gallae.domain.Program;
 import org.springframework.data.domain.Page;
@@ -13,6 +13,8 @@ public interface ProgramRespository extends JpaRepository<Program, Long> {
     Optional<Program> findById(Long programId);
 
     Page<Program> findAllByProgramTypeOrderByCreatedAtDesc(String programType , Pageable pageable);
+
+    Page<Program> findProgramByProgramNameContaining(String programName, Pageable pageable);
 
     List<Program> findTop4ByOrderByCreatedAtDesc();
 

@@ -1,21 +1,21 @@
-package kusitms.gallae.service;
+package kusitms.gallae.service.program;
 
 
 import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.dto.program.ProgramDetailRes;
-import kusitms.gallae.dto.program.ProgramMapRes;
+import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
-import kusitms.gallae.dto.program.ProgramMainRes;
-import kusitms.gallae.repository.ProgramRespository;
+import kusitms.gallae.repository.program.ProgramRepositoryImpl;
+import kusitms.gallae.repository.program.ProgramRespository;
+import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 public class ProgramServiceImpl implements ProgramService {
     private final ProgramRespository programRespository;
 
+    private final ProgramRepositoryImpl programRepositoryImpl;
+
     @Override
     public List<ProgramMainRes> getRecentPrograms(){
         List<Program> programs = programRespository.findTop4ByOrderByCreatedAtDesc();
@@ -34,10 +36,32 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public List<ProgramMainRes> getProgramsByProgramType(String programType, Pageable pageable) {
+    public ProgramPageMainRes getProgramsByProgramType(String programType, Pageable pageable) {
         Page<Program> programs = programRespository.findAllByProgramTypeOrderByCreatedAtDesc(programType , pageable);
         List<Program> pageToListNewPrograms = programs.getContent();
-        return getProgramMainRes(pageToListNewPrograms);
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
+    }
+
+    public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
+        Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
+        List<Program> pageToListNewPrograms = programs.getContent();
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
+    }
+
+    @Override
+    public ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq) {
+        Page<Program> programs = programRepositoryImpl.getDynamicSearch(programSearchReq);
+        List<Program> pageToListNewPrograms = programs.getContent();
+        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
+        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setTotalSize(programs.getTotalPages());
+        return programPageMainRes;
     }
 
     @Override
@@ -57,8 +81,13 @@ public class ProgramServiceImpl implements ProgramService {
             programMapRes.setLongitude(program.getLongitude());
             programMapRes.setLatitude(program.getLatitude());
             programMapRes.setPhotoUrl(program.getPhotoUrl());
-            programMapRes.setRecruitStartDate(program.getRecruitStartDate());
-            programMapRes.setRecruitEndDate(program.getRecruitEndDate());
+            LocalDate startLocalDate = LocalDate.of(program.getRecruitStartDate().getYear(),
+                    program.getRecruitStartDate().getMonth(),program.getRecruitStartDate().getDayOfMonth());
+            programMapRes.setRecruitStartDate(startLocalDate);
+            LocalDate endLocalDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            programMapRes.setRecruitEndDate(endLocalDate);
+
             return programMapRes;
         }).collect(Collectors.toList());
     }
@@ -95,7 +124,9 @@ public class ProgramServiceImpl implements ProgramService {
             programMainRes.setProgramName(program.getProgramName());
             programMainRes.setLike(program.getProgramLike());
             programMainRes.setPhotoUrl(program.getPhotoUrl());
-            String strRemainDay = DurationCalcurator.getDuration(program.getRecruitEndDate());
+            LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            String strRemainDay = DurationCalcurator.getDuration(localDate);
             programMainRes.setRemainDay(strRemainDay);
             programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
                     .collect(Collectors.toList()));
