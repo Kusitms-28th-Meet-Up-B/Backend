@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Data
 public class ProgramSearchReq {
 
+    private String programName;
+
     private String orderCriteria;
 
     private String Location;

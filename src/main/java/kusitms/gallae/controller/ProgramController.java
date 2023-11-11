@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.program.ProgramService;
@@ -111,6 +112,11 @@ public class ProgramController {
             """)
     @GetMapping("/filters")
     public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByFilter(
+
+            @Parameter(description = "프로그램 이름", example = "이름")
+            @RequestParam(value = "programName")
+            String programName,
+
             @Parameter(description = "정렬 기준", example = "최신순, 인기순 , 빠른마감순,늦은마감순")
             @RequestParam(value = "orderCriteria", required = true)
             String orderCriteria,
@@ -159,6 +165,7 @@ public class ProgramController {
             Integer pagingSize
     ) {
         ProgramSearchReq programSearchReq = new ProgramSearchReq();
+        programSearchReq.setProgramName(programName);
         programSearchReq.setOrderCriteria(orderCriteria);
         programSearchReq.setLocation(location);
         programSearchReq.setProgramType(programType);
