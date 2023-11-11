@@ -70,6 +70,8 @@ public class QProgram extends EntityPathBase<Program> {
 
     public final QUser user;
 
+    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
+
     public QProgram(String variable) {
         this(Program.class, forVariable(variable), INITS);
     }

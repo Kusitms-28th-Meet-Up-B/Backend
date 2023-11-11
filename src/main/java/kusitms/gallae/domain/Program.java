@@ -81,8 +81,8 @@ public class Program {
     private ProgramStatus status;
 
     public enum ProgramStatus {
-        ACTIVE,
-        SAVE, // 임시 저장
+        TEMPSAVE,
+        SAVE, // 저장
         FINISH, //마감
         DELETED
     }

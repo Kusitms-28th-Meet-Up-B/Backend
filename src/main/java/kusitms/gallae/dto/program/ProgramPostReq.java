@@ -10,9 +10,15 @@ import java.time.LocalDate;
 @Data
 public class ProgramPostReq {
 
+    private String programName;
+
     private String photoUrl;
 
     private String location;
+
+    private String programType;
+
+    private String programDetailType;
 
     @Schema(description = "모집 시작", example = "2021-11-03", type = "string")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
