@@ -66,6 +66,8 @@ public class Program {
 
     private Long programLike;
 
+    private Long viewCount;
+
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
