@@ -66,6 +66,8 @@ public class Program {
 
     private Long programLike;
 
+    private Long viewCount;
+
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -79,8 +81,8 @@ public class Program {
     private ProgramStatus status;
 
     public enum ProgramStatus {
-        ACTIVE,
-        SAVE, // 임시 저장
+        SAVE,
+        TEMPSAVE, // 임시 저장
         FINISH, //마감
         DELETED
     }
