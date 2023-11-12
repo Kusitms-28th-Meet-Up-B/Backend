@@ -117,6 +117,29 @@ public class ProgramServiceImpl implements ProgramService {
         }
     }
 
+    @Override
+    public void postProgram(ProgramPostReq programPostReq) {
+        Program program = Program.builder()
+                .programName(programPostReq.getProgramName())
+                .photoUrl(programPostReq.getPhotoUrl())
+                .location(programPostReq.getLocation())
+                .recruitStartDate(programPostReq.getRecruitStartDate())
+                .recruitEndDate(programPostReq.getRecruitEndDate())
+                .activeStartDate(programPostReq.getActiveStartDate())
+                .activeEndDate(programPostReq.getActiveEndDate())
+                .contact(programPostReq.getContact())
+                .contactNumber(programPostReq.getContact())
+                .detailType(programPostReq.getProgramDetailType())
+                .programLink(programPostReq.getLink())
+                .hashTags(programPostReq.getHashtag())
+                .description(programPostReq.getBody())
+                .programLike(0L)
+                .viewCount(0L)
+                .status(Program.ProgramStatus.SAVE)
+                .build();
+        programRespository.save(program);
+    }
+
     private List<ProgramMainRes> getProgramMainRes(List<Program> programs){
         return programs.stream().map(program -> {
             ProgramMainRes programMainRes = new ProgramMainRes();

@@ -1,26 +1,24 @@
 package kusitms.gallae.dto.program;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
-public class ProgramSearchReq {
+public class ProgramPostReq {
 
     private String programName;
 
-    private String orderCriteria;
+    private String photoUrl;
 
-    private String Location;
+    private String location;
 
     private String programType;
 
-    private String detailType;
+    private String programDetailType;
 
     @Schema(description = "모집 시작", example = "2021-11-03", type = "string")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -38,5 +36,13 @@ public class ProgramSearchReq {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate activeEndDate;
 
-    private Pageable pageable;
+    private String contact;
+
+    private String contactPhone;
+
+    private String link;
+
+    private String hashtag;
+
+    private String body;
 }

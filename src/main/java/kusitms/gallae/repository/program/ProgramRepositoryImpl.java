@@ -46,6 +46,10 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
     private BooleanBuilder createSearchCondition(ProgramSearchReq programSearchReq) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
+        if(programSearchReq.getProgramName() != null) {
+            booleanBuilder.and(program.programName.contains(programSearchReq.getProgramName()));
+        }
+
         if(programSearchReq.getProgramType() != null) {
             booleanBuilder.and(program.programType.eq(programSearchReq.getProgramType()));
         }
@@ -67,6 +71,8 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         if(programSearchReq.getActiveEndDate() != null) {
             booleanBuilder.and(program.activeEndDate.loe(programSearchReq.getActiveEndDate()));
         }
+
+        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
         return booleanBuilder;
     }
 

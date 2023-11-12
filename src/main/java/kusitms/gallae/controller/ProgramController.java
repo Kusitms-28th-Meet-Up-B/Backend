@@ -7,17 +7,18 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,10 @@ import java.util.List;
 public class ProgramController {
 
     private final ProgramService programService;
+
+
+    private final S3Service s3Service;
+
 
     @Operation(summary = "최신 프로그램 상위 4개", description = """
             최근에 등록된 프로그램 상위 4개를 반환 합니다.
@@ -71,7 +76,7 @@ public class ProgramController {
             즉 TotalSize가 4를 가리키면
             pageNumber는 0~3 까지 4개 있는 겁니다.
             """)
-    @GetMapping("/serach")
+    @GetMapping("/search")
     public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByProgramName(
             @Parameter(description = "프로그램 이름", example = "test")
             @RequestParam(value = "programName", required = true)
@@ -107,6 +112,11 @@ public class ProgramController {
             """)
     @GetMapping("/filters")
     public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByFilter(
+
+            @Parameter(description = "프로그램 이름", example = "이름")
+            @RequestParam(value = "programName")
+            String programName,
+
             @Parameter(description = "정렬 기준", example = "최신순, 인기순 , 빠른마감순,늦은마감순")
             @RequestParam(value = "orderCriteria", required = true)
             String orderCriteria,
@@ -155,6 +165,7 @@ public class ProgramController {
             Integer pagingSize
     ) {
         ProgramSearchReq programSearchReq = new ProgramSearchReq();
+        programSearchReq.setProgramName(programName);
         programSearchReq.setOrderCriteria(orderCriteria);
         programSearchReq.setLocation(location);
         programSearchReq.setProgramType(programType);
@@ -166,6 +177,100 @@ public class ProgramController {
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         programSearchReq.setPageable(pageRequest);
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq)));
+    }
+
+    @Operation(summary = "프로그램 저장", description = """
+            프로그램 저장을 합니다.
+            아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.
+            임시 저장 로직 -> 
+            1. 임시저장이 되어 있는지 체크 
+            1-1 안되어 있다면 없음 반환
+            1-2 임시저장이 되어 있다면 저장된 값 반환
+            2. 저장을 누르면 해당 로직 진행 (저장됨)
+            3. 취소를 누르면 프로그램 내용들 삭제 
+            """)
+    @PostMapping("/save")
+    public ResponseEntity<BaseResponse> saveProgram(
+            @Parameter(description = "프로그램 이미지")
+            @RequestPart
+            MultipartFile photo,
+
+            @Parameter(description = "제목", example = "충북살기")
+            @RequestParam(value = "programName", required = true)
+            String programName,
+
+            @Parameter(description = "위치", example = "충북")
+            @RequestParam(value = "location", required = true)
+            String location,
+
+            @Parameter(description = "여행 타입", example = "여행지원사업,여행공모전,여행대외활동")
+            @RequestParam(value = "programType", required = true)
+            String programType,
+
+            @Parameter(description = "여행 세부사항 타입", example = "지자체 한달살이, 여행사진 공모전 등")
+            @RequestParam(value = "detailType", required = true)
+            String detailType,
+
+            @Parameter(description = "모집 시작 날짜 ", example = "2023-11-01")
+            @RequestParam(value = "recruitStartDate", required = true)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate recruitStartDate,
+
+            @Parameter(description = "모집 마감 날짜", example = "2023-11-01")
+            @RequestParam(value = "recruitEndDate", required = true)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate recruitEndDate,
+
+            @Parameter(description = "활동 시작 날짜", example = "2023-11-01")
+            @RequestParam(value = "activeStartDate", required = true)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate activeStartDate,
+
+            @Parameter(description = "활동 마감 날짜", example = "2023-11-01")
+            @RequestParam(value = "activeEndDate", required = true)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            LocalDate activeEndDate,
+
+            @Parameter(description = "문의처", example = "문의처")
+            @RequestParam(value = "contact", required = true)
+            String contact,
+
+            @Parameter(description = "문의처 전화번호", example = "010-3333-3333")
+            @RequestParam(value = "detailType", required = true)
+            String contactNumber,
+
+            @Parameter(description = "신청 링크", example = "")
+            @RequestParam(value = "link", required = false)
+            String link,
+
+            @Parameter(description = "해시태그", example = "충북,친절")
+            @RequestParam(value = "hastags", required = false)
+            String hashtags,
+
+            @Parameter(description = "상세 입력 내용", example = "주저리주저리")
+            @RequestParam(value = "body", required = false)
+            String body
+    ) throws IOException {
+
+        String photoUrl = s3Service.upload(photo);
+        ProgramPostReq programPostReq = new ProgramPostReq();
+        programPostReq.setProgramName(programName);
+        programPostReq.setPhotoUrl(photoUrl);
+        programPostReq.setLocation(location);
+        programPostReq.setProgramType(programType);
+        programPostReq.setProgramDetailType(detailType);
+        programPostReq.setRecruitStartDate(recruitStartDate);
+        programPostReq.setRecruitEndDate(recruitEndDate);
+        programPostReq.setActiveStartDate(activeStartDate);
+        programPostReq.setActiveEndDate(activeEndDate);
+        programPostReq.setContact(contact);
+        programPostReq.setContactPhone(contactNumber);
+        programPostReq.setLink(link);
+        programPostReq.setHashtag(hashtags);
+        programPostReq.setBody(body);
+        this.programService.postProgram(programPostReq);
+
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
 
     @Operation(summary = "인기 많은 프로그램들", description = """
