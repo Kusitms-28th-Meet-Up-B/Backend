@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Data
 public class ProgramPostReq {
 
+    private Long programId;
+
     private String programName;
 
     private String photoUrl;

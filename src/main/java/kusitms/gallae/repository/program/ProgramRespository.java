@@ -19,4 +19,6 @@ public interface ProgramRespository extends JpaRepository<Program, Long> {
     List<Program> findTop4ByOrderByCreatedAtDesc();
 
     List<Program> findTop4ByOrderByProgramLikeDesc();
+
+    Program findByUserIdAndStatus(Long id, Program.ProgramStatus programStatus);
 }
