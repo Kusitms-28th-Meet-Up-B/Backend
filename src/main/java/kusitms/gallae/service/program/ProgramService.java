@@ -24,4 +24,6 @@ public interface ProgramService {
 
     void postProgram(ProgramPostReq programPostReq);
 
+    ProgramPostReq getTempProgram();
+
 }

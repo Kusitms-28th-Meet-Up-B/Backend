@@ -179,6 +179,12 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq)));
     }
 
+    @GetMapping
+    public ResponseEntity<BaseResponse<ProgramPostReq>> findTempProgram() {
+        //사용자 로그인 들어오면
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getTempProgram()));
+    }
+
     @Operation(summary = "프로그램 저장", description = """
             프로그램 저장을 합니다.
             아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.

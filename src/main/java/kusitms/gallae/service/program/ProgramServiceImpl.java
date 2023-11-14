@@ -121,6 +121,30 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    public ProgramPostReq getTempProgram() {
+        Program tempProgram = programRespository.findByUserIdAndStatus(1L, Program.ProgramStatus.TEMPSAVE);
+        if(tempProgram == null) {
+            return new ProgramPostReq();
+        }else{
+            ProgramPostReq programPostReq = new ProgramPostReq();
+            programPostReq.setProgramId(tempProgram.getId());
+            programPostReq.setProgramName(tempProgram.getProgramName());
+            programPostReq.setPhotoUrl(tempProgram.getPhotoUrl());
+            programPostReq.setLocation(tempProgram.getLocation());
+            programPostReq.setRecruitStartDate(tempProgram.getRecruitStartDate());
+            programPostReq.setRecruitEndDate(tempProgram.getRecruitEndDate());
+            programPostReq.setActiveStartDate(tempProgram.getActiveStartDate());
+            programPostReq.setActiveEndDate(tempProgram.getActiveEndDate());
+            programPostReq.setContact(tempProgram.getContact());
+            programPostReq.setContactPhone(tempProgram.getContactNumber());
+            programPostReq.setProgramDetailType(tempProgram.getDetailType());
+            programPostReq.setLink(tempProgram.getProgramLink());
+            programPostReq.setHashtag(tempProgram.getHashTags());
+            programPostReq.setBody(tempProgram.getDescription());
+            return programPostReq;
+        }
+    }
+    @Override
     public void postProgram(ProgramPostReq programPostReq) {
         Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMPSAVE);
@@ -144,7 +168,7 @@ public class ProgramServiceImpl implements ProgramService {
         program.setActiveStartDate(programPostReq.getActiveStartDate());
         program.setActiveEndDate(programPostReq.getActiveEndDate());
         program.setContact(programPostReq.getContact());
-        program.setContactNumber(programPostReq.getContact());
+        program.setContactNumber(programPostReq.getContactPhone());
         program.setDetailType(programPostReq.getProgramDetailType());
         program.setProgramLink(programPostReq.getLink());
         program.setHashTags(programPostReq.getHashtag());
