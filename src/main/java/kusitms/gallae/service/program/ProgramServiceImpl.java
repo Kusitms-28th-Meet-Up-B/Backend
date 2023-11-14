@@ -97,6 +97,11 @@ public class ProgramServiceImpl implements ProgramService {
 
 
     @Override
+    public void deleteTempProgram(Long programId) {
+        programRespository.deleteById(programId);
+    }
+
+    @Override
     public ProgramDetailRes getProgramDetail(Long id){
         Program program = programRespository.findById(id).orElse(null);
         if(program == null) {

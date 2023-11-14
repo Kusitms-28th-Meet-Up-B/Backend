@@ -179,10 +179,45 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq)));
     }
 
+    @Operation(summary = "임시 프로그램 삭제", description = """
+            프로그램 저장을 합니다.
+            아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.
+            임시 저장 로직 -> 
+            1. 임시저장이 되어 있는지 체크 
+            1-1 안되어 있다면 없음 반환
+            1-2 임시저장이 되어 있다면 저장된 값 반환
+            2. 확인을 누르면 해당 로직 진행 (저장됨)
+            3. 취소를 누르면 프로그램 내용들 삭제 API 호출 시켜줘야함-> 임시저장 데이터 지우기 위함 
+            \n
+            1번을 위한 API
+            """)
     @GetMapping
     public ResponseEntity<BaseResponse<ProgramPostReq>> findTempProgram() {
         //사용자 로그인 들어오면
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getTempProgram()));
+    }
+
+    @Operation(summary = "임시 프로그램 삭제", description = """
+            프로그램 저장을 합니다.
+            아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.
+            임시 저장 로직 -> 
+            1. 임시저장이 되어 있는지 체크 
+            1-1 안되어 있다면 없음 반환
+            1-2 임시저장이 되어 있다면 저장된 값 반환
+            2. 확인을 누르면 해당 로직 진행 (저장됨)
+            3. 취소를 누르면 프로그램 내용들 삭제 API 호출 시켜줘야함-> 임시저장 데이터 지우기 위함 
+            \n
+            3번을 위한 API
+            """)
+    @DeleteMapping
+    public ResponseEntity<BaseResponse> deleteTempProgram(
+            @Parameter(description = "프로그램 Id")
+            @RequestParam(value = "programId", required = true)
+            Long programId
+    ) {
+        //사용자 로그인 들어오면
+        programService.deleteTempProgram(programId);
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
 
     @Operation(summary = "프로그램 저장", description = """
@@ -192,8 +227,10 @@ public class ProgramController {
             1. 임시저장이 되어 있는지 체크 
             1-1 안되어 있다면 없음 반환
             1-2 임시저장이 되어 있다면 저장된 값 반환
-            2. 저장을 누르면 해당 로직 진행 (저장됨)
-            3. 취소를 누르면 프로그램 내용들 삭제 
+            2. 확인을 누르면 해당 로직 진행 (저장됨)
+            3. 취소를 누르면 프로그램 내용들 삭제 API 호출 시켜줘야함-> 임시저장 데이터 지우기 위함
+            \n
+            2번을 위한 API
             """)
     @PostMapping("/save")
     public ResponseEntity<BaseResponse> saveProgram(

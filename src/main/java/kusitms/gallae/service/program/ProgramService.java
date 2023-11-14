@@ -26,4 +26,6 @@ public interface ProgramService {
 
     ProgramPostReq getTempProgram();
 
+    void deleteTempProgram(Long programId);
+
 }
