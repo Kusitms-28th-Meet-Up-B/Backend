@@ -7,6 +7,8 @@ public interface ManagerService {
 
     void postProgram(ProgramPostReq programPostReq);
 
+    void postTempProgram(ProgramPostReq programPostReq);
+
     ProgramPostReq getTempProgram();
 
     void deleteTempProgram(Long programId);

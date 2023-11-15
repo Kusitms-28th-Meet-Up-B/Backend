@@ -82,7 +82,7 @@ public class Program {
 
     public enum ProgramStatus {
         SAVE,
-        TEMPSAVE, // 임시 저장
+        TEMP, // 임시 저장
         FINISH, //마감
         DELETED
     }
@@ -97,6 +97,10 @@ public class Program {
 
     public void save(){
         this.status = ProgramStatus.SAVE;
+    }
+
+    public void tempSave(){
+        this.status = ProgramStatus.TEMP;
     }
 
 }

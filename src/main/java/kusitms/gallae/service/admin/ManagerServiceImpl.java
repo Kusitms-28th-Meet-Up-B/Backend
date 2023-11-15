@@ -18,7 +18,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ProgramPostReq getTempProgram() {
-        Program tempProgram = programRespository.findByUserIdAndStatus(1L, Program.ProgramStatus.TEMPSAVE);
+        Program tempProgram = programRespository.findByUserIdAndStatus(1L, Program.ProgramStatus.TEMP);
         if(tempProgram == null) {
             return new ProgramPostReq();
         }else{
@@ -43,19 +43,32 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public void postProgram(ProgramPostReq programPostReq) {
         Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
-                Program.ProgramStatus.TEMPSAVE);
+                Program.ProgramStatus.TEMP);
         System.out.println(tempProgram);
         User user = new User();
         user.setId(1L);
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
-            program.setUser(user);
+            saveProgram.setUser(user);
+            saveProgram.setStatus(Program.ProgramStatus.SAVE);
             programRespository.save(saveProgram);
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
+            saveProgram.setStatus(Program.ProgramStatus.SAVE);
             programRespository.save(saveProgram);
         }
+    }
+
+    @Override
+    public void postTempProgram(ProgramPostReq programPostReq) {
+        User user = new User();  //나중에 유저 변경
+        user.setId(1L);
+        Program program = new Program();
+        Program saveProgram = this.getProgramEntity(program,programPostReq);
+        saveProgram.setUser(user);
+        saveProgram.setStatus(Program.ProgramStatus.SAVE);
+        programRespository.save(saveProgram);
     }
 
     @Override
@@ -79,7 +92,6 @@ public class ManagerServiceImpl implements ManagerService {
         program.setDescription(programPostReq.getBody());
         program.setProgramLike(0L);
         program.setViewCount(0L);
-        program.setStatus(Program.ProgramStatus.SAVE);
         return program;
     }
 }
