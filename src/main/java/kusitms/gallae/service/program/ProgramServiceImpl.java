@@ -4,6 +4,7 @@ package kusitms.gallae.service.program;
 import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
@@ -154,9 +155,12 @@ public class ProgramServiceImpl implements ProgramService {
         Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMPSAVE);
         System.out.println(tempProgram);
+        User user = new User();
+        user.setId(1L);
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
+            program.setUser(user);
             programRespository.save(saveProgram);
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
