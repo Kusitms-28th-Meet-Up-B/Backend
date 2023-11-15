@@ -22,10 +22,4 @@ public interface ProgramService {
 
     List<ProgramMapRes> getProgramsMap();
 
-    void postProgram(ProgramPostReq programPostReq);
-
-    ProgramPostReq getTempProgram();
-
-    void deleteTempProgram(Long programId);
-
 }
