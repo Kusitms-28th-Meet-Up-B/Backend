@@ -23,6 +23,8 @@ public interface ProgramService {
 
     List<ProgramMapRes> getProgramsMap();
 
+    List<ProgramMainRes> getSimilarPrograms(Long ProgramId);
+
     List<TourApiDto> getTourDatas(Long programId);
 
 }

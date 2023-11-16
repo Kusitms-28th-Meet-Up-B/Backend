@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ public class ProgramServiceImpl implements ProgramService {
         return programPageMainRes;
     }
 
+    @Override
     public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
         Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
         List<Program> pageToListNewPrograms = programs.getContent();
@@ -82,6 +84,14 @@ public class ProgramServiceImpl implements ProgramService {
     public List<TourApiDto> getTourDatas(Long programId) {
         Program program = programRespository.findById(programId).orElse(null);
         return tourApiService.getTourDatas(program.getLocation());
+    }
+
+    @Override
+    public List<ProgramMainRes> getSimilarPrograms(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        List<Program> programs = programRespository.findTop4ByLocationContainingAndProgramTypeContainingAndStatus(program.getLocation(),
+                program.getProgramType(), Program.ProgramStatus.SAVE);
+        return this.getProgramMainRes(programs);
     }
 
     @Override

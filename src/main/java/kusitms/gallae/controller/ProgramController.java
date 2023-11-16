@@ -209,6 +209,19 @@ public class ProgramController {
     ){
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourDatas(id)));
     }
+
+    @Operation(summary = "유사한 프로그램 추천", description = """
+            지역과 프로그램 타입이 같은 프로그램 4개를 반환합니다.
+            해당 프로그램은 없을 수도 있습니다.
+            만약에 다른 방법이 제시 되면 수정하겠습니다.
+            """)
+    @GetMapping("/similarRecommend")
+    public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findTourbySimilarPrograms(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getSimilarPrograms(id)));
+    }
     @Operation(summary = "프로그램 지도에 필요한 값 보내주기", description = """
             위도,경도,사진,모집기간이 포함되어 있습니다 .
             일단 모든 데이터 넘겨주는 걸로 했습니다...
