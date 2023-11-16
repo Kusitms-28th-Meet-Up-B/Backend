@@ -80,7 +80,7 @@ public class ManagerController {
             MultipartFile photo
     ) throws IOException {
         String photoUrl = null;
-        if(!photo.isEmpty()) {
+        if(photo != null) {
             photoUrl = s3Service.upload(photo);
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
@@ -122,7 +122,7 @@ public class ManagerController {
             MultipartFile photo
     ) throws IOException {
         String photoUrl = null;
-        if(!photo.isEmpty()) {
+        if(photo != null) {
             photoUrl = s3Service.upload(photo);
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
