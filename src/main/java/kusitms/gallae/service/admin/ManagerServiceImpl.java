@@ -56,7 +56,6 @@ public class ManagerServiceImpl implements ManagerService {
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
-            programRespository.save(saveProgram);
         }
     }
 

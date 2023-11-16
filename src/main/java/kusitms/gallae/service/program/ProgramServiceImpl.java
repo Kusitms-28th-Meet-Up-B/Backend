@@ -6,8 +6,10 @@ import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.dto.tourapi.TourApiDto;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
+import kusitms.gallae.global.TourApiService;
 import kusitms.gallae.global.jwt.JwtProvider;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
@@ -31,6 +33,8 @@ public class ProgramServiceImpl implements ProgramService {
     private final ProgramRepositoryImpl programRepositoryImpl;
 
     private final JwtProvider jwtProvider;
+
+    private final TourApiService tourApiService;
 
     @Override
     public List<ProgramMainRes> getRecentPrograms(){
@@ -72,6 +76,12 @@ public class ProgramServiceImpl implements ProgramService {
     public List<ProgramMainRes> getBestPrograms(){
         List<Program> programs = programRespository.findTop4ByOrderByProgramLikeDesc();
         return getProgramMainRes(programs);
+    }
+
+    @Override
+    public List<TourApiDto> getTourDatas(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        return tourApiService.getTourDatas(program.getLocation());
     }
 
     @Override

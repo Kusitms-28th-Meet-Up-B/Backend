@@ -11,6 +11,7 @@ import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.model.PostModel;
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.dto.tourapi.TourApiDto;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
@@ -191,12 +192,22 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getBestPrograms()));
     }
 
+    @Operation(summary = "프로그램 세부내용 가져오기")
     @GetMapping("/program")
     public ResponseEntity<BaseResponse<ProgramDetailRes>> findProgramDetail(
             @Parameter(description = "프로그램 ID")
-            @RequestParam(value = "id", required = false) Long id
+            @RequestParam(value = "id", required = true) Long id
     ){
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
+    }
+
+    @Operation(summary = "프로그램 지역에 맞게 여행 추천해주기")
+    @GetMapping("/regionTour")
+    public ResponseEntity<BaseResponse<List<TourApiDto>>> findTourbyProgramRegion(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourDatas(id)));
     }
     @Operation(summary = "프로그램 지도에 필요한 값 보내주기", description = """
             위도,경도,사진,모집기간이 포함되어 있습니다 .
