@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.ProgramPostReq;
+import kusitms.gallae.global.S3Service;
 import kusitms.gallae.repository.program.ProgramRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class ManagerServiceImpl implements ManagerService {
 
     private final ProgramRespository programRespository;
+
+    private final S3Service s3Service;
 
     @Override
     public ProgramPostReq getTempProgram() {
@@ -61,13 +64,21 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void postTempProgram(ProgramPostReq programPostReq) {
-        User user = new User();  //나중에 유저 변경
+        Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
+                Program.ProgramStatus.TEMP);
+        System.out.println(tempProgram);
+        User user = new User();
         user.setId(1L);
-        Program program = new Program();
-        Program saveProgram = this.getProgramEntity(program,programPostReq);
-        saveProgram.setUser(user);
-        saveProgram.setStatus(Program.ProgramStatus.SAVE);
-        programRespository.save(saveProgram);
+        if(tempProgram == null) { //임시 저장이 없으면
+            Program program = new Program();
+            Program saveProgram = this.getProgramEntity(program,programPostReq);
+            saveProgram.setUser(user);
+            saveProgram.setStatus(Program.ProgramStatus.TEMP);
+            programRespository.save(saveProgram);
+        }else {      //임시 저장이 있으면
+            Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
+            saveProgram.setStatus(Program.ProgramStatus.TEMP);
+        };
     }
 
     @Override
@@ -77,7 +88,12 @@ public class ManagerServiceImpl implements ManagerService {
 
     private Program getProgramEntity(Program program ,ProgramPostReq programPostReq) {
         program.setProgramName(programPostReq.getProgramName());
-        program.setPhotoUrl(programPostReq.getPhotoUrl());
+        if(program.getPhotoUrl()==null) {
+            program.setPhotoUrl(programPostReq.getPhotoUrl());
+        }else{
+            s3Service.deleteFile(program.getPhotoUrl());
+            program.setPhotoUrl(program.getPhotoUrl());
+        }
         program.setLocation(programPostReq.getLocation());
         program.setRecruitStartDate(programPostReq.getRecruitStartDate());
         program.setRecruitEndDate(programPostReq.getRecruitEndDate());

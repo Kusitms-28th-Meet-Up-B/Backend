@@ -80,7 +80,7 @@ public class ManagerController {
             MultipartFile photo
     ) throws IOException {
         String photoUrl = null;
-        if(photo != null) {
+        if(!photo.isEmpty()) {
             photoUrl = s3Service.upload(photo);
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
@@ -122,7 +122,7 @@ public class ManagerController {
             MultipartFile photo
     ) throws IOException {
         String photoUrl = null;
-        if(photo != null) {
+        if(!photo.isEmpty()) {
             photoUrl = s3Service.upload(photo);
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
@@ -140,7 +140,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-        this.managerService.postProgram(programPostReq);
+        this.managerService.postTempProgram(programPostReq);
 
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
