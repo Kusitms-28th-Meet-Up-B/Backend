@@ -1,6 +1,7 @@
 package kusitms.gallae.service.program;
 
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.dto.tourapi.TourApiDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface ProgramService {
 
     List<ProgramMapRes> getProgramsMap();
 
-    void postProgram(ProgramPostReq programPostReq);
+    List<ProgramMainRes> getSimilarPrograms(Long ProgramId);
+
+    List<TourApiDto> getTourDatas(Long programId);
 
 }

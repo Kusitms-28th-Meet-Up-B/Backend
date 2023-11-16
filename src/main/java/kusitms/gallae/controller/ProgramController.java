@@ -3,17 +3,21 @@ package kusitms.gallae.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.dto.model.PostModel;
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.dto.tourapi.TourApiDto;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -179,99 +183,6 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq)));
     }
 
-    @Operation(summary = "프로그램 저장", description = """
-            프로그램 저장을 합니다.
-            아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.
-            임시 저장 로직 -> 
-            1. 임시저장이 되어 있는지 체크 
-            1-1 안되어 있다면 없음 반환
-            1-2 임시저장이 되어 있다면 저장된 값 반환
-            2. 저장을 누르면 해당 로직 진행 (저장됨)
-            3. 취소를 누르면 프로그램 내용들 삭제 
-            """)
-    @PostMapping("/save")
-    public ResponseEntity<BaseResponse> saveProgram(
-            @Parameter(description = "프로그램 이미지")
-            @RequestPart
-            MultipartFile photo,
-
-            @Parameter(description = "제목", example = "충북살기")
-            @RequestParam(value = "programName", required = true)
-            String programName,
-
-            @Parameter(description = "위치", example = "충북")
-            @RequestParam(value = "location", required = true)
-            String location,
-
-            @Parameter(description = "여행 타입", example = "여행지원사업,여행공모전,여행대외활동")
-            @RequestParam(value = "programType", required = true)
-            String programType,
-
-            @Parameter(description = "여행 세부사항 타입", example = "지자체 한달살이, 여행사진 공모전 등")
-            @RequestParam(value = "detailType", required = true)
-            String detailType,
-
-            @Parameter(description = "모집 시작 날짜 ", example = "2023-11-01")
-            @RequestParam(value = "recruitStartDate", required = true)
-            @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate recruitStartDate,
-
-            @Parameter(description = "모집 마감 날짜", example = "2023-11-01")
-            @RequestParam(value = "recruitEndDate", required = true)
-            @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate recruitEndDate,
-
-            @Parameter(description = "활동 시작 날짜", example = "2023-11-01")
-            @RequestParam(value = "activeStartDate", required = true)
-            @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate activeStartDate,
-
-            @Parameter(description = "활동 마감 날짜", example = "2023-11-01")
-            @RequestParam(value = "activeEndDate", required = true)
-            @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate activeEndDate,
-
-            @Parameter(description = "문의처", example = "문의처")
-            @RequestParam(value = "contact", required = true)
-            String contact,
-
-            @Parameter(description = "문의처 전화번호", example = "010-3333-3333")
-            @RequestParam(value = "detailType", required = true)
-            String contactNumber,
-
-            @Parameter(description = "신청 링크", example = "")
-            @RequestParam(value = "link", required = false)
-            String link,
-
-            @Parameter(description = "해시태그", example = "충북,친절")
-            @RequestParam(value = "hastags", required = false)
-            String hashtags,
-
-            @Parameter(description = "상세 입력 내용", example = "주저리주저리")
-            @RequestParam(value = "body", required = false)
-            String body
-    ) throws IOException {
-
-        String photoUrl = s3Service.upload(photo);
-        ProgramPostReq programPostReq = new ProgramPostReq();
-        programPostReq.setProgramName(programName);
-        programPostReq.setPhotoUrl(photoUrl);
-        programPostReq.setLocation(location);
-        programPostReq.setProgramType(programType);
-        programPostReq.setProgramDetailType(detailType);
-        programPostReq.setRecruitStartDate(recruitStartDate);
-        programPostReq.setRecruitEndDate(recruitEndDate);
-        programPostReq.setActiveStartDate(activeStartDate);
-        programPostReq.setActiveEndDate(activeEndDate);
-        programPostReq.setContact(contact);
-        programPostReq.setContactPhone(contactNumber);
-        programPostReq.setLink(link);
-        programPostReq.setHashtag(hashtags);
-        programPostReq.setBody(body);
-        this.programService.postProgram(programPostReq);
-
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
-    }
 
     @Operation(summary = "인기 많은 프로그램들", description = """
             찜수가 가장 높은 프로그램들을 상위 4개를 반환합니다.
@@ -281,12 +192,35 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getBestPrograms()));
     }
 
+    @Operation(summary = "프로그램 세부내용 가져오기")
     @GetMapping("/program")
     public ResponseEntity<BaseResponse<ProgramDetailRes>> findProgramDetail(
             @Parameter(description = "프로그램 ID")
-            @RequestParam(value = "id", required = false) Long id
+            @RequestParam(value = "id", required = true) Long id
     ){
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
+    }
+
+    @Operation(summary = "프로그램 지역에 맞게 여행 추천해주기")
+    @GetMapping("/regionTour")
+    public ResponseEntity<BaseResponse<List<TourApiDto>>> findTourbyProgramRegion(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourDatas(id)));
+    }
+
+    @Operation(summary = "유사한 프로그램 추천", description = """
+            지역과 프로그램 타입이 같은 프로그램 4개를 반환합니다.
+            해당 프로그램은 없을 수도 있습니다.
+            만약에 다른 방법이 제시 되면 수정하겠습니다.
+            """)
+    @GetMapping("/similarRecommend")
+    public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findTourbySimilarPrograms(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getSimilarPrograms(id)));
     }
     @Operation(summary = "프로그램 지도에 필요한 값 보내주기", description = """
             위도,경도,사진,모집기간이 포함되어 있습니다 .

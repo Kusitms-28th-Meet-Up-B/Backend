@@ -4,9 +4,13 @@ package kusitms.gallae.service.program;
 import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
+import kusitms.gallae.dto.tourapi.TourApiDto;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
+import kusitms.gallae.global.TourApiService;
+import kusitms.gallae.global.jwt.JwtProvider;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
 import kusitms.gallae.service.program.ProgramService;
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +32,10 @@ public class ProgramServiceImpl implements ProgramService {
     private final ProgramRespository programRespository;
 
     private final ProgramRepositoryImpl programRepositoryImpl;
+
+    private final JwtProvider jwtProvider;
+
+    private final TourApiService tourApiService;
 
     @Override
     public List<ProgramMainRes> getRecentPrograms(){
@@ -45,6 +54,7 @@ public class ProgramServiceImpl implements ProgramService {
         return programPageMainRes;
     }
 
+    @Override
     public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
         Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
         List<Program> pageToListNewPrograms = programs.getContent();
@@ -71,6 +81,20 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    public List<TourApiDto> getTourDatas(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        return tourApiService.getTourDatas(program.getLocation());
+    }
+
+    @Override
+    public List<ProgramMainRes> getSimilarPrograms(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        List<Program> programs = programRespository.findTop4ByLocationContainingAndProgramTypeContainingAndStatus(program.getLocation(),
+                program.getProgramType(), Program.ProgramStatus.SAVE);
+        return this.getProgramMainRes(programs);
+    }
+
+    @Override
     public List<ProgramMapRes> getProgramsMap(){
         List<Program> programs = programRespository.findAll();  //나중에 수정필요
 
@@ -91,7 +115,6 @@ public class ProgramServiceImpl implements ProgramService {
             return programMapRes;
         }).collect(Collectors.toList());
     }
-
 
     @Override
     public ProgramDetailRes getProgramDetail(Long id){
@@ -117,28 +140,6 @@ public class ProgramServiceImpl implements ProgramService {
         }
     }
 
-    @Override
-    public void postProgram(ProgramPostReq programPostReq) {
-        Program program = Program.builder()
-                .programName(programPostReq.getProgramName())
-                .photoUrl(programPostReq.getPhotoUrl())
-                .location(programPostReq.getLocation())
-                .recruitStartDate(programPostReq.getRecruitStartDate())
-                .recruitEndDate(programPostReq.getRecruitEndDate())
-                .activeStartDate(programPostReq.getActiveStartDate())
-                .activeEndDate(programPostReq.getActiveEndDate())
-                .contact(programPostReq.getContact())
-                .contactNumber(programPostReq.getContact())
-                .detailType(programPostReq.getProgramDetailType())
-                .programLink(programPostReq.getLink())
-                .hashTags(programPostReq.getHashtag())
-                .description(programPostReq.getBody())
-                .programLike(0L)
-                .viewCount(0L)
-                .status(Program.ProgramStatus.SAVE)
-                .build();
-        programRespository.save(program);
-    }
 
     private List<ProgramMainRes> getProgramMainRes(List<Program> programs){
         return programs.stream().map(program -> {

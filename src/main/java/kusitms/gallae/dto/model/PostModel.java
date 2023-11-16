@@ -1,20 +1,19 @@
-package kusitms.gallae.dto.program;
-
+package kusitms.gallae.dto.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
-@Data
-public class ProgramPostReq {
 
-    private Long programId;
+@Data
+@ToString
+public class PostModel {
 
     private String programName;
-
-    private String photoUrl;
 
     private String location;
 
