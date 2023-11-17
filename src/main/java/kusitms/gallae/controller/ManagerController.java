@@ -242,4 +242,19 @@ public class ManagerController {
         //사용자 로그인 들어오면
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.getTempProgram()));
     }
+
+
+
+    @Operation(summary = "프로그램 마감", description = """
+            프로그램을 마감하는 버튼 클릭시
+            프로그램 상태가 마감으로 변경됨
+            """)
+    @PostMapping("/finish")
+    public ResponseEntity<BaseResponse> finishProgram(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long programId
+    ) {
+        managerService.finishProgram(programId);
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+    }
 }

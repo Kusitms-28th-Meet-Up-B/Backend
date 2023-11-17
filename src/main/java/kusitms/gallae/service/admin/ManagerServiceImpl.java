@@ -137,6 +137,12 @@ public class ManagerServiceImpl implements ManagerService {
         return programPageMangagerRes;
     }
 
+    @Override
+    public void finishProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        program.setStatus(Program.ProgramStatus.FINISH);
+    }
+
     private List<ProgramManagerRes> getProgramManagerRes(List<Program> programs){
         return programs.stream().map(program -> {
             ProgramManagerRes programManagerRes = new ProgramManagerRes();

@@ -16,4 +16,6 @@ public interface ManagerService {
     ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq);
 
     void deleteTempProgram(Long programId);
+
+    void finishProgram(Long programId);
 }
