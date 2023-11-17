@@ -1,13 +1,24 @@
 package kusitms.gallae.service.admin;
 
 import jakarta.transaction.Transactional;
+import kusitms.gallae.config.BaseException;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
-import kusitms.gallae.dto.program.ProgramPostReq;
+import kusitms.gallae.dto.program.*;
+import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.global.S3Service;
+import kusitms.gallae.repository.program.ProgramRepositoryCustom;
+import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,7 +28,34 @@ public class ManagerServiceImpl implements ManagerService {
 
     private final ProgramRespository programRespository;
 
+    private final ProgramRepositoryCustom programRepositoryCustom;
+
     private final S3Service s3Service;
+
+
+    @Override
+    public ProgramDetailRes getProgramDetail(Long id){
+        Program program = programRespository.findById(id).orElse(null);
+        if(program == null) {
+            throw new BaseException(BaseResponseStatus.BAD_REQUEST);
+        }else{
+            ProgramDetailRes programDetailRes = new ProgramDetailRes();
+            programDetailRes.setId(program.getId());
+            programDetailRes.setProgramName(program.getProgramName());
+            programDetailRes.setProgramLink(program.getProgramLink());
+            programDetailRes.setContact(program.getContact());
+            programDetailRes.setContactNumber(program.getContactNumber());
+            programDetailRes.setDescription(program.getDescription());
+            programDetailRes.setLocation(program.getLocation());
+            programDetailRes.setActiveStartDate(program.getActiveStartDate());
+            programDetailRes.setActiveEndDate(program.getActiveEndDate());
+            programDetailRes.setRecruitStartDate(program.getRecruitStartDate());
+            programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
+            programDetailRes.setTripStartDate(program.getTripStartDate());
+            programDetailRes.setTripEndDate(program.getTripEndDate());
+            return programDetailRes;
+        }
+    }
 
     @Override
     public ProgramPostReq getTempProgram() {
@@ -83,7 +121,44 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void deleteTempProgram(Long programId) {
+        programRespository.deleteByIdAndStatus(programId, Program.ProgramStatus.TEMP);
+    }
+
+    @Override
+    public ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq) {
+        User user = new User();
+        user.setId(1L);
+        programManagerReq.setUser(user);
+        Page<Program> programs = programRepositoryCustom.getDynamicMananger(programManagerReq);
+        List<Program> pageToListManagerPrograms = programs.getContent();
+        ProgramPageMangagerRes programPageMangagerRes = new ProgramPageMangagerRes();
+        programPageMangagerRes.setPrograms(getProgramManagerRes(pageToListManagerPrograms));
+        programPageMangagerRes.setTotalSize(programs.getTotalPages());
+        return programPageMangagerRes;
+    }
+
+    @Override
+    public void finishProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        program.setStatus(Program.ProgramStatus.FINISH);
+    }
+
+    @Override
+    public void deleteProgram(Long programId) {
         programRespository.deleteById(programId);
+    }
+
+    private List<ProgramManagerRes> getProgramManagerRes(List<Program> programs){
+        return programs.stream().map(program -> {
+            ProgramManagerRes programManagerRes = new ProgramManagerRes();
+            programManagerRes.setId(program.getId());
+            programManagerRes.setTitle(program.getProgramName());
+            programManagerRes.setLike(program.getProgramLike());
+            programManagerRes.setViewCount(program.getViewCount());
+            programManagerRes.setRecruitStartDate(program.getRecruitStartDate());
+            programManagerRes.setRecuritEndDate(program.getRecruitEndDate());
+            return programManagerRes;
+        }).collect(Collectors.toList());
     }
 
     private Program getProgramEntity(Program program ,ProgramPostReq programPostReq) {

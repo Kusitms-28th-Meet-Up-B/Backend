@@ -6,6 +6,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kusitms.gallae.domain.Program;
+import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.program.ProgramSearchReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,40 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
                 .where(createSearchCondition(programSearchReq))
                 .fetchOne();
         return new PageImpl<>(programs, programSearchReq.getPageable(), Objects.requireNonNull(totalSize));
+    }
+
+
+    public Page<Program> getDynamicMananger(ProgramManagerReq programManagerReq){
+        List<Program> programs = this.jpaQueryFactory
+                .selectFrom(program)
+                .where(createManagerProgramCondition(programManagerReq))
+                .orderBy(new OrderSpecifier<>(Order.DESC,program.createdAt))
+                .offset(programManagerReq.getPageable().getOffset())
+                .limit(programManagerReq.getPageable().getPageSize())
+                .fetch();
+
+        Long totalSize = this.jpaQueryFactory
+                .select(Wildcard.count)
+                .from(program)
+                .where(createManagerProgramCondition(programManagerReq))
+                .fetchOne();
+        return new PageImpl<>(programs, programManagerReq.getPageable(), Objects.requireNonNull(totalSize));
+    }
+
+    private BooleanBuilder createManagerProgramCondition(ProgramManagerReq programManagerReq) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if(programManagerReq.getProgramType() != null) {
+            booleanBuilder.and(program.programType.contains(programManagerReq.getProgramType()));
+        }
+
+        if(programManagerReq.getStatus() != null) {
+            booleanBuilder.and(program.status.eq(programManagerReq.getStatus()));
+        }
+
+        booleanBuilder.and(program.user.eq(programManagerReq.getUser()));
+
+        return booleanBuilder;
     }
 
     private BooleanBuilder createSearchCondition(ProgramSearchReq programSearchReq) {

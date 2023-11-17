@@ -11,6 +11,7 @@ import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.global.TourApiService;
 import kusitms.gallae.global.jwt.JwtProvider;
+import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
 import kusitms.gallae.service.program.ProgramService;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 public class ProgramServiceImpl implements ProgramService {
     private final ProgramRespository programRespository;
 
-    private final ProgramRepositoryImpl programRepositoryImpl;
+    private final ProgramRepositoryCustom programRepositoryCustom;
 
     private final JwtProvider jwtProvider;
 
@@ -66,7 +67,7 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq) {
-        Page<Program> programs = programRepositoryImpl.getDynamicSearch(programSearchReq);
+        Page<Program> programs = programRepositoryCustom.getDynamicSearch(programSearchReq);
         List<Program> pageToListNewPrograms = programs.getContent();
         ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
         programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
