@@ -6,11 +6,18 @@ import kusitms.gallae.global.jwt.JwtAuthenticationEntryPoint;
 import kusitms.gallae.global.jwt.JwtAuthenticationFilter;
 import kusitms.gallae.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,7 +34,12 @@ public class SpringSecurityConfig {
     private final JwtProvider jwtAuthenticationProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final UserDetailsService customUserDetailsService;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers( "/swagger-resources/**",
@@ -35,6 +47,16 @@ public class SpringSecurityConfig {
                 "/v3/api-docs",
                 "/webjars/**");
     }
+    @Bean
+    public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
+    }
+
+
 
     @Bean
     public SecurityFilterChain SecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -46,6 +68,7 @@ public class SpringSecurityConfig {
                 .exceptionHandling()
                 .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(this.jwtAccessDeniedHandler).and()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(this.jwtAuthenticationProvider), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }

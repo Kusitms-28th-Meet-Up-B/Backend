@@ -1,6 +1,7 @@
 package kusitms.gallae.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import kusitms.gallae.global.Role;
 import lombok.*;
@@ -31,6 +32,10 @@ public class User {
     private String loginPw;
 
     private String refreshToken;
+    private String name;
+    private String phoneNumber;
+    private String email;
+    private String profileImageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -38,13 +43,16 @@ public class User {
 
     @CreationTimestamp
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column
     private LocalDateTime updatedAt;
 
     @Column
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
     public enum UserSignUpStatus{
