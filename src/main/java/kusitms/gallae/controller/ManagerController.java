@@ -112,7 +112,7 @@ public class ManagerController {
     }
 
     @Operation(summary = "프로그램 수정할 정보 가져오기", description = """
-            프로그램 저장을 합니다.
+            프로그램 정보를 가져옵니다. 
             프로그램 수정을 할 때 해당 메서드로 정보를 가져오고
             postProgram으로 저장하시면 됩니다. 
             """)
