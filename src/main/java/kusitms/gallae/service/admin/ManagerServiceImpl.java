@@ -1,8 +1,11 @@
 package kusitms.gallae.service.admin;
 
 import jakarta.transaction.Transactional;
+import kusitms.gallae.config.BaseException;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramPostReq;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.repository.program.ProgramRespository;
@@ -18,6 +21,31 @@ public class ManagerServiceImpl implements ManagerService {
     private final ProgramRespository programRespository;
 
     private final S3Service s3Service;
+
+
+    @Override
+    public ProgramDetailRes getProgramDetail(Long id){
+        Program program = programRespository.findById(id).orElse(null);
+        if(program == null) {
+            throw new BaseException(BaseResponseStatus.BAD_REQUEST);
+        }else{
+            ProgramDetailRes programDetailRes = new ProgramDetailRes();
+            programDetailRes.setId(program.getId());
+            programDetailRes.setProgramName(program.getProgramName());
+            programDetailRes.setProgramLink(program.getProgramLink());
+            programDetailRes.setContact(program.getContact());
+            programDetailRes.setContactNumber(program.getContactNumber());
+            programDetailRes.setDescription(program.getDescription());
+            programDetailRes.setLocation(program.getLocation());
+            programDetailRes.setActiveStartDate(program.getActiveStartDate());
+            programDetailRes.setActiveEndDate(program.getActiveEndDate());
+            programDetailRes.setRecruitStartDate(program.getRecruitStartDate());
+            programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
+            programDetailRes.setTripStartDate(program.getTripStartDate());
+            programDetailRes.setTripEndDate(program.getTripEndDate());
+            return programDetailRes;
+        }
+    }
 
     @Override
     public ProgramPostReq getTempProgram() {

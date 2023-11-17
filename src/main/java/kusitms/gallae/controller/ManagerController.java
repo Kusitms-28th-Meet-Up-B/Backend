@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.dto.model.PostModel;
+import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramPostReq;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.admin.ManagerService;
@@ -101,6 +102,19 @@ public class ManagerController {
         this.managerService.postProgram(programPostReq);
 
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+    }
+
+    @Operation(summary = "프로그램 수정할 정보 가져오기", description = """
+            프로그램 저장을 합니다.
+            프로그램 수정을 할 때 해당 메서드로 정보를 가져오고
+            postProgram으로 저장하시면 됩니다. 
+            """)
+    @GetMapping("/program")
+    public ResponseEntity<BaseResponse<ProgramDetailRes>> findProgramDetail(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
     }
 
     @Operation(summary = "프로그램 임시저장", description = """
