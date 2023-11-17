@@ -2,15 +2,22 @@ package kusitms.gallae.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.Program;
 import kusitms.gallae.dto.model.PostModel;
 import kusitms.gallae.dto.program.ProgramDetailRes;
+import kusitms.gallae.dto.program.ProgramManagerReq;
+import kusitms.gallae.dto.program.ProgramPageMangagerRes;
 import kusitms.gallae.dto.program.ProgramPostReq;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.admin.ManagerService;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -114,7 +121,65 @@ public class ManagerController {
             @Parameter(description = "프로그램 ID")
             @RequestParam(value = "id", required = true) Long id
     ){
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getProgramDetail(id)));
+    }
+
+    @Operation(summary = "관리자 프로그램중 진행되고 있는 정보 가져오기", description = """
+            진행하고 있는 프로그램 입니다.
+            전체로 설정할경우 null로 보내주시면 됩니다.
+            """)
+    @GetMapping("/progress")
+    public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerProgress(
+            @Parameter(description = "프로그램 타입")
+            @RequestParam(value = "programType", required = false)
+            String programType,
+
+            @Parameter(description = "페이지 번호")
+            @Positive(message = "must be greater than 0")
+            @RequestParam(value = "page", defaultValue = "0")
+            Integer pageNumber,
+
+            @Parameter(description = "페이징 사이즈 (최대 100)")
+            @Min(value = 1, message = "must be greater than or equal to 1")
+            @Max(value = 100, message = "must be less than or equal to 100")
+            @RequestParam(value = "size", defaultValue = "20")
+            Integer pagingSize
+    ){
+        ProgramManagerReq programManagerReq = new ProgramManagerReq();
+        programManagerReq.setProgramType(programType);
+        programManagerReq.setStatus(Program.ProgramStatus.SAVE);
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        programManagerReq.setPageable(pageRequest);
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq)));
+    }
+
+    @Operation(summary = "관리자 프로그램 중 마감된 정보 가져오기", description = """
+            진행하고 있는 프로그램 입니다.
+            전체로 설정할경우 null로 보내주시면 됩니다.
+            """)
+    @GetMapping("/finish")
+    public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerFinish(
+            @Parameter(description = "프로그램 유형")
+            @RequestParam(value = "programType", required = false)
+            String programType,
+
+            @Parameter(description = "페이지 번호")
+            @Positive(message = "must be greater than 0")
+            @RequestParam(value = "page", defaultValue = "0")
+            Integer pageNumber,
+
+            @Parameter(description = "페이징 사이즈 (최대 100)")
+            @Min(value = 1, message = "must be greater than or equal to 1")
+            @Max(value = 100, message = "must be less than or equal to 100")
+            @RequestParam(value = "size", defaultValue = "20")
+            Integer pagingSize
+    ){
+        ProgramManagerReq programManagerReq = new ProgramManagerReq();
+        programManagerReq.setProgramType(programType);
+        programManagerReq.setStatus(Program.ProgramStatus.FINISH);
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        programManagerReq.setPageable(pageRequest);
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq)));
     }
 
     @Operation(summary = "프로그램 임시저장", description = """

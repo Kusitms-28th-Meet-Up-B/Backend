@@ -1,7 +1,6 @@
 package kusitms.gallae.service.admin;
 
-import kusitms.gallae.dto.program.ProgramDetailRes;
-import kusitms.gallae.dto.program.ProgramPostReq;
+import kusitms.gallae.dto.program.*;
 
 public interface ManagerService {
 
@@ -13,6 +12,8 @@ public interface ManagerService {
     ProgramPostReq getTempProgram();
 
     ProgramDetailRes getProgramDetail(Long id);
+
+    ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq);
 
     void deleteTempProgram(Long programId);
 }
