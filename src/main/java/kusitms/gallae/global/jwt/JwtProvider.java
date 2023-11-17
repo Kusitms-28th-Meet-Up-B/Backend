@@ -40,6 +40,10 @@ public class JwtProvider{
                 .signWith(SignatureAlgorithm.HS256 , this.secret)
                 .compact();
     }
+    public String getUsernameFromToken(String token) {
+        Claims claims = this.getClaims(token);
+        return claims.getSubject();
+    }
 
     public Optional<Authentication> getAuthentication(String token) {
         if (!this.validateToken(token)) {
