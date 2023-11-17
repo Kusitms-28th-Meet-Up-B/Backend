@@ -121,7 +121,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void deleteTempProgram(Long programId) {
-        programRespository.deleteById(programId);
+        programRespository.deleteByIdAndStatus(programId, Program.ProgramStatus.TEMP);
     }
 
     @Override
@@ -141,6 +141,11 @@ public class ManagerServiceImpl implements ManagerService {
     public void finishProgram(Long programId) {
         Program program = programRespository.findById(programId).orElse(null);
         program.setStatus(Program.ProgramStatus.FINISH);
+    }
+
+    @Override
+    public void deleteProgram(Long programId) {
+        programRespository.deleteById(programId);
     }
 
     private List<ProgramManagerRes> getProgramManagerRes(List<Program> programs){

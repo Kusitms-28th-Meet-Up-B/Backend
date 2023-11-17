@@ -124,11 +124,11 @@ public class ManagerController {
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.getProgramDetail(id)));
     }
 
-    @Operation(summary = "관리자 프로그램중 진행되고 있는 정보 가져오기", description = """
+    @Operation(summary = "관리자 프로그램중 진행되고 있는 정보들 가져오기", description = """
             진행하고 있는 프로그램 입니다.
             전체로 설정할경우 null로 보내주시면 됩니다.
             """)
-    @GetMapping("/progress")
+    @GetMapping("/progressPrograms")
     public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerProgress(
             @Parameter(description = "프로그램 타입")
             @RequestParam(value = "programType", required = false)
@@ -153,11 +153,11 @@ public class ManagerController {
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq)));
     }
 
-    @Operation(summary = "관리자 프로그램 중 마감된 정보 가져오기", description = """
+    @Operation(summary = "관리자 프로그램 중 마감된 정보들 가져오기", description = """
             진행하고 있는 프로그램 입니다.
             전체로 설정할경우 null로 보내주시면 됩니다.
             """)
-    @GetMapping("/finish")
+    @GetMapping("/finishPrograms")
     public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerFinish(
             @Parameter(description = "프로그램 유형")
             @RequestParam(value = "programType", required = false)
@@ -255,6 +255,20 @@ public class ManagerController {
             @RequestParam(value = "id", required = true) Long programId
     ) {
         managerService.finishProgram(programId);
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+    }
+
+    @Operation(summary = "프로그램 삭제", description = """
+            프로그램을 삭제합니다.
+            """)
+    @DeleteMapping("/deleteProgram")
+    public ResponseEntity<BaseResponse> deleteProgram(
+            @Parameter(description = "프로그램 Id")
+            @RequestParam(value = "programId", required = true)
+            Long programId
+    ) {
+        //사용자 로그인 들어오면
+        managerService.deleteProgram(programId);
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
 }

@@ -17,5 +17,7 @@ public interface ManagerService {
 
     void deleteTempProgram(Long programId);
 
+    void deleteProgram(Long programId);
+
     void finishProgram(Long programId);
 }

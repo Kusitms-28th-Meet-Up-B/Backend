@@ -25,4 +25,6 @@ public interface ProgramRespository extends JpaRepository<Program, Long> {
     List<Program> findTop4ByLocationContainingAndProgramTypeContainingAndStatus(String Location, String programType
             , Program.ProgramStatus programStatus);
 
+    void deleteByIdAndStatus(Long programId,Program.ProgramStatus programStatus);
+
 }
