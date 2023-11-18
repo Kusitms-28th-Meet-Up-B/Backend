@@ -3,6 +3,10 @@ package kusitms.gallae.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "review")
@@ -29,10 +33,20 @@ public class Review {
 
     private String writer;
 
+    private String fileName;
+
     private String fileUrl;
 
     private String body;
 
     private String hashtag;
+
+    @Column
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }
