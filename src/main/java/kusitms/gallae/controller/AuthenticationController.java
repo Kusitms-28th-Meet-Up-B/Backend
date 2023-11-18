@@ -32,7 +32,7 @@ public class AuthenticationController {
             String loginId,
 
             @Parameter(description = "패스워드")
-            @RequestParam(value = "login password", required = true)
+            @RequestParam(value = "loginPassword", required = true)
             String loginPw,
 
             HttpServletResponse httpServletResponse) {
