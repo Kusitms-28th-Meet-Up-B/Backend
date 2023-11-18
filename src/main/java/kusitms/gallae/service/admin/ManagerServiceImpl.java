@@ -179,6 +179,7 @@ public class ManagerServiceImpl implements ManagerService {
         program.setActiveEndDate(programPostReq.getActiveEndDate());
         program.setContact(programPostReq.getContact());
         program.setContactNumber(programPostReq.getContactPhone());
+        program.setProgramType(programPostReq.getProgramType());
         program.setDetailType(programPostReq.getProgramDetailType());
         program.setProgramLink(programPostReq.getLink());
         program.setHashTags(programPostReq.getHashtag());
