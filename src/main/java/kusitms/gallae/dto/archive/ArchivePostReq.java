@@ -1,13 +1,9 @@
-package kusitms.gallae.dto.review;
-
+package kusitms.gallae.dto.archive;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class ReviewPostReq {
-    private String writer;
-
+public class ArchivePostReq {
     private String title;
 
     private String category;
@@ -19,4 +15,5 @@ public class ReviewPostReq {
     private String fileName;
 
     private String fileUrl;
+    private String writer;
 }

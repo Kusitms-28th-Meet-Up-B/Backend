@@ -8,6 +8,7 @@ import kusitms.gallae.dto.review.ReviewPostReq;
 import kusitms.gallae.repository.review.ReviewRepository;
 
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
+import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,9 @@ public class ReviewService {
     @Autowired
     private ReviewRepositoryCustom reviewRepositoryCustom;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
         Page<Review> reviews = reviewRepositoryCustom.findReviewDynamicCategory(category,pageable);
@@ -35,7 +39,7 @@ public class ReviewService {
                     reviewDtoRes.setId(review.getId());
                     reviewDtoRes.setWriter(review.getWriter());
                     reviewDtoRes.setTitle(review.getTitle());
-                    reviewDtoRes.setCreatedDate(review.getCreatedAt());
+                     reviewDtoRes.setCreatedDate(review.getCreatedAt());
                     return reviewDtoRes;
                 }).collect(Collectors.toList());
 
@@ -46,14 +50,15 @@ public class ReviewService {
         return reviewPageRes;
     }
 
-    public void postReivew(ReviewPostReq reviewPostReq) {
+    public void postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
-        User user = new User();
-        user.setId(1L);
+        User user = userRepository.findByName(username).get();
         review.setTitle(reviewPostReq.getTitle());
         review.setUser(user);
         review.setBody(reviewPostReq.getBody());
+        review.setCategory(review.getCategory());
         review.setFileName(reviewPostReq.getFileName());
+        review.setWriter(reviewPostReq.getWriter());
         review.setFileUrl(reviewPostReq.getFileUrl());
         review.setHashtag(reviewPostReq.getHashTags());
         reviewRepository.save(review);

@@ -1,6 +1,5 @@
 package kusitms.gallae.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
@@ -8,15 +7,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.domain.Program;
-import kusitms.gallae.domain.Review;
-import kusitms.gallae.dto.program.ProgramManagerReq;
-import kusitms.gallae.dto.review.ReviewDtoRes;
-import kusitms.gallae.dto.review.ReviewModel;
-import kusitms.gallae.dto.review.ReviewPageRes;
-import kusitms.gallae.dto.review.ReviewPostReq;
+import kusitms.gallae.dto.archive.ArchiveModel;
+import kusitms.gallae.dto.archive.ArchivePageRes;
+import kusitms.gallae.dto.archive.ArchivePostReq;
 import kusitms.gallae.global.S3Service;
-import kusitms.gallae.service.review.ReviewService;
+import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,27 +20,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
-public class ReviewController {
+@RequestMapping("/archives")
+public class ArchiveController {
 
     @Autowired
-    private ReviewService reviewService;
+    private ArchiveService archiveService;
 
     @Autowired
     private S3Service s3Service;
 
-
-
-    @Operation(summary = "리뷰 카테고리별 게시판 내용들 가져오기", description = """
+    @Operation(summary = "자료실 카테고리별 게시판 내용들 가져오기", description = """
             전체는 null로 보내주세요 
             """)
     @GetMapping("/category")
-    public ResponseEntity<BaseResponse<ReviewPageRes>>  getReviewsByCategory(
-            @Parameter(description = "여행 지원사업 / 여행 대외활동 / 여행 공모전")
+    public ResponseEntity<BaseResponse<ArchivePageRes>> getArchivesByCategory(
+            @Parameter(description = "지원서 / 보고서")
             @RequestParam(value = "category", required = false)
             String category,
 
@@ -61,33 +53,34 @@ public class ReviewController {
             Integer pagingSize){
 
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.reviewService.getReviewsByCategory(category,pageRequest)));
+        return ResponseEntity.ok(new BaseResponse<>(this.archiveService.getArchivesByCategory(category,pageRequest)));
     }
 
-    @PostMapping("/saveReview")
-    public ResponseEntity<BaseResponse> saveReview(
+    @PostMapping("/saveArchive")
+    public ResponseEntity<BaseResponse> saveArchive(
             Principal principal,
-
             @ModelAttribute
-            ReviewModel reviewModel
+            ArchiveModel archiveModel
     ) throws IOException {
         String fileName = null;
         String fileUrl = null;
         System.out.println(principal.getName());
-        if(reviewModel.getFile() != null && !reviewModel.getFile().isEmpty()) {
-            fileName = reviewModel.getFile().getName();
-            fileUrl = s3Service.upload(reviewModel.getFile());
+        if(archiveModel.getFile() != null && !archiveModel.getFile().isEmpty()) {
+            fileName = archiveModel.getFile().getName();
+            fileUrl = s3Service.upload(archiveModel.getFile());
         }
-        ReviewPostReq reviewPostReq = new ReviewPostReq();
-        reviewPostReq.setTitle(reviewModel.getTitle());
-        reviewPostReq.setWriter(reviewPostReq.getWriter());
-        reviewPostReq.setCategory(reviewPostReq.getCategory());
-        reviewPostReq.setFileUrl(fileUrl);
-        reviewPostReq.setFileName(fileName);
-        reviewPostReq.setBody(reviewModel.getBody());
-        reviewPostReq.setHashTags(reviewModel.getHashTags());
-        reviewService.postReivew(reviewPostReq,principal.getName());
+        ArchivePostReq archivePostReq = new ArchivePostReq();
+        archivePostReq.setTitle(archiveModel.getTitle());
+        archivePostReq.setCategory(archivePostReq.getCategory());
+        archivePostReq.setFileUrl(fileUrl);
+        archivePostReq.setFileName(fileName);
+        archivePostReq.setWriter(archiveModel.getWriter());
+        archivePostReq.setBody(archiveModel.getBody());
+        archivePostReq.setHashTags(archiveModel.getHashTags());
+        archiveService.postArchive(archivePostReq,principal.getName());
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
 
     }
 }
+
+//writer 왜 Null로 나오지

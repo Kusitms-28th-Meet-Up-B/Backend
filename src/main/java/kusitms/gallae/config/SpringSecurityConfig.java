@@ -51,6 +51,8 @@ public class SpringSecurityConfig {
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .authorizeHttpRequests()
                 .requestMatchers("/manager/**").hasRole(Role.MANAGER.getValue())
+                .requestMatchers("/reviews/saveReview").hasRole(Role.USER.getValue())
+                .requestMatchers("/archives/saveArchive").hasRole(Role.USER.getValue())
                 .anyRequest().permitAll().and()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
