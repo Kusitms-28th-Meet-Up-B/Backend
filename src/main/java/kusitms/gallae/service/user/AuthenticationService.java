@@ -42,6 +42,12 @@ public class AuthenticationService {
 
         // 로그인 응답 생성 및 반환
         return LoginResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .imageUrl(user.getProfileImageUrl())
+                .nickName(user.getNickName())
+                .phoneNumber(user.getPhoneNumber())
+                .name(user.getName())
                 .accessToken(accessToken)
                 .refreshToken(user.getRefreshToken())
                 .build();
