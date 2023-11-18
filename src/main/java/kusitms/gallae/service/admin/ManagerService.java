@@ -5,15 +5,15 @@ import kusitms.gallae.dto.program.*;
 public interface ManagerService {
 
 
-    void postProgram(ProgramPostReq programPostReq);
+    void postProgram(ProgramPostReq programPostReq,String username);
 
-    void postTempProgram(ProgramPostReq programPostReq);
+    void postTempProgram(ProgramPostReq programPostReq,String username);
 
-    ProgramPostReq getTempProgram();
+    ProgramPostReq getTempProgram(String username);
 
     ProgramDetailRes getProgramDetail(Long id);
 
-    ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq);
+    ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq, String username);
 
     void deleteTempProgram(Long programId);
 

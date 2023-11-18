@@ -1,6 +1,7 @@
 package kusitms.gallae.config;
 
 
+import kusitms.gallae.global.Role;
 import kusitms.gallae.global.jwt.JwtAccessDeniedHandler;
 import kusitms.gallae.global.jwt.JwtAuthenticationEntryPoint;
 import kusitms.gallae.global.jwt.JwtAuthenticationFilter;
@@ -49,6 +50,7 @@ public class SpringSecurityConfig {
                 .csrf().disable()
                 .cors().configurationSource(corsConfigurationSource()).and()
                 .authorizeHttpRequests()
+                .requestMatchers("/manager/**").hasRole(Role.MANAGER.getValue())
                 .anyRequest().permitAll().and()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)

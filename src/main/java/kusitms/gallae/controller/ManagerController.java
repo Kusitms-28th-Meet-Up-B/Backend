@@ -14,6 +14,7 @@ import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.program.ProgramPageMangagerRes;
 import kusitms.gallae.dto.program.ProgramPostReq;
 import kusitms.gallae.global.S3Service;
+import kusitms.gallae.global.jwt.AuthUtil;
 import kusitms.gallae.service.admin.ManagerService;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 
 
 @RequiredArgsConstructor
@@ -62,6 +64,8 @@ public class ManagerController {
 
     @Operation(summary = "프로그램 저장", description = """
             프로그램 저장을 합니다.
+            
+            포스트맨에서 테스트 하세요
             다른 API와 다르게 파일과 json Data를 구분해야합니다.
             프론트엔드 분은 아래 링크를 참고 해주세요
             
@@ -77,20 +81,18 @@ public class ManagerController {
             \n
             2번을 위한 API  
             """)
-    @PostMapping(value = "/save", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/save")
     public ResponseEntity<BaseResponse> saveProgram(
-            @Parameter(description = "이미지 제외하고 전부")
-            @RequestPart
-            PostModel model,
+            Principal principal,
 
-            @Parameter(description = "프로그램 이미지")
-            @RequestPart(required = false)
-            MultipartFile photo
+            @ModelAttribute
+            PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(photo != null) {
-            photoUrl = s3Service.upload(photo);
+        if(model.getPhoto() != null) {
+            photoUrl = s3Service.upload(model.getPhoto());
         }
+
         ProgramPostReq programPostReq = new ProgramPostReq();
         programPostReq.setProgramName(model.getProgramName());
         programPostReq.setPhotoUrl(photoUrl);
@@ -106,7 +108,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-        this.managerService.postProgram(programPostReq);
+        this.managerService.postProgram(programPostReq, principal.getName());
 
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
@@ -130,6 +132,8 @@ public class ManagerController {
             """)
     @GetMapping("/progressPrograms")
     public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerProgress(
+            Principal principal,
+
             @Parameter(description = "프로그램 타입")
             @RequestParam(value = "programType", required = false)
             String programType,
@@ -150,7 +154,7 @@ public class ManagerController {
         programManagerReq.setStatus(Program.ProgramStatus.SAVE);
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         programManagerReq.setPageable(pageRequest);
-        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq)));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq, principal.getName())));
     }
 
     @Operation(summary = "관리자 프로그램 중 마감된 정보들 가져오기", description = """
@@ -159,6 +163,8 @@ public class ManagerController {
             """)
     @GetMapping("/finishPrograms")
     public ResponseEntity<BaseResponse<ProgramPageMangagerRes>> findProgramManagerFinish(
+            Principal principal,
+
             @Parameter(description = "프로그램 유형")
             @RequestParam(value = "programType", required = false)
             String programType,
@@ -179,7 +185,7 @@ public class ManagerController {
         programManagerReq.setStatus(Program.ProgramStatus.FINISH);
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         programManagerReq.setPageable(pageRequest);
-        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq)));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq, principal.getName())));
     }
 
     @Operation(summary = "프로그램 임시저장", description = """
@@ -190,19 +196,16 @@ public class ManagerController {
             https://leeggmin.tistory.com/7
             
             """)
-    @PostMapping(value = "/tempSave", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/tempSave")
     public ResponseEntity<BaseResponse> tempSaveProgram(
-            @Parameter(description = "이미지 제외하고 전부")
-            @RequestPart
-            PostModel model,
+            Principal principal,
 
-            @Parameter(description = "프로그램 이미지")
-            @RequestPart(required = false)
-            MultipartFile photo
+            @ModelAttribute
+            PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(photo != null) {
-            photoUrl = s3Service.upload(photo);
+        if(model.getPhoto() != null) {
+            photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
         programPostReq.setProgramName(model.getProgramName());
@@ -219,7 +222,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-        this.managerService.postTempProgram(programPostReq);
+        this.managerService.postTempProgram(programPostReq, principal.getName());
 
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
@@ -238,9 +241,10 @@ public class ManagerController {
             1번을 위한 API
             """)
     @GetMapping("/findTemp")
-    public ResponseEntity<BaseResponse<ProgramPostReq>> findTempProgram() {
+    public ResponseEntity<BaseResponse<ProgramPostReq>> findTempProgram(Principal principal) {
+
         //사용자 로그인 들어오면
-        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getTempProgram()));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.getTempProgram(principal.getName())));
     }
 
 

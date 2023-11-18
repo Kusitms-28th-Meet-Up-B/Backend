@@ -8,9 +8,11 @@ import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.global.S3Service;
+import kusitms.gallae.global.jwt.AuthUtil;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
+import kusitms.gallae.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,6 +34,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final ProgramRepositoryCustom programRepositoryCustom;
 
     private final S3Service s3Service;
+
+    private final UserRepository userRepository;
 
 
     @Override
@@ -58,8 +63,9 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ProgramPostReq getTempProgram() {
-        Program tempProgram = programRespository.findByUserIdAndStatus(1L, Program.ProgramStatus.TEMP);
+    public ProgramPostReq getTempProgram(String username) {
+        User user = userRepository.findByName(username).get();
+        Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(), Program.ProgramStatus.TEMP);
         if(tempProgram == null) {
             return new ProgramPostReq();
         }else{
@@ -82,12 +88,11 @@ public class ManagerServiceImpl implements ManagerService {
         }
     }
     @Override
-    public void postProgram(ProgramPostReq programPostReq) {
-        Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
+    public void postProgram(ProgramPostReq programPostReq ,String username) {
+        User user = userRepository.findByName(username).get();
+        Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
-        System.out.println(tempProgram);
-        User user = new User();
-        user.setId(1L);
+
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
@@ -101,12 +106,11 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void postTempProgram(ProgramPostReq programPostReq) {
-        Program tempProgram = programRespository.findByUserIdAndStatus(1L,  //나중에 유저 생기면 수정 필요
+    public void postTempProgram(ProgramPostReq programPostReq , String username) {
+        User user = userRepository.findByName(username).get();
+        Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
         System.out.println(tempProgram);
-        User user = new User();
-        user.setId(1L);
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
@@ -125,10 +129,9 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq) {
-        User user = new User();
-        user.setId(1L);
-        programManagerReq.setUser(user);
+    public ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq , String username) {
+        Optional<User> user = userRepository.findByName(username);
+        programManagerReq.setUser(user.get());
         Page<Program> programs = programRepositoryCustom.getDynamicMananger(programManagerReq);
         List<Program> pageToListManagerPrograms = programs.getContent();
         ProgramPageMangagerRes programPageMangagerRes = new ProgramPageMangagerRes();

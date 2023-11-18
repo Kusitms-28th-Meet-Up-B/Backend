@@ -46,4 +46,6 @@ public class PostModel {
     private String hashtag;
 
     private String body;
+
+    private MultipartFile photo;
 }

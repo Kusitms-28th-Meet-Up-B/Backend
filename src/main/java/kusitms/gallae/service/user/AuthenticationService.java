@@ -36,7 +36,6 @@ public class AuthenticationService {
 
         // 리프레시 토큰 생성 및 갱신
         user.renewRefreshToken();
-        userRepository.save(user);
 
         // 리프레시 토큰을 쿠키에 저장
         AuthUtil.setRefreshTokenCookie(httpServletResponse, user.getRefreshToken());

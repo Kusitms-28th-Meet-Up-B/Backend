@@ -25,17 +25,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nickName;
+    private String nickName;   //기업이면 이게 기관명
+
+    private String registrationNum;
+
+    private String department;  //담당 부서
 
     private String loginId;
 
     private String loginPw;
 
     private String refreshToken;
-    private String name;
+    private String name;   //담당자 명
     private String phoneNumber;
     private String email;
     private String profileImageUrl;
+    private Long point;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
