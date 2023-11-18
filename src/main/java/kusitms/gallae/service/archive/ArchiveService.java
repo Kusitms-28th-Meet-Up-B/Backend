@@ -52,14 +52,13 @@ public class ArchiveService {
 
     public void postArchive(ArchivePostReq archivePostReq, String username) {
         Archive archive = new Archive();
-        User user = userRepository.findByName(username).get();
+        User user = userRepository.findById(Long.valueOf(username)).get();
         archive.setTitle(archivePostReq.getTitle());
         archive.setUser(user);
         archive.setBody(archivePostReq.getBody());
         archive.setFileName(archivePostReq.getFileName());
         archive.setWriter(archivePostReq.getWriter());
         archive.setCategory(archivePostReq.getCategory());
-        System.out.println(archivePostReq.getCategory());
         archive.setFileUrl(archivePostReq.getFileUrl());
         archive.setHashtag(archivePostReq.getHashTags());
         archiveRepository.save(archive);

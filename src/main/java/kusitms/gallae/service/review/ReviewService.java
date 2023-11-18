@@ -52,7 +52,7 @@ public class ReviewService {
 
     public void postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
-        User user = userRepository.findByName(username).get();
+        User user = userRepository.findById(Long.valueOf(username)).get();
         review.setTitle(reviewPostReq.getTitle());
         review.setUser(user);
         review.setBody(reviewPostReq.getBody());

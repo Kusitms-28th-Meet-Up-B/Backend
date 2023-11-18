@@ -24,7 +24,7 @@ public class JwtProvider{
     private static final String AUTHORITIES_KEY = "authorities";
 
     private final String secret="wewef23fewfwfwfeefkalefalekfalekfaef2iweifejslqeqwew";
-    private final long durationSeconds= 12*60*60*60*1000;
+    private final long durationSeconds= 12*60*60*60*60*1000;
 
 
     public String createToken(String username, List<Role> roles) {

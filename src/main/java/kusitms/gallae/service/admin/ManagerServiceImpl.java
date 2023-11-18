@@ -64,7 +64,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ProgramPostReq getTempProgram(String username) {
-        User user = userRepository.findByName(username).get();
+        User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(), Program.ProgramStatus.TEMP);
         if(tempProgram == null) {
             return new ProgramPostReq();
@@ -89,7 +89,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
     @Override
     public void postProgram(ProgramPostReq programPostReq ,String username) {
-        User user = userRepository.findByName(username).get();
+        User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
 
@@ -107,7 +107,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void postTempProgram(ProgramPostReq programPostReq , String username) {
-        User user = userRepository.findByName(username).get();
+        User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
         System.out.println(tempProgram);
@@ -130,7 +130,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq , String username) {
-        Optional<User> user = userRepository.findByName(username);
+        Optional<User> user = userRepository.findById(Long.valueOf(username));
         programManagerReq.setUser(user.get());
         Page<Program> programs = programRepositoryCustom.getDynamicMananger(programManagerReq);
         List<Program> pageToListManagerPrograms = programs.getContent();

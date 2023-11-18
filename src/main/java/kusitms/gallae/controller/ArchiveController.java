@@ -71,7 +71,7 @@ public class ArchiveController {
         }
         ArchivePostReq archivePostReq = new ArchivePostReq();
         archivePostReq.setTitle(archiveModel.getTitle());
-        archivePostReq.setCategory(archivePostReq.getCategory());
+        archivePostReq.setCategory(archiveModel.getCategory());
         archivePostReq.setFileUrl(fileUrl);
         archivePostReq.setFileName(fileName);
         archivePostReq.setWriter(archiveModel.getWriter());

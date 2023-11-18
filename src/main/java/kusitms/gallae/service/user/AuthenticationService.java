@@ -35,7 +35,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // JWT 액세스 토큰 생성
-        String accessToken = jwtProvider.createToken(user.getName(), List.of(user.getRole()));
+        String accessToken = jwtProvider.createToken(String.valueOf(user.getId()), List.of(user.getRole()));
 
         // 리프레시 토큰 생성 및 갱신
         user.renewRefreshToken();
