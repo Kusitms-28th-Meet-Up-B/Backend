@@ -118,7 +118,7 @@ public class ProgramController {
     public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByFilter(
 
             @Parameter(description = "프로그램 이름", example = "이름")
-            @RequestParam(value = "programName")
+            @RequestParam(value = "programName" , required = false)
             String programName,
 
             @Parameter(description = "정렬 기준", example = "최신순, 인기순 , 빠른마감순,늦은마감순")

@@ -120,6 +120,7 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public ProgramDetailRes getProgramDetail(Long id){
         Program program = programRespository.findById(id).orElse(null);
+        program.setViewCount(program.getViewCount()+1);
         if(program == null) {
             throw new BaseException(BaseResponseStatus.BAD_REQUEST);
         }else{
