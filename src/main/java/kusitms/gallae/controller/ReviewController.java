@@ -1,0 +1,58 @@
+package kusitms.gallae.controller;
+
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import kusitms.gallae.config.BaseResponse;
+import kusitms.gallae.domain.Program;
+import kusitms.gallae.domain.Review;
+import kusitms.gallae.dto.program.ProgramManagerReq;
+import kusitms.gallae.dto.review.ReviewDtoRes;
+import kusitms.gallae.dto.review.ReviewPageRes;
+import kusitms.gallae.service.review.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/reviews")
+public class ReviewController {
+
+    @Autowired
+    private ReviewService reviewService;
+
+
+
+    @Operation(summary = "리뷰 카테고리별 게시판 내용들 가져오기", description = """
+            전체는 null로 보내주세요 
+            """)
+    @GetMapping
+    public ResponseEntity<BaseResponse<ReviewPageRes>>  getReviewsByCategory(
+            @Parameter(description = "여행 지원사업 / 여행 대외활동 / 여행 공모전")
+            @RequestParam(value = "category", required = false)
+            String category,
+
+            @Parameter(description = "페이지 번호")
+            @Positive(message = "must be greater than 0")
+            @RequestParam(value = "page", defaultValue = "0")
+            Integer pageNumber,
+
+            @Parameter(description = "페이징 사이즈 (최대 100)")
+            @Min(value = 1, message = "must be greater than or equal to 1")
+            @Max(value = 100, message = "must be less than or equal to 100")
+            @RequestParam(value = "size", defaultValue = "20")
+            Integer pagingSize){
+
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        return ResponseEntity.ok(new BaseResponse<>(this.reviewService.getReviewsByCategory(category,pageRequest)));
+    }
+}
