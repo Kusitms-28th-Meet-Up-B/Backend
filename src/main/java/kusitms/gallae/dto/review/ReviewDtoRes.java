@@ -1,5 +1,6 @@
 package kusitms.gallae.dto.review;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,8 @@ public class ReviewDtoRes {
     private String category;  // 게시판 명
     private String title;      // 제목
     private String writer;     // 글쓴이
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;  // 등록일
 
 }

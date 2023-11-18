@@ -1,8 +1,10 @@
 package kusitms.gallae.service.review;
 import kusitms.gallae.domain.Review;
 
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
+import kusitms.gallae.dto.review.ReviewPostReq;
 import kusitms.gallae.repository.review.ReviewRepository;
 
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
@@ -42,5 +44,18 @@ public class ReviewService {
         reviewPageRes.setTotalSize(reviews.getTotalPages());
 
         return reviewPageRes;
+    }
+
+    public void postReivew(ReviewPostReq reviewPostReq) {
+        Review review = new Review();
+        User user = new User();
+        user.setId(1L);
+        review.setTitle(reviewPostReq.getTitle());
+        review.setUser(user);
+        review.setBody(reviewPostReq.getBody());
+        review.setFileName(reviewPostReq.getFileName());
+        review.setFileUrl(reviewPostReq.getFileUrl());
+        review.setHashtag(reviewPostReq.getHashTags());
+        reviewRepository.save(review);
     }
 }

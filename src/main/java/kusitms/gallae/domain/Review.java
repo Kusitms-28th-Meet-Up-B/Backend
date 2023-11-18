@@ -33,6 +33,8 @@ public class Review {
 
     private String writer;
 
+    private String fileName;
+
     private String fileUrl;
 
     private String body;
