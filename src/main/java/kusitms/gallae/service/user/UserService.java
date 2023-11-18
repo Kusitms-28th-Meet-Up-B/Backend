@@ -1,14 +1,18 @@
 package kusitms.gallae.service.user;
 
+import kusitms.gallae.domain.Point;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.UserRegistrationDto;
 import kusitms.gallae.global.S3Service;
+import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 public class UserService  {
@@ -16,12 +20,14 @@ public class UserService  {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final PointRepository pointRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, S3Service s3Service) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, S3Service s3Service, PointRepository pointRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.s3Service = s3Service;
+        this.pointRepository = pointRepository;
     }
 
     public User registerNewUser(UserRegistrationDto registrationDto) throws IllegalStateException, IOException {
@@ -49,6 +55,23 @@ public class UserService  {
                 .loginPw(passwordEncoder.encode(registrationDto.getLoginPw()))
                 .build();
 
-        return userRepository.save(newUser);
+        newUser= userRepository.save(newUser);
+        awardPointsToUser(newUser, 100);
+
+        return newUser;
+
     }
+    private void awardPointsToUser(User user, int points) {
+        Point newPoint = Point.builder()
+                .user(user)
+                .pointScore(points)
+                .pointActivity("회원가입 보상")
+                .pointCategory("적립")
+                .date(LocalDateTime.now())
+                .time(LocalTime.now())
+                .build();
+
+        pointRepository.save(newPoint);
+    }
+
 }

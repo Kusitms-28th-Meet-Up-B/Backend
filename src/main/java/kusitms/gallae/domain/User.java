@@ -10,6 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -55,6 +57,8 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Point> points = new ArrayList<>();
     public enum UserSignUpStatus{
         MANAGER,
         USER,
