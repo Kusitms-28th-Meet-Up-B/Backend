@@ -1,5 +1,6 @@
 package kusitms.gallae.controller;
 
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.UserRegistrationDto;
 import kusitms.gallae.service.user.UserService;
@@ -21,8 +22,8 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@ModelAttribute UserRegistrationDto registrationDto) {
         try {
-            User user = userService.registerNewUser(registrationDto);
-            return ResponseEntity.ok(user);
+            userService.registerNewUser(registrationDto);
+            return ResponseEntity.ok(BaseResponseStatus.SUCCESS);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

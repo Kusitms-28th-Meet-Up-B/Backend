@@ -13,18 +13,17 @@ import java.io.IOException;
 @Service
 public class UserService  {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final S3Service s3Service;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, S3Service s3Service) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.s3Service = s3Service;
-    }
+    private UserRepository userRepository;
 
-    public User registerNewUser(UserRegistrationDto registrationDto) throws IllegalStateException, IOException {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private S3Service s3Service;
+
+    public void registerNewUser(UserRegistrationDto registrationDto) throws IllegalStateException, IOException {
         if (userRepository.existsByLoginId(registrationDto.getLoginId())) {
             throw new IllegalStateException("이미 존재하는 ID 입니다.");
         }
@@ -46,9 +45,11 @@ public class UserService  {
                 .refreshToken("")  // 회원가입은 토큰 없음
                 .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 추가
                 .signUpStatus(User.UserSignUpStatus.USER)
-                .loginPw(passwordEncoder.encode(registrationDto.getLoginPw()))
+                .loginPw(registrationDto.getLoginPw())
                 .build();
 
-        return userRepository.save(newUser);
+        System.out.println(newUser.getLoginPw());
+
+        userRepository.save(newUser);
     }
 }

@@ -12,14 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class AuthenticationService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -28,13 +27,8 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     public LoginResponse login(LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
-        // 사용자 인증
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequestDto.getLoginId(), loginRequestDto.getLoginId())
-        );
-
         // 사용자 정보 조회
-        User user = userRepository.findByLoginId(loginRequestDto.getLoginId())
+        User user = userRepository.findByLoginIdAndLoginPw(loginRequestDto.getLoginId(), loginRequestDto.getLoginPw())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // JWT 액세스 토큰 생성
@@ -49,14 +43,6 @@ public class AuthenticationService {
 
         // 로그인 응답 생성 및 반환
         return LoginResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .nickName(user.getNickName())
-                .email(user.getEmail())
-                .imageUrl(user.getProfileImageUrl())
-                .role(user.getRole())
-                .tokenType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(user.getRefreshToken())
                 .build();
