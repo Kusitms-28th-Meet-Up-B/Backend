@@ -62,11 +62,24 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public List<ProgramMainRes> getSimilarPrograms(Long programId) {
+    public List<ProgramMainRes> getSimilarPrograms(Long programId,String username) {
         Program program = programRespository.findById(programId).orElse(null);
-        List<Program> programs = programRespository.findTop4ByLocationContainingAndProgramTypeContainingAndStatus(program.getLocation(),
-                program.getProgramType(), Program.ProgramStatus.SAVE);
-        return this.getProgramMainRes(programs);
+        ProgramSimilarReq programSimilarReq = new ProgramSimilarReq();
+        programSimilarReq.setLocation(program.getLocation());
+        programSimilarReq.setProgramType(program.getProgramType());
+        User user = null;
+        if(username != null){
+            user = userRepository.findById(Long.valueOf(username)).get();
+            programSimilarReq.setUser(user);
+        }
+        List<ProgramMainRes> temp = programRepositoryCustom.getDynamicSimilar(programSimilarReq);
+        List<ProgramMainRes> programs = new ArrayList<>();
+        temp.stream().forEach(programMainRes -> {    //자기 자신은 추천안하게 제거
+            if(programMainRes.getId() != programId) {
+                programs.add(programMainRes);
+            }
+        });
+        return programs;
     }
 
     @Override

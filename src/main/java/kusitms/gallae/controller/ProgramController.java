@@ -41,6 +41,7 @@ public class ProgramController {
 
     @Operation(summary = "필터로 프로그램 검색", description = """
             필터 조건에 맞게 프로그램 검색을 합니다.
+            userLikeCheck 가 true이면 이미 사용자가 좋아요를 누른 것입니다.
             필수 입력값이 orderCriteria(정렬기준) 이며 나머지는 null로 보내주셔도 됩니다.
             ** 주의  ** 
             피그마에 전체로 되어있는데 전체를 선택시 null로 보내주시면 됩니다.
@@ -145,16 +146,22 @@ public class ProgramController {
     }
 
     @Operation(summary = "유사한 프로그램 추천", description = """
-            지역과 프로그램 타입이 같은 프로그램 4개를 반환합니다.
+            지역이나 프로그램 타입이 같은 프로그램 최대 4개를 반환합니다
             해당 프로그램은 없을 수도 있습니다.
-            만약에 다른 방법이 제시 되면 수정하겠습니다.
+            userLikeCheck 가 true이면 이미 사용자가 좋아요를 누른 것입니다.
             """)
     @GetMapping("/similarRecommend")
     public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findTourbySimilarPrograms(
+            Principal principal,
+
             @Parameter(description = "프로그램 ID")
             @RequestParam(value = "id", required = true) Long id
     ){
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getSimilarPrograms(id)));
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
+        }
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getSimilarPrograms(id,username)));
     }
     @Operation(summary = "프로그램 지도에 필요한 값 보내주기", description = """
             위도,경도,사진,모집기간이 포함되어 있습니다 .

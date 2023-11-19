@@ -15,7 +15,7 @@ public interface ProgramService {
 
     List<ProgramMapRes> getProgramsMap();
 
-    List<ProgramMainRes> getSimilarPrograms(Long ProgramId);
+    List<ProgramMainRes> getSimilarPrograms(Long ProgramId,String username);
 
     List<TourApiDto> getTourDatas(Long programId);
 

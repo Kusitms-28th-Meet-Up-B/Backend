@@ -12,6 +12,7 @@ import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.ProgramMainRes;
 import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.program.ProgramSearchReq;
+import kusitms.gallae.dto.program.ProgramSimilarReq;
 import kusitms.gallae.global.DurationCalcurator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -75,6 +76,20 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         return new PageImpl<>(programs, programManagerReq.getPageable(), Objects.requireNonNull(totalSize));
     }
 
+    public List<ProgramMainRes> getDynamicSimilar(ProgramSimilarReq programSimilarReq){
+        List<Tuple> tuples = this.jpaQueryFactory
+                .select(program,favorite)
+                .from(favorite)
+                .rightJoin(favorite.program,program)
+                .where(createSimiliarProgramCondition(programSimilarReq))
+                .offset(0)
+                .limit(4)
+                .fetch();
+
+        List<ProgramMainRes> programs = this.getProgramMainRes(tuples, programSimilarReq.getUser());
+        return programs;
+    }
+
     private BooleanBuilder createManagerProgramCondition(ProgramManagerReq programManagerReq) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -121,6 +136,22 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         }
 
         booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+        return booleanBuilder;
+    }
+
+    private BooleanBuilder createSimiliarProgramCondition(ProgramSimilarReq programSimilarReq) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if(programSimilarReq.getLocation() != null) {
+            booleanBuilder.or(program.location.contains(programSimilarReq.getLocation()));
+        }
+
+        if(programSimilarReq.getProgramType() != null) {
+            booleanBuilder.or(program.programType.eq(programSimilarReq.getProgramType()));
+        }
+
+        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+
         return booleanBuilder;
     }
 
