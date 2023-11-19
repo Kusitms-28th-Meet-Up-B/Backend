@@ -3,6 +3,7 @@ package kusitms.gallae.service.archive;
 
 import kusitms.gallae.domain.Archive;
 import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.archive.ArchiveDtoRes;
 import kusitms.gallae.dto.archive.ArchivePageRes;
 import kusitms.gallae.dto.archive.ArchivePostReq;
@@ -62,6 +63,24 @@ public class ArchiveService {
         archive.setFileUrl(archivePostReq.getFileUrl());
         archive.setHashtag(archivePostReq.getHashTags());
         archiveRepository.save(archive);
+    }
+
+    public ArchiveDetailRes getArchiveById(Long id) {
+        return archiveRepository.findById(id)
+                .map(archive -> {
+                    ArchiveDetailRes detailRes = new ArchiveDetailRes();
+                    detailRes.setId(archive.getId());
+                    detailRes.setCategory(archive.getCategory());
+                    detailRes.setTitle(archive.getTitle());
+                    detailRes.setWriter(archive.getWriter());
+                    detailRes.setFileName(archive.getFileName());
+                    detailRes.setFileUrl(archive.getFileUrl());
+                    detailRes.setHashtag(archive.getHashtag());
+                    detailRes.setBody(archive.getBody());
+                    detailRes.setCreatedDate(archive.getCreatedAt());
+                    return detailRes;
+                })
+                .orElse(null);
     }
 
 
