@@ -2,6 +2,7 @@ package kusitms.gallae.dto.program;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import kusitms.gallae.domain.User;
 import lombok.Data;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ProgramSearchReq {
+    private User user;
 
     private String programName;
 

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,70 +39,6 @@ public class ProgramController {
     private final S3Service s3Service;
 
 
-    @Operation(summary = "최신 프로그램 상위 4개", description = """
-            최근에 등록된 프로그램 상위 4개를 반환 합니다.
-            """)
-    @GetMapping("/recent")
-    public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findRecentProgram(){
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getRecentPrograms()));
-    }
-
-    @Operation(summary = "프로그램 유형별 프로그램들", description = """
-            여행지원사업, 여행공모전, 여행대외활동 세가지 유형별로 프로그램들을 반환합니다.
-            """)
-    @GetMapping("/type")
-    public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByProgramType(
-            @Parameter(description = "프로그램 유형", example = "여행지원사업, 여행공모전, 여행대외활동")
-            @RequestParam(value = "programType", required = true)
-            String programType,
-
-            @Parameter(description = "페이지 번호")
-            @Positive(message = "must be greater than 0")
-            @RequestParam(value = "page", defaultValue = "0")
-            Integer pageNumber,
-
-            @Parameter(description = "페이징 사이즈 (최대 100)")
-            @Min(value = 1, message = "must be greater than or equal to 1")
-            @Max(value = 100, message = "must be less than or equal to 100")
-            @RequestParam(value = "size", defaultValue = "20")
-            Integer pagingSize
-            ) {
-
-        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByProgramType(programType,pageRequest)));
-    }
-
-    @Operation(summary = "프로그램 이름으로 검색", description = """
-            프로그램 이름이 포함된 프로그램들을 반환합니다
-            
-            여기서 TotalSize는 페이지의 총 갯수를 나타내며 
-            pageNumber는 0 부터 시작 
-            TotalSize는 1부터 시작입니다.
-            즉 TotalSize가 4를 가리키면
-            pageNumber는 0~3 까지 4개 있는 겁니다.
-            """)
-    @GetMapping("/search")
-    public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByProgramName(
-            @Parameter(description = "프로그램 이름", example = "test")
-            @RequestParam(value = "programName", required = true)
-            String programName,
-
-            @Parameter(description = "페이지 번호")
-            @Positive(message = "must be greater than 0")
-            @RequestParam(value = "page", defaultValue = "0")
-            Integer pageNumber,
-
-            @Parameter(description = "페이징 사이즈 (최대 100)")
-            @Min(value = 1, message = "must be greater than or equal to 1")
-            @Max(value = 100, message = "must be less than or equal to 100")
-            @RequestParam(value = "size", defaultValue = "20")
-            Integer pagingSize
-    ) {
-
-        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByProgramName(programName,pageRequest)));
-    }
-
     @Operation(summary = "필터로 프로그램 검색", description = """
             필터 조건에 맞게 프로그램 검색을 합니다.
             필수 입력값이 orderCriteria(정렬기준) 이며 나머지는 null로 보내주셔도 됩니다.
@@ -116,6 +53,7 @@ public class ProgramController {
             """)
     @GetMapping("/filters")
     public ResponseEntity<BaseResponse<ProgramPageMainRes>> findProgramsByFilter(
+            Principal principal,
 
             @Parameter(description = "프로그램 이름", example = "이름")
             @RequestParam(value = "programName" , required = false)
@@ -168,7 +106,11 @@ public class ProgramController {
             @RequestParam(value = "size", defaultValue = "20")
             Integer pagingSize
     ) {
+        String username = null;
         ProgramSearchReq programSearchReq = new ProgramSearchReq();
+        if(principal != null) {
+            username = principal.getName();
+        }
         programSearchReq.setProgramName(programName);
         programSearchReq.setOrderCriteria(orderCriteria);
         programSearchReq.setLocation(location);
@@ -180,17 +122,9 @@ public class ProgramController {
         programSearchReq.setActiveEndDate(activeEndDate);
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         programSearchReq.setPageable(pageRequest);
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq)));
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramsByDynamicQuery(programSearchReq,username)));
     }
 
-
-    @Operation(summary = "인기 많은 프로그램들", description = """
-            찜수가 가장 높은 프로그램들을 상위 4개를 반환합니다.
-            """)
-    @GetMapping("/best")
-    public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findBestPrograms(){
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getBestPrograms()));
-    }
 
     @Operation(summary = "프로그램 세부내용 가져오기")
     @GetMapping("/program")
