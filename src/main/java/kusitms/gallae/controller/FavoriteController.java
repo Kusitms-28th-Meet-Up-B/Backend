@@ -29,6 +29,7 @@ public class FavoriteController {
             유저가 프로그램 좋아요를 누른다.
             프로그램 좋아요 갯수가 오른다.
             유저 마이페이지에 프로그램 추가된다.
+            이미 좋아요 눌렀던 프로그램이면 "코드 410 ,이미 존재합니다" 메시지 나옴
             """)
     @PostMapping("/program")
     public ResponseEntity<BaseResponse> postFavoriteProgram(
