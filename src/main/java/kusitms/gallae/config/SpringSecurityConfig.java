@@ -53,6 +53,7 @@ public class SpringSecurityConfig {
                 .requestMatchers("/manager/**").hasRole(Role.MANAGER.getValue())
                 .requestMatchers("/reviews/saveReview").hasAnyRole(Role.USER.getValue(),Role.MANAGER.getValue())
                 .requestMatchers("/archives/saveArchive").hasAnyRole(Role.USER.getValue(),Role.MANAGER.getValue())
+                .requestMatchers("/favorite/**").hasAnyRole(Role.USER.getValue(),Role.MANAGER.getValue())
                 .anyRequest().permitAll().and()
                 .exceptionHandling()
                 .authenticationEntryPoint(this.jwtAuthenticationEntryPoint)

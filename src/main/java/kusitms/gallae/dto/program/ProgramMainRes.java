@@ -20,4 +20,6 @@ public class ProgramMainRes {
 
     private List<String> hashTag;
 
+    private boolean userLikeCheck;
+
 }

@@ -45,7 +45,6 @@ public class AuthenticationController {
             LoginRequestDto loginRequestDto = new LoginRequestDto();
             loginRequestDto.setLoginId(loginId);
             loginRequestDto.setLoginPw(loginPw);
-            System.out.println(loginRequestDto.getLoginPw());
             return ResponseEntity.ok(new BaseResponse<>(authenticationService.login(loginRequestDto, httpServletResponse)));
         } catch (RuntimeException e) {
 

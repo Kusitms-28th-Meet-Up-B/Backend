@@ -11,19 +11,11 @@ public interface ProgramService {
 
     ProgramDetailRes getProgramDetail(Long id);
 
-    List<ProgramMainRes> getRecentPrograms();
-
-    ProgramPageMainRes getProgramsByProgramType(String programType , Pageable pageable);
-
-    ProgramPageMainRes getProgramsByProgramName(String programName , Pageable pageable);
-
-    ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq);
-
-    List<ProgramMainRes> getBestPrograms();
+    ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq, String username);
 
     List<ProgramMapRes> getProgramsMap();
 
-    List<ProgramMainRes> getSimilarPrograms(Long ProgramId);
+    List<ProgramMainRes> getSimilarPrograms(Long ProgramId,String username);
 
     List<TourApiDto> getTourDatas(Long programId);
 

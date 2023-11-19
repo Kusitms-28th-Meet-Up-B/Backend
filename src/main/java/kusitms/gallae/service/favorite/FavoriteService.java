@@ -1,6 +1,13 @@
 package kusitms.gallae.service.favorite;
 
+import kusitms.gallae.dto.favorite.FavoriteSearchReq;
+import kusitms.gallae.dto.program.ProgramMainRes;
+
+import java.util.List;
+
 public interface FavoriteService {
 
-    public void postFavorite(String username,Long programId);
+    void postFavorite(String username,Long programId);
+
+    List<ProgramMainRes> getFavoriteByUser(String username, FavoriteSearchReq favoriteSearchReq);
 }

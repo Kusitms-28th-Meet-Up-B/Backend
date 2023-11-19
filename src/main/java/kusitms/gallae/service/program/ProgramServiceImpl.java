@@ -14,6 +14,7 @@ import kusitms.gallae.global.jwt.JwtProvider;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
+import kusitms.gallae.repository.user.UserRepository;
 import kusitms.gallae.service.program.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,51 +35,24 @@ public class ProgramServiceImpl implements ProgramService {
 
     private final ProgramRepositoryCustom programRepositoryCustom;
 
-    private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     private final TourApiService tourApiService;
 
-    @Override
-    public List<ProgramMainRes> getRecentPrograms(){
-        List<Program> programs = programRespository.findTop4ByOrderByCreatedAtDesc();
-
-        return getProgramMainRes(programs);
-    }
 
     @Override
-    public ProgramPageMainRes getProgramsByProgramType(String programType, Pageable pageable) {
-        Page<Program> programs = programRespository.findAllByProgramTypeOrderByCreatedAtDesc(programType , pageable);
-        List<Program> pageToListNewPrograms = programs.getContent();
+    public ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq,String username) {
+        User user = null;
+        if(username != null){
+            user = userRepository.findById(Long.valueOf(username)).get();
+            programSearchReq.setUser(user);
+        }
+        Page<ProgramMainRes> programs = programRepositoryCustom.getDynamicSearch(programSearchReq);
+        List<ProgramMainRes> pageToListNewPrograms = programs.getContent();
         ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
-        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
+        programPageMainRes.setPrograms(pageToListNewPrograms);
         programPageMainRes.setTotalSize(programs.getTotalPages());
         return programPageMainRes;
-    }
-
-    @Override
-    public ProgramPageMainRes getProgramsByProgramName(String programName, Pageable pageable) {
-        Page<Program> programs = programRespository.findProgramByProgramNameContaining(programName , pageable);
-        List<Program> pageToListNewPrograms = programs.getContent();
-        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
-        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
-        programPageMainRes.setTotalSize(programs.getTotalPages());
-        return programPageMainRes;
-    }
-
-    @Override
-    public ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq) {
-        Page<Program> programs = programRepositoryCustom.getDynamicSearch(programSearchReq);
-        List<Program> pageToListNewPrograms = programs.getContent();
-        ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
-        programPageMainRes.setPrograms(getProgramMainRes(pageToListNewPrograms));
-        programPageMainRes.setTotalSize(programs.getTotalPages());
-        return programPageMainRes;
-    }
-
-    @Override
-    public List<ProgramMainRes> getBestPrograms(){
-        List<Program> programs = programRespository.findTop4ByOrderByProgramLikeDesc();
-        return getProgramMainRes(programs);
     }
 
     @Override
@@ -88,11 +62,24 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public List<ProgramMainRes> getSimilarPrograms(Long programId) {
+    public List<ProgramMainRes> getSimilarPrograms(Long programId,String username) {
         Program program = programRespository.findById(programId).orElse(null);
-        List<Program> programs = programRespository.findTop4ByLocationContainingAndProgramTypeContainingAndStatus(program.getLocation(),
-                program.getProgramType(), Program.ProgramStatus.SAVE);
-        return this.getProgramMainRes(programs);
+        ProgramSimilarReq programSimilarReq = new ProgramSimilarReq();
+        programSimilarReq.setLocation(program.getLocation());
+        programSimilarReq.setProgramType(program.getProgramType());
+        User user = null;
+        if(username != null){
+            user = userRepository.findById(Long.valueOf(username)).get();
+            programSimilarReq.setUser(user);
+        }
+        List<ProgramMainRes> temp = programRepositoryCustom.getDynamicSimilar(programSimilarReq);
+        List<ProgramMainRes> programs = new ArrayList<>();
+        temp.stream().forEach(programMainRes -> {    //자기 자신은 추천안하게 제거
+            if(programMainRes.getId() != programId) {
+                programs.add(programMainRes);
+            }
+        });
+        return programs;
     }
 
     @Override
@@ -138,6 +125,12 @@ public class ProgramServiceImpl implements ProgramService {
             programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
             programDetailRes.setTripStartDate(program.getTripStartDate());
             programDetailRes.setTripEndDate(program.getTripEndDate());
+            programDetailRes.setLike(program.getProgramLike());
+            programDetailRes.setPhotoUrl(program.getPhotoUrl());
+            LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            String strRemainDay = DurationCalcurator.getDuration(localDate);
+            programDetailRes.setRemainDay(strRemainDay);
             return programDetailRes;
         }
     }

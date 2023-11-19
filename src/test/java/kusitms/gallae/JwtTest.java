@@ -3,6 +3,7 @@ package kusitms.gallae;
 import kusitms.gallae.global.Role;
 import kusitms.gallae.global.TourApiService;
 import kusitms.gallae.global.jwt.JwtProvider;
+import kusitms.gallae.service.favorite.FavoriteService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ import java.util.List;
 public class JwtTest {
     @Autowired
     private TourApiService tourApiService;
+
+    @Autowired
+    private FavoriteService favoriteService;
     @Test
     @DisplayName("JWT 생성확인")
     void createJwt(){
