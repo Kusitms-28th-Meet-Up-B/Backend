@@ -4,6 +4,8 @@ package kusitms.gallae.dto.user;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Data
 public class ManagerRegistratiorDto {
 
@@ -22,6 +24,8 @@ public class ManagerRegistratiorDto {
     private String email;
 
     private String phoneNum;
+
+    private LocalDate birth;
 
     private MultipartFile profileImage;
 

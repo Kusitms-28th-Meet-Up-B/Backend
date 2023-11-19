@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -24,23 +26,16 @@ public class UserController {
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<?> registerUser(@ModelAttribute UserRegistrationDto registrationDto) {
-        try {
-            userService.registerNewUser(registrationDto);
-            return ResponseEntity.ok(BaseResponseStatus.SUCCESS);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<BaseResponse> registerUser(@ModelAttribute UserRegistrationDto registrationDto) throws IOException {
+        userService.registerNewUser(registrationDto);
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
 
     @PostMapping("/register/manager")
-    public ResponseEntity<?> registerManager(@ModelAttribute ManagerRegistratiorDto registrationDto) {
-        try {
-            userService.registerNewManager(registrationDto);
-            return ResponseEntity.ok(BaseResponseStatus.SUCCESS);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<BaseResponse> registerManager(@ModelAttribute ManagerRegistratiorDto registrationDto) throws IOException {
+        userService.registerNewManager(registrationDto);
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+
     }
 
     @Operation(summary = "닉네임 중복 체크", description = """
