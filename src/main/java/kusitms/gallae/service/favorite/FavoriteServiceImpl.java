@@ -2,6 +2,8 @@ package kusitms.gallae.service.favorite;
 
 
 import jakarta.transaction.Transactional;
+import kusitms.gallae.config.BaseException;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Favorite;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
@@ -42,6 +44,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     public void postFavorite(String username, Long programId) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program program = programRespository.findById(programId).get();
+        if(favoriteRepository.existsByUserAndProgram(user,program)){
+            throw new BaseException(BaseResponseStatus.ALEADY_EXIST);
+        }
         program.setProgramLike(program.getProgramLike()+1);
         Favorite favorite = new Favorite();
         favorite.setUser(user);
