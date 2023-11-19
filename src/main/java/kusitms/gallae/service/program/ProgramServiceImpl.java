@@ -125,6 +125,12 @@ public class ProgramServiceImpl implements ProgramService {
             programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
             programDetailRes.setTripStartDate(program.getTripStartDate());
             programDetailRes.setTripEndDate(program.getTripEndDate());
+            programDetailRes.setLike(program.getProgramLike());
+            programDetailRes.setPhotoUrl(program.getPhotoUrl());
+            LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
+                    program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
+            String strRemainDay = DurationCalcurator.getDuration(localDate);
+            programDetailRes.setRemainDay(strRemainDay);
             return programDetailRes;
         }
     }
