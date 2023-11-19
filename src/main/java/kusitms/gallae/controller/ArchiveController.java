@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.archive.ArchiveModel;
 import kusitms.gallae.dto.archive.ArchivePageRes;
 import kusitms.gallae.dto.archive.ArchivePostReq;
@@ -81,6 +82,15 @@ public class ArchiveController {
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
 
     }
+
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchiveDetail(@PathVariable Long id) {
+        ArchiveDetailRes archiveDetail = archiveService.getArchiveById(id);
+        {
+            return ResponseEntity.ok(new BaseResponse<>(archiveDetail));
+
+        }
+    }
+
 }
 
-//writer 왜 Null로 나오지
