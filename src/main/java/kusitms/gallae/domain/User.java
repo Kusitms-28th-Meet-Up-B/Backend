@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -41,6 +42,7 @@ public class User {
     private String email;
     private String profileImageUrl;
     private Long point;
+    private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

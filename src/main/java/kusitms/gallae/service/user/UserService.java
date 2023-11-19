@@ -36,6 +36,7 @@ public class UserService  {
                 .phoneNumber(registrationDto.getPhoneNum()) // 선택적 입력
                 .email(registrationDto.getEmail()) // 선택적 입력
                 .department(registrationDto.getDepartment())
+                .birth(registrationDto.getBirth())
                 .refreshToken("")  // 회원가입은 토큰 없음
                 .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 추가
                 .signUpStatus(User.UserSignUpStatus.MANAGER)
@@ -59,6 +60,7 @@ public class UserService  {
                 .loginId(registrationDto.getLoginId())
                 .phoneNumber(registrationDto.getPhoneNumber()) // 선택적 입력
                 .email(registrationDto.getEmail()) // 선택적 입력
+                .birth(registrationDto.getBirth())
                 .refreshToken("")  // 회원가입은 토큰 없음
                 .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 추가
                 .signUpStatus(User.UserSignUpStatus.USER)
