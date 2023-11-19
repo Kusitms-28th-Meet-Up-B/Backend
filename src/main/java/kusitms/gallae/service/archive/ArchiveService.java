@@ -1,5 +1,6 @@
 package kusitms.gallae.service.archive;
 
+
 import kusitms.gallae.domain.Archive;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.archive.ArchiveDtoRes;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 public class ArchiveService {
 
