@@ -24,10 +24,6 @@ public class UserService  {
 
     public void registerNewManager(ManagerRegistratiorDto registrationDto) throws IOException {
 
-        if (userRepository.existsByLoginId(registrationDto.getLoginId())) {
-            throw new IllegalStateException("이미 존재하는 ID 입니다.");
-        }
-
         String profileImageUrl = null;
         if (registrationDto.getProfileImage() != null && !registrationDto.getProfileImage().isEmpty()) {
             profileImageUrl = s3Service.upload(registrationDto.getProfileImage());
@@ -51,12 +47,6 @@ public class UserService  {
 
     }
     public void registerNewUser(UserRegistrationDto registrationDto) throws IllegalStateException, IOException {
-        if (userRepository.existsByLoginId(registrationDto.getLoginId())) {
-            throw new IllegalStateException("이미 존재하는 ID 입니다.");
-        }
-        if (userRepository.existsByNickName(registrationDto.getNickName())) {
-            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
-        }
 
         String profileImageUrl = null;
         if (registrationDto.getProfileImage() != null && !registrationDto.getProfileImage().isEmpty()) {
