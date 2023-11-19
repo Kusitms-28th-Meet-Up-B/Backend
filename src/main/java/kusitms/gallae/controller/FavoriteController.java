@@ -40,8 +40,12 @@ public class FavoriteController {
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
     }
 
+
     @Operation(summary = "유저 별 좋아요 누른 프로그램 출력", description = """
             유저별로 좋아요 누른 프로그램 출력한다. 
+            로그인이 필요합니다.
+            programStatus 는 null로 보내면 자동으로 모집중 상태를 뽑아옵니다.
+            null이 아니면 모집마감 넣으시면 됩니다.
             """)
     @GetMapping("/mypage")
     public ResponseEntity<BaseResponse<List<ProgramMainRes>>> findFavoritePrograms(
@@ -56,7 +60,7 @@ public class FavoriteController {
             String programType,
 
             @Parameter(description = "진행상태")
-            @RequestParam(value = "programType", required = false)
+            @RequestParam(value = "programStatus", required = false)
             String status
     ){
         FavoriteSearchReq favoriteSearchReq = new FavoriteSearchReq();
