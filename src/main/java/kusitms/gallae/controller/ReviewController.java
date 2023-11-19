@@ -11,10 +11,7 @@ import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.Review;
 import kusitms.gallae.dto.program.ProgramManagerReq;
-import kusitms.gallae.dto.review.ReviewDtoRes;
-import kusitms.gallae.dto.review.ReviewModel;
-import kusitms.gallae.dto.review.ReviewPageRes;
-import kusitms.gallae.dto.review.ReviewPostReq;
+import kusitms.gallae.dto.review.*;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -90,4 +87,14 @@ public class ReviewController {
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
 
     }
+
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
+        ReviewDetailRes reviewDetail = reviewService.getReviewById(id);
+        {
+            return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+
+        }
+    }
+
 }

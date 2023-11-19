@@ -2,6 +2,7 @@ package kusitms.gallae.service.review;
 import kusitms.gallae.domain.Review;
 
 import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.review.ReviewDetailRes;
 import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
 import kusitms.gallae.dto.review.ReviewPostReq;
@@ -62,5 +63,24 @@ public class ReviewService {
         review.setFileUrl(reviewPostReq.getFileUrl());
         review.setHashtag(reviewPostReq.getHashTags());
         reviewRepository.save(review);
+    }
+
+
+    public ReviewDetailRes getReviewById(Long id) {
+        return reviewRepository.findById(id)
+                .map(review -> {
+                    ReviewDetailRes detailRes = new ReviewDetailRes();
+                    detailRes.setId(review.getId());
+                    detailRes.setCategory(review.getCategory());
+                    detailRes.setTitle(review.getTitle());
+                    detailRes.setWriter(review.getWriter());
+                    detailRes.setFileName(review.getFileName());
+                    detailRes.setFileUrl(review.getFileUrl());
+                    detailRes.setHashtag(review.getHashtag());
+                    detailRes.setBody(review.getBody());
+                    detailRes.setCreatedDate(review.getCreatedAt());
+                    return detailRes;
+                })
+                .orElse(null);
     }
 }
