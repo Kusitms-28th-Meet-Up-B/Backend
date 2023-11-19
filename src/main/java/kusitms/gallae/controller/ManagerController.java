@@ -41,6 +41,7 @@ public class ManagerController {
 
     @Operation(summary = "임시 프로그램 삭제", description = """
             프로그램 저장을 합니다.
+            사진 뻬고는 다 필수 값입니다.
             아직 유저 부분이 구현이 안되어 로그인 없이 사용가능합니다.
             임시 저장 로직 -> 
             1. 임시저장이 되어 있는지 체크 
@@ -64,6 +65,7 @@ public class ManagerController {
 
     @Operation(summary = "프로그램 저장", description = """
             프로그램 저장을 합니다.
+            사진 뻬고는 다 필수 값입니다.
             
             포스트맨에서 테스트 하세요
             다른 API와 다르게 파일과 json Data를 구분해야합니다.
@@ -190,6 +192,7 @@ public class ManagerController {
 
     @Operation(summary = "프로그램 임시저장", description = """
             프로그램 저장을 합니다.
+            사진 뻬고는 다 필수 값입니다.
             다른 API와 다르게 파일과 json Data를 구분해야합니다.
             프론트엔드 분은 아래 링크를 참고 해주세요
             

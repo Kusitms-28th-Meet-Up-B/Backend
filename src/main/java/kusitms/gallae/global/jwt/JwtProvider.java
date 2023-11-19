@@ -24,7 +24,7 @@ public class JwtProvider{
     private static final String AUTHORITIES_KEY = "authorities";
 
     private final String secret="wewef23fewfwfwfeefkalefalekfalekfaef2iweifejslqeqwew";
-    private final long durationSeconds= 12*60*60*60*60*1000;
+    private final long durationSeconds= 24;
 
 
     public String createToken(String username, List<Role> roles) {
@@ -47,7 +47,7 @@ public class JwtProvider{
 
     public Optional<Authentication> getAuthentication(String token) {
         if (!this.validateToken(token)) {
-            throw new JwtException("토큰 재발급 받으세요");
+            return Optional.empty();
         }
 
         Claims claims = this.getClaims(token);
