@@ -36,6 +36,11 @@ public class PointController {
             로그인이 되어있어야합니다.\n
             type : 적립/사용  -> null이면 전체 \n
             period: 1주일/한달/3개월/6개월/1년 -> null이면 전체\n
+            
+            반환에서 userPoint는 현재 유저가 가지고있는 포인트
+            totalpage 가 1인 것은 말그대로 페이지 1밖에 없다는 뜻 
+            size를 10으로 주고 데이터가 92개 이면 페이지는 totalpage는 10
+            10*9 9개와 나머지 2개를 가진 1페이지 
             """)
     @GetMapping("/list")
     public ResponseEntity<BaseResponse<PointPageListRes>> findProgramManagerProgress(
