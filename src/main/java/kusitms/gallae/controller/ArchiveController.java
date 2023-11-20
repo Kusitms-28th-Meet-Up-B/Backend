@@ -69,7 +69,6 @@ public class ArchiveController {
     ) throws IOException {
         String fileName = null;
         String fileUrl = null;
-        System.out.println(principal.getName());
         if(archiveModel.getFile() != null && !archiveModel.getFile().isEmpty()) {
             fileName = archiveModel.getFile().getOriginalFilename();
             fileUrl = s3Service.upload(archiveModel.getFile());

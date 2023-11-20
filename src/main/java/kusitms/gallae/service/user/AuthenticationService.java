@@ -48,6 +48,7 @@ public class AuthenticationService {
         return LoginResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
+                .loginId(user.getLoginId())
                 .imageUrl(user.getProfileImageUrl())
                 .nickName(user.getNickName())
                 .phoneNumber(user.getPhoneNumber())
