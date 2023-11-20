@@ -51,9 +51,11 @@ public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom{
         }
 
         if(favoriteSearchReq.getStatus() != null){
-            booleanBuilder.and(program.status.eq(Program.ProgramStatus.FINISH));
-        }else{
-            booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+            if(favoriteSearchReq.getStatus().contains("모집 중")) {
+                booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+            }else{
+                booleanBuilder.and(program.status.eq(Program.ProgramStatus.FINISH));
+            }
         }
 
         return booleanBuilder;

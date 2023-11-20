@@ -1,7 +1,10 @@
 package kusitms.gallae.service.archive;
 
 
+import kusitms.gallae.config.BaseException;
+import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Point;
 import kusitms.gallae.domain.Review;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.archive.ArchiveDetailRes;
@@ -11,12 +14,15 @@ import kusitms.gallae.dto.archive.ArchivePostReq;
 import kusitms.gallae.repository.archive.ArchiveRepository;
 import kusitms.gallae.repository.archive.ArchiveRespositoryCustom;
 import kusitms.gallae.repository.favoriteArchiveRepository.FavoriteArchiveRepository;
+import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -35,6 +41,8 @@ public class ArchiveService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PointRepository pointRepository;
 
     public ArchivePageRes getArchivesByCategory(String category, Pageable pageable) {
         Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,pageable);
@@ -69,39 +77,40 @@ public class ArchiveService {
         archive.setHashtag(archivePostReq.getHashTags());
         archive.setLikes(0L);
         Archive saveArchive = archiveRepository.save(archive);
+
+        //포인트 적립
+        Point point = new Point();
+        point.setDate(LocalDate.now());
+        point.setPointCategory("적립");
+        point.setPointActivity("보고서 작성");
+        point.setTime(LocalTime.now());
+        point.setPointScore(30);
+        point.setUser(user);
+        pointRepository.save(point);
+        user.setPoint(user.getPoint() + 30);
+        userRepository.save(user);
         return saveArchive.getId();
     }
 
     public ArchiveDetailRes getArchiveById(Long archiveId , String username) {
-        User user = null;
-        if(username != null) {
-            user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(user.getPoint() < 15 ) throw new BaseException(BaseResponseStatus.POINT_TRIBE);
+        Archive archive = archiveRepository.findById(archiveId).orElse(null);
+        if(archive.getUser().getId() != user.getId()) {
+            //포인트 적립
+            Point point = new Point();
+            point.setDate(LocalDate.now());
+            point.setPointCategory("사용");
+            point.setPointActivity("보고서 열람");
+            point.setTime(LocalTime.now());
+            point.setPointScore(-15);
+            point.setUser(user);
+            pointRepository.save(point);
+            user.setPoint(user.getPoint() - 15);
+            userRepository.save(user);
         }
-        User finalUser = user;
-        return archiveRepository.findById(archiveId)
-                .map(archive -> {
-                    ArchiveDetailRes detailRes = new ArchiveDetailRes();
-                    detailRes.setId(archive.getId());
-                    detailRes.setCategory(archive.getCategory());
-                    detailRes.setTitle(archive.getTitle());
-                    detailRes.setWriter(archive.getWriter());
-                    detailRes.setFileName(archive.getFileName());
-                    detailRes.setFileUrl(archive.getFileUrl());
-                    detailRes.setHashtag(archive.getHashtag());
-                    detailRes.setBody(archive.getBody());
-                    detailRes.setCreatedDate(archive.getCreatedAt());
-                    if(finalUser != null) {
-                        detailRes.setLikeCheck(favoriteArchiveRepository.existsByUserAndArchive(finalUser,archive));
-                    }
-                    Long prevId = getPreviousArchiveId(archiveId);
-                    Long nextId = getNextArchiveId(archiveId);
 
-                    detailRes.setPreviousId(prevId);
-                    detailRes.setNextId(nextId);
-
-                    return detailRes;
-                })
-                .orElse(null);
+        return convertArchive(archive,user);
     }
 
 
@@ -121,5 +130,26 @@ public class ArchiveService {
         return archiveRepository.findAllByOrderByLikesDesc(pageable);
     }
 
+    private ArchiveDetailRes convertArchive(Archive archive,User user){
+        ArchiveDetailRes detailRes = new ArchiveDetailRes();
+        detailRes.setId(archive.getId());
+        detailRes.setCategory(archive.getCategory());
+        detailRes.setTitle(archive.getTitle());
+        detailRes.setWriter(archive.getWriter());
+        detailRes.setFileName(archive.getFileName());
+        detailRes.setFileUrl(archive.getFileUrl());
+        detailRes.setHashtag(archive.getHashtag());
+        detailRes.setBody(archive.getBody());
+        detailRes.setCreatedDate(archive.getCreatedAt());
+        if(user != null) {
+            detailRes.setLikeCheck(favoriteArchiveRepository.existsByUserAndArchive(user,archive));
+        }
+        Long prevId = getPreviousArchiveId(archive.getId());
+        Long nextId = getNextArchiveId(archive.getId());
 
+        detailRes.setPreviousId(prevId);
+        detailRes.setNextId(nextId);
+
+        return detailRes;
+    }
 }

@@ -1,4 +1,7 @@
 package kusitms.gallae.service.review;
+import kusitms.gallae.config.BaseException;
+import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.Point;
 import kusitms.gallae.domain.Review;
 
 import kusitms.gallae.domain.User;
@@ -7,6 +10,7 @@ import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
 import kusitms.gallae.dto.review.ReviewPostReq;
 import kusitms.gallae.repository.favoriteReviewRepository.FavoriteReviewRepository;
+import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.review.ReviewRepository;
 
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
@@ -16,6 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +39,9 @@ public class ReviewService {
 
     @Autowired
     private FavoriteReviewRepository favoriteReviewRepository;
+
+    @Autowired
+    private PointRepository pointRepository;
 
 
     public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
@@ -69,41 +78,40 @@ public class ReviewService {
         review.setHashtag(reviewPostReq.getHashTags());
         review.setLikes(0L);
         Review saveReview = reviewRepository.save(review);
+
+        //포인트 적립
+        Point point = new Point();
+        point.setDate(LocalDate.now());
+        point.setPointCategory("적립");
+        point.setPointActivity("후기 작성");
+        point.setTime(LocalTime.now());
+        point.setPointScore(20);
+        point.setUser(user);
+        pointRepository.save(point);
+        user.setPoint(user.getPoint() + 20);
+        userRepository.save(user);
         return saveReview.getId();
     }
 
 
     public ReviewDetailRes getReviewById(Long reviewId, String username) {
-        User user = null;
-        if(username != null) {
-            user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(user.getPoint()<10) throw new BaseException(BaseResponseStatus.POINT_TRIBE);
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        if(review.getUser().getId() != user.getId()) {
+            //포인트 적립
+            Point point = new Point();
+            point.setDate(LocalDate.now());
+            point.setPointCategory("사용");
+            point.setPointActivity("후기 열람");
+            point.setTime(LocalTime.now());
+            point.setPointScore(-10);
+            point.setUser(user);
+            pointRepository.save(point);
+            user.setPoint(user.getPoint() - 10);
+            userRepository.save(user);
         }
-        User finalUser = user;
-        return reviewRepository.findById(reviewId)
-                .map(review -> {
-                    ReviewDetailRes detailRes = new ReviewDetailRes();
-                    detailRes.setId(review.getId());
-                    detailRes.setCategory(review.getCategory());
-                    detailRes.setTitle(review.getTitle());
-                    detailRes.setWriter(review.getWriter());
-                    detailRes.setFileName(review.getFileName());
-                    detailRes.setFileUrl(review.getFileUrl());
-                    detailRes.setHashtag(review.getHashtag());
-                    detailRes.setBody(review.getBody());
-                    detailRes.setCreatedDate(review.getCreatedAt());
-                    if( finalUser != null) {
-                        detailRes.setLikeCheck(favoriteReviewRepository.existsByUserAndReview(finalUser,review));
-                    }
-                    Long prevId = getPreviousReviewId(reviewId);
-                    Long nextId = getNextReviewId(reviewId);
-
-                    detailRes.setPreviousId(prevId);
-                    detailRes.setNextId(nextId);
-
-
-                    return detailRes;
-                })
-                .orElse(null);
+        return convertReview(review,user);
     }
 
     public Long getPreviousReviewId(Long currentId) {
@@ -120,5 +128,29 @@ public class ReviewService {
 
     public Page<Review> getAllReviewsSortedByLikes(Pageable pageable) {
         return reviewRepository.findAllByOrderByLikesDesc(pageable);
+    }
+
+    private ReviewDetailRes convertReview(Review review,User user){
+        ReviewDetailRes detailRes = new ReviewDetailRes();
+        detailRes.setId(review.getId());
+        detailRes.setCategory(review.getCategory());
+        detailRes.setTitle(review.getTitle());
+        detailRes.setWriter(review.getWriter());
+        detailRes.setFileName(review.getFileName());
+        detailRes.setFileUrl(review.getFileUrl());
+        detailRes.setHashtag(review.getHashtag());
+        detailRes.setBody(review.getBody());
+        detailRes.setCreatedDate(review.getCreatedAt());
+        if( user != null) {
+            detailRes.setLikeCheck(favoriteReviewRepository.existsByUserAndReview(user,review));
+        }
+        Long prevId = getPreviousReviewId(review.getId());
+        Long nextId = getNextReviewId(review.getId());
+
+        detailRes.setPreviousId(prevId);
+        detailRes.setNextId(nextId);
+
+
+        return detailRes;
     }
 }

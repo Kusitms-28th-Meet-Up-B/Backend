@@ -15,7 +15,9 @@ public enum BaseResponseStatus {
     FORBIDDEN(false, HttpStatus.FORBIDDEN, 403, "권한이 없습니다."),
     NOT_FOUND(false, HttpStatus.NOT_FOUND, 404, "대상을 찾을 수 없습니다."),
 
-    ALEADY_EXIST(false, HttpStatus.BAD_REQUEST, 410, "이미 존재합니다.");
+    ALEADY_EXIST(false, HttpStatus.BAD_REQUEST, 410, "이미 존재합니다."),
+
+    POINT_TRIBE(false, HttpStatus.BAD_REQUEST, 1001, "포인트가 부족합니다.");
 
     private final boolean isSuccess;
     @JsonIgnore
