@@ -45,7 +45,7 @@ public class ReviewController {
             """)
     @GetMapping("/category")
     public ResponseEntity<BaseResponse<ReviewPageRes>>  getReviewsByCategory(
-            @Parameter(description = "여행 지원사업 / 여행 대외활동 / 여행 공모전")
+            @Parameter(description = "여행지원사업 / 여행대외활동 / 여행공모전")
             @RequestParam(value = "category", required = false)
             String category,
 

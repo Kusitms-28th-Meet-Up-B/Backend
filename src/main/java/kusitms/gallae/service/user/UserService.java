@@ -103,15 +103,36 @@ public class UserService {
         return userRepository.existsByNickName(nickName);
     }
 
-    public Page<UserPostDto> getUserPosts(String userId, Pageable pageable) {
-        Page<UserPostDto> reviewPosts = reviewRepository.findByWriter(userId, pageable);
-        Page<UserPostDto> archivePosts = archiveRepository.findByWriter(userId, pageable);
- //reveiew 랑 archive합쳐서 ... 한번에 출력하게 해주는 거래
-        List<UserPostDto> combinedPosts = Stream.concat(reviewPosts.getContent().stream(), archivePosts.getContent().stream())
-                .sorted(Comparator.comparing(UserPostDto::getCreatedAt).reversed())
-                .collect(Collectors.toList());
-        Page<UserPostDto> combinedPage = new PageImpl<>(combinedPosts, pageable, combinedPosts.size());
-
-        return combinedPage;
+    public UserPostsPageRes getUserPostByArchive(String userId,Pageable pageable) {
+        User user = userRepository.findById(Long.valueOf(userId)).get();
+        Page<Archive> archives = archiveRepository.findByUser(user, pageable);
+        UserPostsPageRes userPostsPageRes = new UserPostsPageRes();
+        userPostsPageRes.setUserPosts(archives.getContent().stream().map(archive-> {
+            UserPostDto userPostDto = new UserPostDto();
+            userPostDto.setId(archive.getId());
+            userPostDto.setWriter(archive.getWriter());
+            userPostDto.setCategory(archive.getCategory());
+            userPostDto.setTitle(archive.getTitle());
+            userPostDto.setCreatedAt(archive.getCreatedAt());
+            return userPostDto;
+        }).collect(Collectors.toList()));
+        userPostsPageRes.setTotalPages(archives.getTotalPages());
+        return userPostsPageRes;
+    }
+    public UserPostsPageRes getUserPostByReview(String userId,Pageable pageable) {
+        User user = userRepository.findById(Long.valueOf(userId)).get();
+        Page<Review> reviews = reviewRepository.findByUser(user, pageable);
+        UserPostsPageRes userPostsPageRes = new UserPostsPageRes();
+        userPostsPageRes.setUserPosts(reviews.getContent().stream().map(review-> {
+            UserPostDto userPostDto = new UserPostDto();
+            userPostDto.setId(review.getId());
+            userPostDto.setWriter(review.getWriter());
+            userPostDto.setCategory(review.getCategory());
+            userPostDto.setTitle(review.getTitle());
+            userPostDto.setCreatedAt(review.getCreatedAt());
+            return userPostDto;
+        }).collect(Collectors.toList()));
+        userPostsPageRes.setTotalPages(reviews.getTotalPages());
+        return userPostsPageRes;
     }
 }

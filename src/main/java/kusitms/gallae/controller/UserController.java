@@ -74,24 +74,24 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse<>(userService.checkDuplicateLoginId(loginId)));
     }
 
-    @GetMapping("/myPosts/{userId}")
-    public ResponseEntity<BaseResponse<List<UserPostDto>>> getMyPosts(
-            @PathVariable String userId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+    @GetMapping("/myPosts/archive")
+    public ResponseEntity<BaseResponse<UserPostsPageRes>> getMyPostByArchive(
+            Principal principal,
+            @RequestParam(value = "page", defaultValue = "0") int pageNumber,
+            @RequestParam(value = "size", defaultValue = "10") int pagingSize) {
 
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<UserPostDto> userPostDtoPage = userService.getUserPosts(userId, pageRequest);
-        List<UserPostDto> userPostDtos = userPostDtoPage.getContent();
-        BaseResponse<List<UserPostDto>> response = new BaseResponse<>(
-                true,
-                "Success",
-                userPostDtoPage.getNumber(),
-                userPostDtos
-        );
-
-        return ResponseEntity.ok(response);
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        return ResponseEntity.ok(new BaseResponse<>(userService.getUserPostByArchive(principal.getName(), pageRequest)));
     }
 
+    @GetMapping("/myPosts/review")
+    public ResponseEntity<BaseResponse<UserPostsPageRes>> getMyPostByReview(
+            Principal principal,
+            @RequestParam(value = "page", defaultValue = "0") int pageNumber,
+            @RequestParam(value = "size", defaultValue = "10") int pagingSize) {
+
+        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
+        return ResponseEntity.ok(new BaseResponse<>(userService.getUserPostByReview(principal.getName(), pageRequest)));
+    }
 
 }

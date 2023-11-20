@@ -1,6 +1,7 @@
 package kusitms.gallae.repository.archive;
 
 import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.UserPostDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,6 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
     Optional<Archive> findTop1ByIdLessThanOrderByIdDesc(Long id);
     Optional<Archive> findTop1ByIdGreaterThanOrderByIdAsc(Long id);
-    Page<UserPostDto> findByWriter(String userId, Pageable pageable);
+    Page<Archive> findByUser(User user, Pageable pageable);
 
 }
