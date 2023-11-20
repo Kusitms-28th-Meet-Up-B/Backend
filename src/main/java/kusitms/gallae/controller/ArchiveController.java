@@ -7,20 +7,24 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.dto.archive.ArchiveDetailRes;
-import kusitms.gallae.dto.archive.ArchiveModel;
-import kusitms.gallae.dto.archive.ArchivePageRes;
-import kusitms.gallae.dto.archive.ArchivePostReq;
+import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Review;
+import kusitms.gallae.dto.archive.*;
+import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -91,6 +95,38 @@ public class ArchiveController {
 
         }
     }
+
+    @GetMapping("/sorted/likes")
+    public ResponseEntity<BaseResponse<List<ArchiveDtoRes>>> getAllReviewsSortedByLikes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes"));
+        Page<Archive> archivePage = archiveService.getAllArchivesSortedByLikes(pageRequest);
+        List<ArchiveDtoRes> archiveDtos = archivePage.getContent().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        BaseResponse<List<ArchiveDtoRes>> response = new BaseResponse<>(
+                true,
+                "Success",
+                archivePage.getNumber(),
+                archiveDtos
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Review 엔티티를 ReviewDtoRes로 변환하는 메소드
+    private ArchiveDtoRes convertToDto(Archive archive) {
+        ArchiveDtoRes dto = new ArchiveDtoRes();
+        dto.setId(archive.getId());
+        dto.setCategory(archive.getCategory());
+        dto.setTitle(archive.getTitle());
+        dto.setWriter(archive.getWriter());
+        dto.setCreatedDate(archive.getCreatedAt());
+        return dto;
+    }
+
 
 }
 

@@ -92,6 +92,7 @@ public class ArchiveService {
                 .orElse(null);
     }
 
+
     public Long getPreviousArchiveId(Long currentId) {
         return archiveRepository.findTop1ByIdLessThanOrderByIdDesc(currentId)
                 .map(Archive::getId)
@@ -102,6 +103,10 @@ public class ArchiveService {
         return archiveRepository.findTop1ByIdGreaterThanOrderByIdAsc(currentId)
                 .map(Archive::getId)
                 .orElse(null);
+    }
+
+    public Page<Archive> getAllArchivesSortedByLikes(Pageable pageable) {
+        return archiveRepository.findAllByOrderByLikesDesc(pageable);
     }
 
 
