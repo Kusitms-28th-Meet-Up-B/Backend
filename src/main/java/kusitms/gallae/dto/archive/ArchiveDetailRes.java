@@ -18,6 +18,8 @@ public class ArchiveDetailRes {
 
     private String hashtag;
     private String body;
+    private Long previousId;
+    private Long nextId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;  // 등록일

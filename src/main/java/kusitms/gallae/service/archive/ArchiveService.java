@@ -2,6 +2,7 @@ package kusitms.gallae.service.archive;
 
 
 import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Review;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.archive.ArchiveDtoRes;
@@ -78,8 +79,27 @@ public class ArchiveService {
                     detailRes.setHashtag(archive.getHashtag());
                     detailRes.setBody(archive.getBody());
                     detailRes.setCreatedDate(archive.getCreatedAt());
+
+                    Long prevId = getPreviousArchiveId(id);
+                    Long nextId = getNextArchiveId(id);
+
+                    detailRes.setPreviousId(prevId);
+                    detailRes.setNextId(nextId);
+
                     return detailRes;
                 })
+                .orElse(null);
+    }
+
+    public Long getPreviousArchiveId(Long currentId) {
+        return archiveRepository.findTop1ByIdLessThanOrderByIdDesc(currentId)
+                .map(Archive::getId)
+                .orElse(null);
+    }
+
+    public Long getNextArchiveId(Long currentId) {
+        return archiveRepository.findTop1ByIdGreaterThanOrderByIdAsc(currentId)
+                .map(Archive::getId)
                 .orElse(null);
     }
 
