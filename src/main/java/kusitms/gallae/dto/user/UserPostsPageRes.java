@@ -8,5 +8,4 @@ import java.util.List;
 public class UserPostsPageRes {
     private List<UserPostDto> userPosts;
     private int totalPages;
-    private long totalElements;
 }
