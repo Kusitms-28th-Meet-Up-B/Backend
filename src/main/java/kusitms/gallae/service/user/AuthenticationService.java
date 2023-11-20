@@ -69,7 +69,7 @@ public class AuthenticationService {
         user.renewRefreshToken();
         userRepository.save(user);
         RenewTokenResponse response = new RenewTokenResponse();
-        response.setAccessToken(this.jwtProvider.createToken(user.getName(), List.of(user.getRole())));
+        response.setAccessToken(this.jwtProvider.createToken(String.valueOf(user.getId()), List.of(user.getRole())));
         response.setRefreshToken(user.getRefreshToken());
         return response;
     }

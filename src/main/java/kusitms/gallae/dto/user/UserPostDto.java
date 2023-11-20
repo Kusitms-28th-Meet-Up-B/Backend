@@ -12,5 +12,5 @@ public class UserPostDto {
     private String writer;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdDate;
 }
