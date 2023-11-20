@@ -10,6 +10,8 @@ public class PointPageListRes {
 
     private Integer totalPage;
 
+    private Long userPoint;
+
     private List<PointListRes> points;
 
 }

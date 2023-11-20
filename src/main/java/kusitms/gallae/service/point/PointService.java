@@ -46,6 +46,7 @@ public class PointService {
             return pointListRes;
         }).collect(Collectors.toList());
         PointPageListRes pointPageListRes = new PointPageListRes();
+        pointPageListRes.setUserPoint(user.getPoint());
         pointPageListRes.setPoints(pointListResList);
         pointPageListRes.setTotalPage(points.getTotalPages());
         return pointPageListRes;
