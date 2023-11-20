@@ -92,6 +92,18 @@ public class ReviewController {
 
     }
 
+
+    @Operation(summary = "지원후기 정보 가져오기", description = """
+            포인트가 부족하면
+            \n
+            "isSuccess": false,\n
+            "code": 1001,\n
+            "message": "포인트가 부족합니다."\n
+            이 반환합니다. 
+            \n
+            로그인한 유저는 포인트 10포인트 차감되고 포인트 컬럼 생성됩니다.\n
+            *주의* 지원후기 작성한 유저가 열람 할때는 포인트 차감이 되지 않습니다.
+            """)
     @GetMapping("/detail")
     public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(
             Principal principal,
@@ -100,11 +112,7 @@ public class ReviewController {
             @RequestParam(value = "reviewId", required = false)
             Long reviewId
     ) {
-        String username = null;
-        if(principal != null) {
-            username = principal.getName();
-        }
-        ReviewDetailRes reviewDetail = reviewService.getReviewById(reviewId, username);
+        ReviewDetailRes reviewDetail = reviewService.getReviewById(reviewId, principal.getName());
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
     }
 

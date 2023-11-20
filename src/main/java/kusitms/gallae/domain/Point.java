@@ -9,8 +9,9 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "points")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@Setter
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Point {
     @Id
