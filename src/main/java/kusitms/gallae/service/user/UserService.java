@@ -105,7 +105,7 @@ public class UserService {
 
     public UserPostsPageRes getUserPostByArchive(String userId,Pageable pageable) {
         User user = userRepository.findById(Long.valueOf(userId)).get();
-        Page<Archive> archives = archiveRepository.findByUser(user, pageable);
+        Page<Archive> archives = archiveRepository.findByUserOrderByCategoryDesc(user, pageable);
         UserPostsPageRes userPostsPageRes = new UserPostsPageRes();
         userPostsPageRes.setUserPosts(archives.getContent().stream().map(archive-> {
             UserPostDto userPostDto = new UserPostDto();
@@ -121,7 +121,7 @@ public class UserService {
     }
     public UserPostsPageRes getUserPostByReview(String userId,Pageable pageable) {
         User user = userRepository.findById(Long.valueOf(userId)).get();
-        Page<Review> reviews = reviewRepository.findByUser(user, pageable);
+        Page<Review> reviews = reviewRepository.findByUserOrderByCategoryDesc(user, pageable);
         UserPostsPageRes userPostsPageRes = new UserPostsPageRes();
         userPostsPageRes.setUserPosts(reviews.getContent().stream().map(review-> {
             UserPostDto userPostDto = new UserPostDto();

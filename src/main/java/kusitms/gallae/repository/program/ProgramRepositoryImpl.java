@@ -177,6 +177,8 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
             programMainRes.setProgramName(p.getProgramName());
             programMainRes.setLike(p.getProgramLike());
             programMainRes.setPhotoUrl(p.getPhotoUrl());
+            programMainRes.setLatitude(p.getLatitude());
+            programMainRes.setLongitude(p.getLongitude());
             LocalDate localDate = LocalDate.of(p.getRecruitEndDate().getYear(),
                     p.getRecruitEndDate().getMonth(),p.getRecruitEndDate().getDayOfMonth());
             String strRemainDay = DurationCalcurator.getDuration(localDate);

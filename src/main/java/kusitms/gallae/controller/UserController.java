@@ -74,6 +74,8 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse<>(userService.checkDuplicateLoginId(loginId)));
     }
 
+
+    @Operation(summary = "내가 작성한 자료실")
     @GetMapping("/myPosts/archive")
     public ResponseEntity<BaseResponse<UserPostsPageRes>> getMyPostByArchive(
             Principal principal,
@@ -84,6 +86,7 @@ public class UserController {
         return ResponseEntity.ok(new BaseResponse<>(userService.getUserPostByArchive(principal.getName(), pageRequest)));
     }
 
+    @Operation(summary = "내가 작성한 지언후기")
     @GetMapping("/myPosts/review")
     public ResponseEntity<BaseResponse<UserPostsPageRes>> getMyPostByReview(
             Principal principal,

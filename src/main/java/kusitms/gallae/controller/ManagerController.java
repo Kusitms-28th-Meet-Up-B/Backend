@@ -91,7 +91,7 @@ public class ManagerController {
             PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null) {
+        if(model.getPhoto() != null  && !model.getPhoto().isEmpty()) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
 
@@ -207,7 +207,7 @@ public class ManagerController {
             PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null) {
+        if(model.getPhoto() != null && !model.getPhoto().isEmpty()) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();

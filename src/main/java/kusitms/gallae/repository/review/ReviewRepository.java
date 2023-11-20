@@ -14,5 +14,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findTop1ByIdGreaterThanOrderByIdAsc(Long id);
 
     Page<Review> findAllByOrderByLikesDesc(Pageable pageable);
-    Page<Review> findByUser(User user, Pageable pageable);
+    Page<Review> findByUserOrderByCategoryDesc(User user, Pageable pageable);
 }

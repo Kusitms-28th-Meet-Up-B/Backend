@@ -14,6 +14,6 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
     Optional<Archive> findTop1ByIdLessThanOrderByIdDesc(Long id);
     Optional<Archive> findTop1ByIdGreaterThanOrderByIdAsc(Long id);
-    Page<Archive> findByUser(User user, Pageable pageable);
+    Page<Archive> findByUserOrderByCategoryDesc(User user, Pageable pageable);
 
 }

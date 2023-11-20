@@ -14,6 +14,10 @@ public class ProgramMainRes {
 
     private String programName;
 
+    private Float latitude;
+
+    private Float longitude;
+
     private Long Like;
 
     private String remainDay;

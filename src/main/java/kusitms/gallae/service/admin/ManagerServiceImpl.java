@@ -72,6 +72,7 @@ public class ManagerServiceImpl implements ManagerService {
             ProgramPostReq programPostReq = new ProgramPostReq();
             programPostReq.setProgramId(tempProgram.getId());
             programPostReq.setProgramName(tempProgram.getProgramName());
+            programPostReq.setProgramType(tempProgram.getProgramType());
             programPostReq.setPhotoUrl(tempProgram.getPhotoUrl());
             programPostReq.setLocation(tempProgram.getLocation());
             programPostReq.setRecruitStartDate(tempProgram.getRecruitStartDate());

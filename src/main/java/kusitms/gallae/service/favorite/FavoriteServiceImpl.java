@@ -44,14 +44,16 @@ public class FavoriteServiceImpl implements FavoriteService {
     public void postFavorite(String username, Long programId) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program program = programRespository.findById(programId).get();
-        if(favoriteRepository.existsByUserAndProgram(user,program)){
-            throw new BaseException(BaseResponseStatus.ALEADY_EXIST);
+        Favorite favorite = favoriteRepository.findByUserAndProgram(user,program).orElse(null);
+        if(favorite == null ) {
+            program.setProgramLike(program.getProgramLike() + 1);
+            Favorite newFavorite = new Favorite();
+            newFavorite.setUser(user);
+            newFavorite.setProgram(program);
+            favoriteRepository.save(newFavorite);
+        }else{
+            favoriteRepository.delete(favorite);
         }
-        program.setProgramLike(program.getProgramLike()+1);
-        Favorite favorite = new Favorite();
-        favorite.setUser(user);
-        favorite.setProgram(program);
-        favoriteRepository.save(favorite);
     }
 
     @Override
