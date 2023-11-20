@@ -63,6 +63,7 @@ public class ArchiveService {
         archive.setCategory(archivePostReq.getCategory());
         archive.setFileUrl(archivePostReq.getFileUrl());
         archive.setHashtag(archivePostReq.getHashTags());
+        archive.setLikes(0L);
         archiveRepository.save(archive);
     }
 

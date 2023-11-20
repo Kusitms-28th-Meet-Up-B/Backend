@@ -63,6 +63,7 @@ public class ReviewService {
         review.setWriter(reviewPostReq.getWriter());
         review.setFileUrl(reviewPostReq.getFileUrl());
         review.setHashtag(reviewPostReq.getHashTags());
+        review.setLikes(0L);
         reviewRepository.save(review);
     }
 

@@ -40,6 +40,8 @@ public class Archive {
 
     private String hashtag;
 
+    private Long likes;
+
     @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
