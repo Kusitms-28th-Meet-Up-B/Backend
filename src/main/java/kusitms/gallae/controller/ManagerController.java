@@ -84,7 +84,7 @@ public class ManagerController {
             2번을 위한 API  
             """)
     @PostMapping(value = "/save")
-    public ResponseEntity<BaseResponse> saveProgram(
+    public ResponseEntity<BaseResponse<Long>> saveProgram(
             Principal principal,
 
             @ModelAttribute
@@ -110,9 +110,8 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-        this.managerService.postProgram(programPostReq, principal.getName());
 
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.postProgram(programPostReq, principal.getName())));
     }
 
     @Operation(summary = "프로그램 수정할 정보 가져오기", description = """
@@ -200,7 +199,7 @@ public class ManagerController {
             
             """)
     @PostMapping(value = "/tempSave")
-    public ResponseEntity<BaseResponse> tempSaveProgram(
+    public ResponseEntity<BaseResponse<Long>> tempSaveProgram(
             Principal principal,
 
             @ModelAttribute
@@ -225,9 +224,9 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-        this.managerService.postTempProgram(programPostReq, principal.getName());
 
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.postTempProgram(programPostReq, principal.getName())));
     }
 
 

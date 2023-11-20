@@ -89,7 +89,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
     }
     @Override
-    public void postProgram(ProgramPostReq programPostReq ,String username) {
+    public Long postProgram(ProgramPostReq programPostReq ,String username) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
@@ -99,29 +99,33 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
-            programRespository.save(saveProgram);
+            Program programId = programRespository.save(saveProgram);
+            return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
+            return tempProgram.getId();
         }
     }
 
     @Override
-    public void postTempProgram(ProgramPostReq programPostReq , String username) {
+    public Long postTempProgram(ProgramPostReq programPostReq , String username) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
-        System.out.println(tempProgram);
+
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-            programRespository.save(saveProgram);
+            Program programId = programRespository.save(saveProgram);
+            return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-        };
+            return saveProgram.getId();
+        }
     }
 
     @Override

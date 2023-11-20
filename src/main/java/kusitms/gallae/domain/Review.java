@@ -41,7 +41,7 @@ public class Review {
 
     private String hashtag;
 
-    private int likes;
+    private Long likes;
 
     @Column
     @CreationTimestamp

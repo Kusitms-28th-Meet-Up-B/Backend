@@ -7,20 +7,24 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.dto.archive.ArchiveDetailRes;
-import kusitms.gallae.dto.archive.ArchiveModel;
-import kusitms.gallae.dto.archive.ArchivePageRes;
-import kusitms.gallae.dto.archive.ArchivePostReq;
+import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Review;
+import kusitms.gallae.dto.archive.*;
+import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,7 +62,7 @@ public class ArchiveController {
     }
 
     @PostMapping("/saveArchive")
-    public ResponseEntity<BaseResponse> saveArchive(
+    public ResponseEntity<BaseResponse<Long>> saveArchive(
             Principal principal,
             @ModelAttribute
             ArchiveModel archiveModel
@@ -78,19 +82,59 @@ public class ArchiveController {
         archivePostReq.setWriter(archiveModel.getWriter());
         archivePostReq.setBody(archiveModel.getBody());
         archivePostReq.setHashTags(archiveModel.getHashTags());
-        archiveService.postArchive(archivePostReq,principal.getName());
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+        return ResponseEntity.ok(new BaseResponse<>(archiveService.postArchive(archivePostReq,principal.getName())));
 
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchiveDetail(@PathVariable Long id) {
-        ArchiveDetailRes archiveDetail = archiveService.getArchiveById(id);
-        {
-            return ResponseEntity.ok(new BaseResponse<>(archiveDetail));
+    @GetMapping("/detail")
+    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchiveDetail(
+            Principal principal,
 
+            @Parameter(description = "자료실아이디")
+            @RequestParam(value = "archiveId", required = true)
+            Long archiveId
+    ) {
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
         }
+        ArchiveDetailRes archiveDetail = archiveService.getArchiveById(archiveId, username);
+        return ResponseEntity.ok(new BaseResponse<>(archiveDetail));
     }
+
+
+    @Operation(summary = "자료실 좋아요순으로 게시판 내용들 가져오기")
+    @GetMapping("/sorted/likes")
+    public ResponseEntity<BaseResponse<List<ArchiveDtoRes>>> getAllReviewsSortedByLikes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes"));
+        Page<Archive> archivePage = archiveService.getAllArchivesSortedByLikes(pageRequest);
+        List<ArchiveDtoRes> archiveDtos = archivePage.getContent().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        BaseResponse<List<ArchiveDtoRes>> response = new BaseResponse<>(
+                true,
+                "Success",
+                archivePage.getNumber(),
+                archiveDtos
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Review 엔티티를 ReviewDtoRes로 변환하는 메소드
+    private ArchiveDtoRes convertToDto(Archive archive) {
+        ArchiveDtoRes dto = new ArchiveDtoRes();
+        dto.setId(archive.getId());
+        dto.setCategory(archive.getCategory());
+        dto.setTitle(archive.getTitle());
+        dto.setWriter(archive.getWriter());
+        dto.setCreatedDate(archive.getCreatedAt());
+        return dto;
+    }
+
 
 }
 

@@ -10,6 +10,7 @@ import kusitms.gallae.dto.archive.ArchivePageRes;
 import kusitms.gallae.dto.archive.ArchivePostReq;
 import kusitms.gallae.repository.archive.ArchiveRepository;
 import kusitms.gallae.repository.archive.ArchiveRespositoryCustom;
+import kusitms.gallae.repository.favoriteArchiveRepository.FavoriteArchiveRepository;
 import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,9 @@ public class ArchiveService {
 
     @Autowired
     private ArchiveRespositoryCustom archiveRespositoryCustom;
+
+    @Autowired
+    private FavoriteArchiveRepository favoriteArchiveRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,7 +56,7 @@ public class ArchiveService {
         return archivePageRes;
     }
 
-    public void postArchive(ArchivePostReq archivePostReq, String username) {
+    public Long postArchive(ArchivePostReq archivePostReq, String username) {
         Archive archive = new Archive();
         User user = userRepository.findById(Long.valueOf(username)).get();
         archive.setTitle(archivePostReq.getTitle());
@@ -63,11 +67,18 @@ public class ArchiveService {
         archive.setCategory(archivePostReq.getCategory());
         archive.setFileUrl(archivePostReq.getFileUrl());
         archive.setHashtag(archivePostReq.getHashTags());
-        archiveRepository.save(archive);
+        archive.setLikes(0L);
+        Archive saveArchive = archiveRepository.save(archive);
+        return saveArchive.getId();
     }
 
-    public ArchiveDetailRes getArchiveById(Long id) {
-        return archiveRepository.findById(id)
+    public ArchiveDetailRes getArchiveById(Long archiveId , String username) {
+        User user = null;
+        if(username != null) {
+            user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        }
+        User finalUser = user;
+        return archiveRepository.findById(archiveId)
                 .map(archive -> {
                     ArchiveDetailRes detailRes = new ArchiveDetailRes();
                     detailRes.setId(archive.getId());
@@ -79,9 +90,11 @@ public class ArchiveService {
                     detailRes.setHashtag(archive.getHashtag());
                     detailRes.setBody(archive.getBody());
                     detailRes.setCreatedDate(archive.getCreatedAt());
-
-                    Long prevId = getPreviousArchiveId(id);
-                    Long nextId = getNextArchiveId(id);
+                    if(finalUser != null) {
+                        detailRes.setLikeCheck(favoriteArchiveRepository.existsByUserAndArchive(finalUser,archive));
+                    }
+                    Long prevId = getPreviousArchiveId(archiveId);
+                    Long nextId = getNextArchiveId(archiveId);
 
                     detailRes.setPreviousId(prevId);
                     detailRes.setNextId(nextId);
@@ -90,6 +103,7 @@ public class ArchiveService {
                 })
                 .orElse(null);
     }
+
 
     public Long getPreviousArchiveId(Long currentId) {
         return archiveRepository.findTop1ByIdLessThanOrderByIdDesc(currentId)
@@ -101,6 +115,10 @@ public class ArchiveService {
         return archiveRepository.findTop1ByIdGreaterThanOrderByIdAsc(currentId)
                 .map(Archive::getId)
                 .orElse(null);
+    }
+
+    public Page<Archive> getAllArchivesSortedByLikes(Pageable pageable) {
+        return archiveRepository.findAllByOrderByLikesDesc(pageable);
     }
 
 

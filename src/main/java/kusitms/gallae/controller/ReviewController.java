@@ -65,7 +65,7 @@ public class ReviewController {
     }
 
     @PostMapping("/saveReview")
-    public ResponseEntity<BaseResponse> saveReview(
+    public ResponseEntity<BaseResponse<Long>> saveReview(
             Principal principal,
 
             @ModelAttribute
@@ -88,18 +88,28 @@ public class ReviewController {
         reviewPostReq.setBody(reviewModel.getBody());
         reviewPostReq.setHashTags(reviewModel.getHashTags());
 
-
-        reviewService.postReivew(reviewPostReq,principal.getName());
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+        return ResponseEntity.ok(new BaseResponse<>(reviewService.postReivew(reviewPostReq,principal.getName())));
 
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
-        ReviewDetailRes reviewDetail = reviewService.getReviewById(id);
+    @GetMapping("/detail")
+    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(
+            Principal principal,
+
+            @Parameter(description = "지원후기아이디")
+            @RequestParam(value = "reviewId", required = false)
+            Long reviewId
+    ) {
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
+        }
+        ReviewDetailRes reviewDetail = reviewService.getReviewById(reviewId, username);
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
     }
 
+
+    @Operation(summary = "지원후기 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")
     public ResponseEntity<BaseResponse<List<ReviewDtoRes>>> getAllReviewsSortedByLikes(
             @RequestParam(value = "page", defaultValue = "0") int page,

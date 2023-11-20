@@ -1,6 +1,7 @@
 package kusitms.gallae.repository.archive;
 
 import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Review;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.UserPostDto;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
     Optional<Archive> findTop1ByIdLessThanOrderByIdDesc(Long id);
     Optional<Archive> findTop1ByIdGreaterThanOrderByIdAsc(Long id);
-    Page<Archive> findByUserOrderByCategoryDesc(User user, Pageable pageable);
+    Page<Archive> findByUserOrderByCreatedAtDesc(User user, Pageable pageable);
+
+    Page<Archive> findAllByOrderByLikesDesc(Pageable pageable);
 
 }

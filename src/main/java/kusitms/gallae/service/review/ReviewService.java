@@ -6,6 +6,7 @@ import kusitms.gallae.dto.review.ReviewDetailRes;
 import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
 import kusitms.gallae.dto.review.ReviewPostReq;
+import kusitms.gallae.repository.favoriteReviewRepository.FavoriteReviewRepository;
 import kusitms.gallae.repository.review.ReviewRepository;
 
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
@@ -30,6 +31,9 @@ public class ReviewService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FavoriteReviewRepository favoriteReviewRepository;
+
 
     public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
         Page<Review> reviews = reviewRepositoryCustom.findReviewDynamicCategory(category,pageable);
@@ -52,7 +56,7 @@ public class ReviewService {
     }
 
 
-    public void postReivew(ReviewPostReq reviewPostReq,String username) {
+    public Long postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
         User user = userRepository.findById(Long.valueOf(username)).get();
         review.setTitle(reviewPostReq.getTitle());
@@ -63,12 +67,19 @@ public class ReviewService {
         review.setWriter(reviewPostReq.getWriter());
         review.setFileUrl(reviewPostReq.getFileUrl());
         review.setHashtag(reviewPostReq.getHashTags());
-        reviewRepository.save(review);
+        review.setLikes(0L);
+        Review saveReview = reviewRepository.save(review);
+        return saveReview.getId();
     }
 
 
-    public ReviewDetailRes getReviewById(Long id) {
-        return reviewRepository.findById(id)
+    public ReviewDetailRes getReviewById(Long reviewId, String username) {
+        User user = null;
+        if(username != null) {
+            user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        }
+        User finalUser = user;
+        return reviewRepository.findById(reviewId)
                 .map(review -> {
                     ReviewDetailRes detailRes = new ReviewDetailRes();
                     detailRes.setId(review.getId());
@@ -80,9 +91,11 @@ public class ReviewService {
                     detailRes.setHashtag(review.getHashtag());
                     detailRes.setBody(review.getBody());
                     detailRes.setCreatedDate(review.getCreatedAt());
-
-                    Long prevId = getPreviousReviewId(id);
-                    Long nextId = getNextReviewId(id);
+                    if( finalUser != null) {
+                        detailRes.setLikeCheck(favoriteReviewRepository.existsByUserAndReview(finalUser,review));
+                    }
+                    Long prevId = getPreviousReviewId(reviewId);
+                    Long nextId = getNextReviewId(reviewId);
 
                     detailRes.setPreviousId(prevId);
                     detailRes.setNextId(nextId);
