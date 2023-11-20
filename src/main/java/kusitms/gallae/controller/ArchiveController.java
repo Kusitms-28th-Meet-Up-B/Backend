@@ -67,7 +67,7 @@ public class ArchiveController {
         String fileUrl = null;
         System.out.println(principal.getName());
         if(archiveModel.getFile() != null && !archiveModel.getFile().isEmpty()) {
-            fileName = archiveModel.getFile().getName();
+            fileName = archiveModel.getFile().getOriginalFilename();
             fileUrl = s3Service.upload(archiveModel.getFile());
         }
         ArchivePostReq archivePostReq = new ArchivePostReq();
