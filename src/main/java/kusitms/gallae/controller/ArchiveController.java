@@ -62,7 +62,7 @@ public class ArchiveController {
     }
 
     @PostMapping("/saveArchive")
-    public ResponseEntity<BaseResponse> saveArchive(
+    public ResponseEntity<BaseResponse<Long>> saveArchive(
             Principal principal,
             @ModelAttribute
             ArchiveModel archiveModel
@@ -82,8 +82,7 @@ public class ArchiveController {
         archivePostReq.setWriter(archiveModel.getWriter());
         archivePostReq.setBody(archiveModel.getBody());
         archivePostReq.setHashTags(archiveModel.getHashTags());
-        archiveService.postArchive(archivePostReq,principal.getName());
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+        return ResponseEntity.ok(new BaseResponse<>(archiveService.postArchive(archivePostReq,principal.getName())));
 
     }
 
@@ -96,6 +95,8 @@ public class ArchiveController {
         }
     }
 
+
+    @Operation(summary = "자료실 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")
     public ResponseEntity<BaseResponse<List<ArchiveDtoRes>>> getAllReviewsSortedByLikes(
             @RequestParam(value = "page", defaultValue = "0") int page,

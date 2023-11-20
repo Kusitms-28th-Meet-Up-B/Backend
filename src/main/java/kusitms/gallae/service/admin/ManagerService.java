@@ -5,9 +5,9 @@ import kusitms.gallae.dto.program.*;
 public interface ManagerService {
 
 
-    void postProgram(ProgramPostReq programPostReq,String username);
+    Long postProgram(ProgramPostReq programPostReq,String username);
 
-    void postTempProgram(ProgramPostReq programPostReq,String username);
+    Long postTempProgram(ProgramPostReq programPostReq,String username);
 
     ProgramPostReq getTempProgram(String username);
 

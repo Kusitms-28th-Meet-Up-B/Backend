@@ -52,7 +52,7 @@ public class ArchiveService {
         return archivePageRes;
     }
 
-    public void postArchive(ArchivePostReq archivePostReq, String username) {
+    public Long postArchive(ArchivePostReq archivePostReq, String username) {
         Archive archive = new Archive();
         User user = userRepository.findById(Long.valueOf(username)).get();
         archive.setTitle(archivePostReq.getTitle());
@@ -64,7 +64,8 @@ public class ArchiveService {
         archive.setFileUrl(archivePostReq.getFileUrl());
         archive.setHashtag(archivePostReq.getHashTags());
         archive.setLikes(0L);
-        archiveRepository.save(archive);
+        Archive saveArchive = archiveRepository.save(archive);
+        return saveArchive.getId();
     }
 
     public ArchiveDetailRes getArchiveById(Long id) {

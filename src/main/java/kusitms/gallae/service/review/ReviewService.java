@@ -52,7 +52,7 @@ public class ReviewService {
     }
 
 
-    public void postReivew(ReviewPostReq reviewPostReq,String username) {
+    public Long postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
         User user = userRepository.findById(Long.valueOf(username)).get();
         review.setTitle(reviewPostReq.getTitle());
@@ -64,7 +64,8 @@ public class ReviewService {
         review.setFileUrl(reviewPostReq.getFileUrl());
         review.setHashtag(reviewPostReq.getHashTags());
         review.setLikes(0L);
-        reviewRepository.save(review);
+        Review saveReview = reviewRepository.save(review);
+        return saveReview.getId();
     }
 
 

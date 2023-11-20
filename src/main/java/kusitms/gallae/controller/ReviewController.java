@@ -65,7 +65,7 @@ public class ReviewController {
     }
 
     @PostMapping("/saveReview")
-    public ResponseEntity<BaseResponse> saveReview(
+    public ResponseEntity<BaseResponse<Long>> saveReview(
             Principal principal,
 
             @ModelAttribute
@@ -88,9 +88,7 @@ public class ReviewController {
         reviewPostReq.setBody(reviewModel.getBody());
         reviewPostReq.setHashTags(reviewModel.getHashTags());
 
-
-        reviewService.postReivew(reviewPostReq,principal.getName());
-        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+        return ResponseEntity.ok(new BaseResponse<>(reviewService.postReivew(reviewPostReq,principal.getName())));
 
     }
 
@@ -100,6 +98,8 @@ public class ReviewController {
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
     }
 
+
+    @Operation(summary = "지원후기 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")
     public ResponseEntity<BaseResponse<List<ReviewDtoRes>>> getAllReviewsSortedByLikes(
             @RequestParam(value = "page", defaultValue = "0") int page,
