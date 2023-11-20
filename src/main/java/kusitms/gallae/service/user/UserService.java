@@ -113,7 +113,7 @@ public class UserService {
             userPostDto.setWriter(archive.getWriter());
             userPostDto.setCategory(archive.getCategory());
             userPostDto.setTitle(archive.getTitle());
-            userPostDto.setCreatedAt(archive.getCreatedAt());
+            userPostDto.setCreatedDate(archive.getCreatedAt());
             return userPostDto;
         }).collect(Collectors.toList()));
         userPostsPageRes.setTotalPages(archives.getTotalPages());
@@ -129,7 +129,7 @@ public class UserService {
             userPostDto.setWriter(review.getWriter());
             userPostDto.setCategory(review.getCategory());
             userPostDto.setTitle(review.getTitle());
-            userPostDto.setCreatedAt(review.getCreatedAt());
+            userPostDto.setCreatedDate(review.getCreatedAt());
             return userPostDto;
         }).collect(Collectors.toList()));
         userPostsPageRes.setTotalPages(reviews.getTotalPages());
