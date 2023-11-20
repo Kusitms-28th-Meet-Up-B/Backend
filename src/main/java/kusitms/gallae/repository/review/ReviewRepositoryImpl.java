@@ -5,10 +5,13 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import kusitms.gallae.domain.Program;
+import kusitms.gallae.domain.QReview;
 import kusitms.gallae.domain.Review;
 import kusitms.gallae.dto.program.ProgramManagerReq;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +31,10 @@ import static kusitms.gallae.domain.QReview.review;
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
+    @Autowired
+    public ReviewRepositoryImpl(EntityManager entityManager) {
+        this.jpaQueryFactory = new JPAQueryFactory(entityManager);
+    }
 
     @Override
     public Page<Review> findReviewDynamicCategory(String category, Pageable pageable) {
@@ -56,4 +63,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
 
         return booleanBuilder;
     }
+
+
 }

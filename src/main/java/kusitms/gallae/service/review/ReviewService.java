@@ -51,6 +51,7 @@ public class ReviewService {
         return reviewPageRes;
     }
 
+
     public void postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
         User user = userRepository.findById(Long.valueOf(username)).get();
@@ -79,8 +80,32 @@ public class ReviewService {
                     detailRes.setHashtag(review.getHashtag());
                     detailRes.setBody(review.getBody());
                     detailRes.setCreatedDate(review.getCreatedAt());
+
+                    Long prevId = getPreviousReviewId(id);
+                    Long nextId = getNextReviewId(id);
+
+                    detailRes.setPreviousId(prevId);
+                    detailRes.setNextId(nextId);
+
+
                     return detailRes;
                 })
                 .orElse(null);
+    }
+
+    public Long getPreviousReviewId(Long currentId) {
+        return reviewRepository.findTop1ByIdLessThanOrderByIdDesc(currentId)
+                .map(Review::getId)
+                .orElse(null);
+    }
+
+    public Long getNextReviewId(Long currentId) {
+        return reviewRepository.findTop1ByIdGreaterThanOrderByIdAsc(currentId)
+                .map(Review::getId)
+                .orElse(null);
+    }
+
+    public Page<Review> getAllReviewsSortedByLikes(Pageable pageable) {
+        return reviewRepository.findAllByOrderByLikesDesc(pageable);
     }
 }

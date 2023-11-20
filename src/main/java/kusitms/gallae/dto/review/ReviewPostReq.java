@@ -19,4 +19,6 @@ public class ReviewPostReq {
     private String fileName;
 
     private String fileUrl;
+
+    private MultipartFile file;
 }

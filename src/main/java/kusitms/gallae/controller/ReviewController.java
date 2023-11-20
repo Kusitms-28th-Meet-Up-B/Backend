@@ -16,13 +16,16 @@ import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -68,21 +71,24 @@ public class ReviewController {
             @ModelAttribute
             ReviewModel reviewModel
     ) throws IOException {
-        String fileName = null;
         String fileUrl = null;
-        System.out.println(principal.getName());
-        if(reviewModel.getFile() != null && !reviewModel.getFile().isEmpty()) {
-            fileName = reviewModel.getFile().getName();
+        String originalFilename = null; // 원본 파일 이름을 저장할 변수
+
+        if (reviewModel.getFile() != null && !reviewModel.getFile().isEmpty()) {
+            originalFilename = reviewModel.getFile().getOriginalFilename(); // 원본 파일 이름 가져오기
             fileUrl = s3Service.upload(reviewModel.getFile());
         }
+
         ReviewPostReq reviewPostReq = new ReviewPostReq();
         reviewPostReq.setTitle(reviewModel.getTitle());
         reviewPostReq.setWriter(reviewPostReq.getWriter());
         reviewPostReq.setCategory(reviewPostReq.getCategory());
         reviewPostReq.setFileUrl(fileUrl);
-        reviewPostReq.setFileName(fileName);
+        reviewPostReq.setFileName(originalFilename);
         reviewPostReq.setBody(reviewModel.getBody());
         reviewPostReq.setHashTags(reviewModel.getHashTags());
+
+
         reviewService.postReivew(reviewPostReq,principal.getName());
         return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
 
@@ -91,10 +97,38 @@ public class ReviewController {
     @GetMapping("/{id}/detail")
     public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
         ReviewDetailRes reviewDetail = reviewService.getReviewById(id);
-        {
-            return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+        return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+    }
 
-        }
+    @GetMapping("/sorted/likes")
+    public ResponseEntity<BaseResponse<List<ReviewDtoRes>>> getAllReviewsSortedByLikes(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likes"));
+        Page<Review> reviewPage = reviewService.getAllReviewsSortedByLikes(pageRequest);
+        List<ReviewDtoRes> reviewDtos = reviewPage.getContent().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        BaseResponse<List<ReviewDtoRes>> response = new BaseResponse<>(
+                true,
+                "Success",
+                reviewPage.getNumber(),
+                reviewDtos
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Review 엔티티를 ReviewDtoRes로 변환하는 메소드
+    private ReviewDtoRes convertToDto(Review review) {
+        ReviewDtoRes dto = new ReviewDtoRes();
+        dto.setId(review.getId());
+        dto.setCategory(review.getCategory());
+        dto.setTitle(review.getTitle());
+        dto.setWriter(review.getWriter());
+        dto.setCreatedDate(review.getCreatedAt());
+        return dto;
     }
 
 }
