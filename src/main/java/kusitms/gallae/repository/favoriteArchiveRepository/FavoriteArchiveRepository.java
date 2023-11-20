@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface FavoriteArchiveRepository extends JpaRepository<FavoriteArchive, Long> {
 
     Optional<FavoriteArchive> findByUserAndArchive(User user, Archive archive);
+
+    boolean existsByUserAndArchive(User user, Archive archive);
 }

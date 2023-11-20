@@ -86,13 +86,20 @@ public class ArchiveController {
 
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchiveDetail(@PathVariable Long id) {
-        ArchiveDetailRes archiveDetail = archiveService.getArchiveById(id);
-        {
-            return ResponseEntity.ok(new BaseResponse<>(archiveDetail));
+    @GetMapping("/detail")
+    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchiveDetail(
+            Principal principal,
 
+            @Parameter(description = "자료실아이디")
+            @RequestParam(value = "archiveId", required = true)
+            Long archiveId
+    ) {
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
         }
+        ArchiveDetailRes archiveDetail = archiveService.getArchiveById(archiveId, username);
+        return ResponseEntity.ok(new BaseResponse<>(archiveDetail));
     }
 
 

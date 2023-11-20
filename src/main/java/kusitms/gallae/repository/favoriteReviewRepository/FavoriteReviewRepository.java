@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface FavoriteReviewRepository extends JpaRepository<FavoriteReview, Long> {
 
     Optional<FavoriteReview> findByUserAndReview(User user, Review review);
+
+    boolean existsByUserAndReview(User user, Review review);
 }

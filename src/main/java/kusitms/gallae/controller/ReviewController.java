@@ -92,9 +92,19 @@ public class ReviewController {
 
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
-        ReviewDetailRes reviewDetail = reviewService.getReviewById(id);
+    @GetMapping("/detail")
+    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(
+            Principal principal,
+
+            @Parameter(description = "지원후기아이디")
+            @RequestParam(value = "reviewId", required = false)
+            Long reviewId
+    ) {
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
+        }
+        ReviewDetailRes reviewDetail = reviewService.getReviewById(reviewId, username);
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
     }
 
