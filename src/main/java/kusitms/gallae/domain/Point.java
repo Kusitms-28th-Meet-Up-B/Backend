@@ -2,8 +2,10 @@ package kusitms.gallae.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -35,4 +37,8 @@ public class Point {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
