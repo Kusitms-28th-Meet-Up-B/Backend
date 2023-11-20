@@ -81,8 +81,8 @@ public class ReviewController {
 
         ReviewPostReq reviewPostReq = new ReviewPostReq();
         reviewPostReq.setTitle(reviewModel.getTitle());
-        reviewPostReq.setWriter(reviewPostReq.getWriter());
-        reviewPostReq.setCategory(reviewPostReq.getCategory());
+        reviewPostReq.setWriter(reviewModel.getWriter());
+        reviewPostReq.setCategory(reviewModel.getCategory());
         reviewPostReq.setFileUrl(fileUrl);
         reviewPostReq.setFileName(originalFilename);
         reviewPostReq.setBody(reviewModel.getBody());

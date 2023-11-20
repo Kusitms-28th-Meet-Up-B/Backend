@@ -14,6 +14,8 @@ public class ReviewModel {
 
     private String hashTags;
 
+    private String writer;
+
     private MultipartFile file;
 
 

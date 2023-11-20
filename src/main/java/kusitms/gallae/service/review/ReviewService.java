@@ -58,11 +58,11 @@ public class ReviewService {
 
     public Long postReivew(ReviewPostReq reviewPostReq,String username) {
         Review review = new Review();
-        User user = userRepository.findById(Long.valueOf(username)).get();
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
         review.setTitle(reviewPostReq.getTitle());
         review.setUser(user);
         review.setBody(reviewPostReq.getBody());
-        review.setCategory(review.getCategory());
+        review.setCategory(reviewPostReq.getCategory());
         review.setFileName(reviewPostReq.getFileName());
         review.setWriter(reviewPostReq.getWriter());
         review.setFileUrl(reviewPostReq.getFileUrl());
