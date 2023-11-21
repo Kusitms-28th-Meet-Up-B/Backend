@@ -190,7 +190,7 @@ public class ReviewController {
             Principal principal,
 
             @Parameter(description = "후기 아이디")
-            @RequestParam(value = "reviewId", required = false)
+            @RequestParam(value = "reviewId", required = true)
             Long reviewId
     ){
         if(principal == null ){

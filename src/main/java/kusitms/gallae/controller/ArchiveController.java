@@ -104,7 +104,7 @@ public class ArchiveController {
             Principal principal,
 
             @Parameter(description = "자료실 아이디")
-            @RequestParam(value = "archiveId", required = false)
+            @RequestParam(value = "archiveId", required = true)
             Long archiveId
     ){
         if(principal == null ){
