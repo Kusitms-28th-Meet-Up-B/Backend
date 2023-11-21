@@ -28,7 +28,7 @@ public class LoginResponse {
 
     private Long point;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     private String role;
