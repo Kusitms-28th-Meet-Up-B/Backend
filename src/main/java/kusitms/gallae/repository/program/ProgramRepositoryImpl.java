@@ -183,6 +183,8 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
                     p.getRecruitEndDate().getMonth(),p.getRecruitEndDate().getDayOfMonth());
             String strRemainDay = DurationCalcurator.getDuration(localDate);
             programMainRes.setRemainDay(strRemainDay);
+            programMainRes.setRecruitStartDate(p.getRecruitStartDate());
+            programMainRes.setRecruitEndDate(p.getRecruitEndDate());
             programMainRes.setHashTag(Arrays.stream(p.getHashTags().split(","))
                     .collect(Collectors.toList()));
             if(f != null && f.getUser() != null && f.getUser().equals(u)) {
