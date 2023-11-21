@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ReviewService {
 
     @Autowired
@@ -112,6 +114,7 @@ public class ReviewService {
         return saveReview.getId();
     }
 
+
     public void deleteReivew(Long reviewId, String username) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         User user = userRepository.findById(Long.valueOf(username)).orElse(null);
@@ -121,6 +124,8 @@ public class ReviewService {
         if(review.getFileUrl() != null ){
             s3Service.deleteFile(review.getFileUrl());
         }
+        favoriteReviewRepository.deleteAllByReview(review);
+        userReviewRepository.deleteAllByReview(review);
         reviewRepository.deleteById(reviewId);
     }
 

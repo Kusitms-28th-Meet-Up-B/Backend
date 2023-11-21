@@ -10,4 +10,6 @@ public interface FavoriteArchiveRepository extends JpaRepository<FavoriteArchive
     Optional<FavoriteArchive> findByUserAndArchive(User user, Archive archive);
 
     boolean existsByUserAndArchive(User user, Archive archive);
+
+    void deleteAllByArchive(Archive archive);
 }

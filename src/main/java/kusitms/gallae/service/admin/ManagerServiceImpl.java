@@ -11,6 +11,7 @@ import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.global.jwt.AuthUtil;
+import kusitms.gallae.repository.favorite.FavoriteRepository;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
@@ -38,6 +39,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final S3Service s3Service;
 
     private final UserRepository userRepository;
+
+    private final FavoriteRepository favoriteRepository;
 
 
     @Override
@@ -133,7 +136,10 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public void deleteTempProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        favoriteRepository.deleteAllByProgram(program);
         programRespository.deleteByIdAndStatus(programId, Program.ProgramStatus.TEMP);
     }
 
@@ -156,7 +162,10 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public void deleteProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        favoriteRepository.deleteAllByProgram(program);
         programRespository.deleteById(programId);
     }
 

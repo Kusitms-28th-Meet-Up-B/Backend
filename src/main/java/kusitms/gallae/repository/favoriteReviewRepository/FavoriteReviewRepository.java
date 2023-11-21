@@ -10,4 +10,6 @@ public interface FavoriteReviewRepository extends JpaRepository<FavoriteReview, 
     Optional<FavoriteReview> findByUserAndReview(User user, Review review);
 
     boolean existsByUserAndReview(User user, Review review);
+
+    void deleteAllByReview(Review review);
 }
