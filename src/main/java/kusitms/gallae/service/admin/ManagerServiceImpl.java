@@ -117,6 +117,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Long editProgram(ProgramPostReq programPostReq ,String username) {
+
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findById(programPostReq.getProgramId()).orElse(null);
         if(user.getId() != tempProgram.getUser().getId()) {

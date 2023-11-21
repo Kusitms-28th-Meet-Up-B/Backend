@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 public class EditModel {
 
-    private Long id;
+    private String id;  //Long으로 프론트가 못보냄
 
     private String programName;
 

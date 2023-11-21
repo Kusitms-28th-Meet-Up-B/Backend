@@ -212,7 +212,7 @@ public class ManagerController {
             photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
-        programPostReq.setProgramId(model.getId());
+        programPostReq.setProgramId(Long.valueOf(model.getId()));
         programPostReq.setProgramName(model.getProgramName());
         programPostReq.setPhotoUrl(photoUrl);
         programPostReq.setLocation(model.getLocation());
