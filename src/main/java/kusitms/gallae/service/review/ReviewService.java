@@ -4,10 +4,8 @@ import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.*;
 
 import kusitms.gallae.dto.archive.ArchiveDetailRes;
-import kusitms.gallae.dto.review.ReviewDetailRes;
-import kusitms.gallae.dto.review.ReviewDtoRes;
-import kusitms.gallae.dto.review.ReviewPageRes;
-import kusitms.gallae.dto.review.ReviewPostReq;
+import kusitms.gallae.dto.review.*;
+import kusitms.gallae.global.S3Service;
 import kusitms.gallae.repository.favoriteReviewRepository.FavoriteReviewRepository;
 import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.review.ReviewRepository;
@@ -45,6 +43,9 @@ public class ReviewService {
 
     @Autowired
     private UserReviewRepository userReviewRepository;
+
+    @Autowired
+    private S3Service s3Service;
 
 
     public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
@@ -93,6 +94,21 @@ public class ReviewService {
         pointRepository.save(point);
         user.setPoint(user.getPoint() + 20);
         userRepository.save(user);
+        return saveReview.getId();
+    }
+    public Long editReivew(ReviewEditReq reviewEditReq) {
+        Review review = reviewRepository.findById(reviewEditReq.getReviewId()).orElse(null);
+        if(review.getFileUrl() != null ){
+            s3Service.deleteFile(reviewEditReq.getFileUrl());
+        }
+        review.setTitle(reviewEditReq.getTitle());
+        review.setBody(reviewEditReq.getBody());
+        review.setCategory(reviewEditReq.getCategory());
+        review.setFileName(reviewEditReq.getFileName());
+        review.setWriter(reviewEditReq.getWriter());
+        review.setFileUrl(reviewEditReq.getFileUrl());
+        review.setHashtag(reviewEditReq.getHashTags());
+        Review saveReview = reviewRepository.save(review);
         return saveReview.getId();
     }
 

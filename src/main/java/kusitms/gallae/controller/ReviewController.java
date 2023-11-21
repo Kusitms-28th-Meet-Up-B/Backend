@@ -94,6 +94,37 @@ public class ReviewController {
 
     }
 
+    @Operation(summary = "리뷰 편집", description = """
+            저장이랑 다르게 
+            reivewId도 같이 보내야합니다.
+            """)
+    @PostMapping("/editReview")
+    public ResponseEntity<BaseResponse<Long>> editReview(
+            @ModelAttribute
+            ReviewEditModel reviewEditModel
+    ) throws IOException {
+        String fileUrl = null;
+        String originalFilename = null; // 원본 파일 이름을 저장할 변수
+
+        if (reviewEditModel.getFile() != null && !reviewEditModel.getFile().isEmpty()) {
+            originalFilename = reviewEditModel.getFile().getOriginalFilename(); // 원본 파일 이름 가져오기
+            fileUrl = s3Service.upload(reviewEditModel.getFile());
+        }
+
+        ReviewEditReq reviewEditReq = new ReviewEditReq();
+        reviewEditReq.setReviewId(reviewEditModel.getReviewId());
+        reviewEditReq.setTitle(reviewEditModel.getTitle());
+        reviewEditReq.setWriter(reviewEditModel.getWriter());
+        reviewEditReq.setCategory(reviewEditModel.getCategory());
+        reviewEditReq.setFileUrl(fileUrl);
+        reviewEditReq.setFileName(originalFilename);
+        reviewEditReq.setBody(reviewEditModel.getBody());
+        reviewEditReq.setHashTags(reviewEditModel.getHashTags());
+
+        return ResponseEntity.ok(new BaseResponse<>(reviewService.editReivew(reviewEditReq)));
+
+    }
+
 
     @Operation(summary = "지원후기 정보 가져오기", description = """
             포인트가 부족하면

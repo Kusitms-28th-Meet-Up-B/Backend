@@ -4,10 +4,9 @@ package kusitms.gallae.service.archive;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.*;
-import kusitms.gallae.dto.archive.ArchiveDetailRes;
-import kusitms.gallae.dto.archive.ArchiveDtoRes;
-import kusitms.gallae.dto.archive.ArchivePageRes;
-import kusitms.gallae.dto.archive.ArchivePostReq;
+import kusitms.gallae.dto.archive.*;
+import kusitms.gallae.dto.review.ReviewEditReq;
+import kusitms.gallae.global.S3Service;
 import kusitms.gallae.repository.archive.ArchiveRepository;
 import kusitms.gallae.repository.archive.ArchiveRespositoryCustom;
 import kusitms.gallae.repository.favoriteArchiveRepository.FavoriteArchiveRepository;
@@ -45,6 +44,9 @@ public class ArchiveService {
     @Autowired
     private UserArchiveRepository userArchiveRepository;
 
+    @Autowired
+    private S3Service s3Service;
+
     public ArchivePageRes getArchivesByCategory(String category, Pageable pageable) {
         Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,pageable);
         List<ArchiveDtoRes> archiveDtos = archives.getContent().stream()
@@ -72,6 +74,22 @@ public class ArchiveService {
             throw new BaseException(BaseResponseStatus.NOT_WRITER);
         }
         return convertArchive(archive,user);
+    }
+
+    public Long editArchive(ArchiveEditReq archiveEditReq) {
+        Archive archive = archiveRepository.findById(archiveEditReq.getArchiveId()).orElse(null);
+        if(archive.getFileUrl() != null ){
+            s3Service.deleteFile(archiveEditReq.getFileUrl());
+        }
+        archive.setTitle(archiveEditReq.getTitle());
+        archive.setBody(archiveEditReq.getBody());
+        archive.setCategory(archiveEditReq.getCategory());
+        archive.setFileName(archiveEditReq.getFileName());
+        archive.setWriter(archiveEditReq.getWriter());
+        archive.setFileUrl(archiveEditReq.getFileUrl());
+        archive.setHashtag(archiveEditReq.getHashTags());
+        Archive saveArchive = archiveRepository.save(archive);
+        return saveArchive.getId();
     }
 
     public Long postArchive(ArchivePostReq archivePostReq, String username) {

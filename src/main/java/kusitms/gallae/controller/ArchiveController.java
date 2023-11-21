@@ -12,6 +12,8 @@ import kusitms.gallae.domain.Archive;
 import kusitms.gallae.domain.Review;
 import kusitms.gallae.dto.archive.*;
 import kusitms.gallae.dto.review.ReviewDtoRes;
+import kusitms.gallae.dto.review.ReviewEditModel;
+import kusitms.gallae.dto.review.ReviewEditReq;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
@@ -105,6 +107,36 @@ public class ArchiveController {
 
     }
 
+    @Operation(summary = "자료실 편집", description = """
+            저장이랑 다르게 
+            archiveId도 같이 보내야합니다.
+            """)
+    @PostMapping("/editArchive")
+    public ResponseEntity<BaseResponse<Long>> editArchive(
+            @ModelAttribute
+            ArchiveEditModel archiveEditModel
+    ) throws IOException {
+        String fileUrl = null;
+        String originalFilename = null; // 원본 파일 이름을 저장할 변수
+
+        if (archiveEditModel.getFile() != null && !archiveEditModel.getFile().isEmpty()) {
+            originalFilename = archiveEditModel.getFile().getOriginalFilename(); // 원본 파일 이름 가져오기
+            fileUrl = s3Service.upload(archiveEditModel.getFile());
+        }
+
+        ArchiveEditReq archiveEditReq = new ArchiveEditReq();
+        archiveEditReq.setArchiveId(archiveEditModel.getArchiveId());
+        archiveEditReq.setTitle(archiveEditModel.getTitle());
+        archiveEditReq.setWriter(archiveEditModel.getWriter());
+        archiveEditReq.setCategory(archiveEditModel.getCategory());
+        archiveEditReq.setFileUrl(fileUrl);
+        archiveEditReq.setFileName(originalFilename);
+        archiveEditReq.setBody(archiveEditModel.getBody());
+        archiveEditReq.setHashTags(archiveEditModel.getHashTags());
+
+        return ResponseEntity.ok(new BaseResponse<>(archiveService.editArchive(archiveEditReq)));
+
+    }
     @Operation(summary = "자료실 정보 가져오기", description = """
             포인트가 부족하면
             \n
