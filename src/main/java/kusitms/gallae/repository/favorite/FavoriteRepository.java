@@ -14,4 +14,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     boolean existsByUserAndProgram(User user, Program program);
 
     Optional<Favorite> findByUserAndProgram(User user, Program program);
+
+    List<Favorite> findAllByUser(User user);
 }

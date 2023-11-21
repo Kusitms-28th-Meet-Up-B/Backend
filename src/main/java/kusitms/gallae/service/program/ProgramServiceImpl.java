@@ -4,6 +4,7 @@ package kusitms.gallae.service.program;
 import jakarta.transaction.Transactional;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.Favorite;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.dto.tourapi.TourApiDto;
@@ -50,11 +51,17 @@ public class ProgramServiceImpl implements ProgramService {
             user = userRepository.findById(Long.valueOf(username)).get();
             programSearchReq.setUser(user);
         }
-        Page<ProgramMainRes> programs = programRepositoryCustom.getDynamicSearch(programSearchReq);
-        List<ProgramMainRes> pageToListNewPrograms = programs.getContent();
+        Page<Program> temp = programRepositoryCustom.getDynamicSearch(programSearchReq);
+        List<Program> pageToListNewPrograms = temp.getContent();
+        List<ProgramMainRes> programs = new ArrayList<>();
+        if(user == null ){
+            programs = getProgramMainRes(pageToListNewPrograms);
+        }else{
+            programs = getProgramMainRes(pageToListNewPrograms,user);
+        }
         ProgramPageMainRes programPageMainRes = new ProgramPageMainRes();
-        programPageMainRes.setPrograms(pageToListNewPrograms);
-        programPageMainRes.setTotalSize(programs.getTotalPages());
+        programPageMainRes.setPrograms(programs);
+        programPageMainRes.setTotalSize(temp.getTotalPages());
         return programPageMainRes;
     }
 
@@ -79,15 +86,14 @@ public class ProgramServiceImpl implements ProgramService {
         User user = null;
         if(username != null){
             user = userRepository.findById(Long.valueOf(username)).get();
-            programSimilarReq.setUser(user);
         }
-        List<ProgramMainRes> temp = programRepositoryCustom.getDynamicSimilar(programSimilarReq);
+        List<Program> temp = programRepositoryCustom.getDynamicSimilar(programSimilarReq);
         List<ProgramMainRes> programs = new ArrayList<>();
-        temp.stream().forEach(programMainRes -> {    //자기 자신은 추천안하게 제거
-            if(programMainRes.getId() != programId) {
-                programs.add(programMainRes);
-            }
-        });
+        if(user == null ){
+            programs = getProgramMainRes(temp);
+        }else{
+            programs = getProgramMainRes(temp,user);
+        }
         return programs;
     }
 
@@ -167,6 +173,30 @@ public class ProgramServiceImpl implements ProgramService {
             programMainRes.setRemainDay(strRemainDay);
             programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
                     .collect(Collectors.toList()));
+            return programMainRes;
+        }).collect(Collectors.toList());
+    }
+
+    private List<ProgramMainRes> getProgramMainRes(List<Program> programs , User u){
+        return programs.stream().map(p -> {
+            ProgramMainRes programMainRes = new ProgramMainRes();
+            programMainRes.setId(p.getId());
+            programMainRes.setProgramName(p.getProgramName());
+            programMainRes.setLike(p.getProgramLike());
+            programMainRes.setPhotoUrl(p.getPhotoUrl());
+            programMainRes.setLatitude(p.getLatitude());
+            programMainRes.setLongitude(p.getLongitude());
+            LocalDate localDate = LocalDate.of(p.getRecruitEndDate().getYear(),
+                    p.getRecruitEndDate().getMonth(),p.getRecruitEndDate().getDayOfMonth());
+            String strRemainDay = DurationCalcurator.getDuration(localDate);
+            programMainRes.setRemainDay(strRemainDay);
+            programMainRes.setRecruitStartDate(p.getRecruitStartDate());
+            programMainRes.setRecruitEndDate(p.getRecruitEndDate());
+            programMainRes.setHashTag(Arrays.stream(p.getHashTags().split(","))
+                    .collect(Collectors.toList()));
+            if(favoriteRepository.existsByUserAndProgram(u,p)){
+                programMainRes.setUserLikeCheck(true);
+            }
             return programMainRes;
         }).collect(Collectors.toList());
     }
