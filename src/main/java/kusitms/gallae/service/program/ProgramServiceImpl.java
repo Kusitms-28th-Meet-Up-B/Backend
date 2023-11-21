@@ -143,6 +143,7 @@ public class ProgramServiceImpl implements ProgramService {
                     programDetailRes.setUserLikeCheck(true);
                 }
             }
+            programDetailRes.setWriterId(program.getUser().getId());
             programDetailRes.setPhotoUrl(program.getPhotoUrl());
             LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
                     program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
