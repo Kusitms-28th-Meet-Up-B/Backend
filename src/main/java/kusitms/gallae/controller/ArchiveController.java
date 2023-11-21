@@ -68,6 +68,12 @@ public class ArchiveController {
             편집 버튼 눌르면 권한이 있는지 체크해준다.
             \n
             만약 있으면 기존 정보들을 반환한다.
+            \n 권한이 없으면 아래 코드 처럼 나옴 \n
+            {\n
+              "isSuccess": false,\n
+              "code": 1002,\n
+              "message": "작성자가 아닙니다."\n
+            }
             """)
     @GetMapping("/checkEdit")
     public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchivesEditable(
