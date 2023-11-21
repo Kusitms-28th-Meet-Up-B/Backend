@@ -11,6 +11,7 @@ import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.global.TourApiService;
 import kusitms.gallae.global.jwt.JwtProvider;
+import kusitms.gallae.repository.favorite.FavoriteRepository;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
@@ -38,6 +39,8 @@ public class ProgramServiceImpl implements ProgramService {
     private final UserRepository userRepository;
 
     private final TourApiService tourApiService;
+
+    private final FavoriteRepository favoriteRepository;
 
 
     @Override
@@ -105,9 +108,10 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public ProgramDetailRes getProgramDetail(Long id){
+    public ProgramDetailRes getProgramDetail(Long id, String username){
         Program program = programRespository.findById(id).orElse(null);
         program.setViewCount(program.getViewCount()+1);
+
         if(program == null) {
             throw new BaseException(BaseResponseStatus.BAD_REQUEST);
         }else{
@@ -126,6 +130,13 @@ public class ProgramServiceImpl implements ProgramService {
             programDetailRes.setTripStartDate(program.getTripStartDate());
             programDetailRes.setTripEndDate(program.getTripEndDate());
             programDetailRes.setLike(program.getProgramLike());
+            User user = null;
+            if(username != null){
+                user = userRepository.findById(Long.valueOf(username)).orElse(null);
+                if(user !=null && favoriteRepository.existsByUserAndProgram(user,program)){
+                    programDetailRes.setUserLikeCheck(true);
+                }
+            }
             programDetailRes.setPhotoUrl(program.getPhotoUrl());
             LocalDate localDate = LocalDate.of(program.getRecruitEndDate().getYear(),
                     program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());

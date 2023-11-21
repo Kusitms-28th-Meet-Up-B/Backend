@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ProgramService {
 
-    ProgramDetailRes getProgramDetail(Long id);
+    ProgramDetailRes getProgramDetail(Long id, String username);
 
     ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq, String username);
 

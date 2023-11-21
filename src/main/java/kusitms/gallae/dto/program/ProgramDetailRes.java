@@ -22,6 +22,8 @@ public class ProgramDetailRes {
 
     private String location;
 
+    private boolean userLikeCheck;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate recruitStartDate;
 
