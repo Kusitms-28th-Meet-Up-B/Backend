@@ -17,7 +17,9 @@ public enum BaseResponseStatus {
 
     ALEADY_EXIST(false, HttpStatus.BAD_REQUEST, 410, "이미 존재합니다."),
 
-    POINT_TRIBE(false, HttpStatus.BAD_REQUEST, 1001, "포인트가 부족합니다.");
+    POINT_TRIBE(false, HttpStatus.BAD_REQUEST, 1001, "포인트가 부족합니다."),
+
+    NOT_WRITER(false, HttpStatus.BAD_REQUEST, 1002, "작성자가 아닙니다.");
 
     private final boolean isSuccess;
     @JsonIgnore

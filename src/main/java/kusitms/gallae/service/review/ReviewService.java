@@ -1,11 +1,9 @@
 package kusitms.gallae.service.review;
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.domain.Point;
-import kusitms.gallae.domain.Review;
+import kusitms.gallae.domain.*;
 
-import kusitms.gallae.domain.User;
-import kusitms.gallae.domain.UserReview;
+import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.review.ReviewDetailRes;
 import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
@@ -96,6 +94,15 @@ public class ReviewService {
         user.setPoint(user.getPoint() + 20);
         userRepository.save(user);
         return saveReview.getId();
+    }
+
+    public ReviewDetailRes checkReviewEditable(Long reviewId, String username) {
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(review.getUser().getId() != user.getId()){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        return convertReview(review,user);
     }
 
 

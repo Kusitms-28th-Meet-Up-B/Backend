@@ -65,6 +65,15 @@ public class ArchiveService {
         return archivePageRes;
     }
 
+    public ArchiveDetailRes checkArchiveEditable(Long archiveId, String username) {
+        Archive archive = archiveRepository.findById(archiveId).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(archive.getUser().getId() != user.getId()){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        return convertArchive(archive,user);
+    }
+
     public Long postArchive(ArchivePostReq archivePostReq, String username) {
         Archive archive = new Archive();
         User user = userRepository.findById(Long.valueOf(username)).get();

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Archive;
@@ -59,6 +60,25 @@ public class ArchiveController {
 
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         return ResponseEntity.ok(new BaseResponse<>(this.archiveService.getArchivesByCategory(category,pageRequest)));
+    }
+
+    @Operation(summary = "편집 버튼 눌렀을 때 사용자와 일치하는지 체크 및 정보 반환", description = """
+            편집 버튼 눌르면 권한이 있는지 체크해준다.
+            \n
+            만약 있으면 기존 정보들을 반환한다.
+            """)
+    @GetMapping("/checkEdit")
+    public ResponseEntity<BaseResponse<ArchiveDetailRes>> getArchivesEditable(
+            Principal principal,
+
+            @Parameter(description = "자료실 아이디")
+            @RequestParam(value = "archiveId", required = false)
+            Long archiveId
+    ){
+        if(principal == null ){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        return ResponseEntity.ok(new BaseResponse<>(this.archiveService.checkArchiveEditable(archiveId, principal.getName())));
     }
 
     @PostMapping("/saveArchive")

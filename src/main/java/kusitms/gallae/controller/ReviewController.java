@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.Review;
+import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.review.*;
 import kusitms.gallae.global.S3Service;
@@ -115,6 +117,25 @@ public class ReviewController {
     ) {
         ReviewDetailRes reviewDetail = reviewService.getReviewById(reviewId, principal.getName());
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+    }
+
+    @Operation(summary = "편집 버튼 눌렀을 때 사용자와 일치하는지 체크 및 정보 반환", description = """
+            편집 버튼 눌르면 권한이 있는지 체크해준다.
+            \n
+            만약 있으면 기존 정보들을 반환한다.
+            """)
+    @GetMapping("/checkEdit")
+    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewEditable(
+            Principal principal,
+
+            @Parameter(description = "후 아이디")
+            @RequestParam(value = "reviewId", required = false)
+            Long reviewId
+    ){
+        if(principal == null ){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        return ResponseEntity.ok(new BaseResponse<>(this.reviewService.checkReviewEditable(reviewId, principal.getName())));
     }
 
 
