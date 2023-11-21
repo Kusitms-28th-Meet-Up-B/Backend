@@ -151,6 +151,15 @@ public class ProgramController {
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourDatas(id)));
     }
 
+    @Operation(summary = "프로그램 지역에 맞게 숙소 추천해주기")
+    @GetMapping("/regionLodgment")
+    public ResponseEntity<BaseResponse<List<TourApiDto>>> findTourbyProgramLodgment(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourLodgment(id)));
+    }
+
     @Operation(summary = "유사한 프로그램 추천", description = """
             지역이나 프로그램 타입이 같은 프로그램 최대 4개를 반환합니다
             해당 프로그램은 없을 수도 있습니다.

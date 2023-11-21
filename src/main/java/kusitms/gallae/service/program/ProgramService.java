@@ -19,4 +19,6 @@ public interface ProgramService {
 
     List<TourApiDto> getTourDatas(Long programId);
 
+    List<TourApiDto> getTourLodgment(Long programId);
+
 }

@@ -65,6 +65,12 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    public List<TourApiDto> getTourLodgment(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        return tourApiService.getTourLodgment(program.getLocation());
+    }
+
+    @Override
     public List<ProgramMainRes> getSimilarPrograms(Long programId,String username) {
         Program program = programRespository.findById(programId).orElse(null);
         ProgramSimilarReq programSimilarReq = new ProgramSimilarReq();
