@@ -89,6 +89,31 @@ public class ArchiveController {
         return ResponseEntity.ok(new BaseResponse<>(this.archiveService.checkArchiveEditable(archiveId, principal.getName())));
     }
 
+    @Operation(summary = "게시물 삭제", description = """
+            삭제 버튼 눌르면 권한이 있는지 체크해준다.
+           
+            \n 권한이 없으면 아래 코드 처럼 나옴 \n
+            {\n
+              "isSuccess": false,\n
+              "code": 1002,\n
+              "message": "작성자가 아닙니다."\n
+            }
+            """)
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponse> delArchive(
+            Principal principal,
+
+            @Parameter(description = "자료실 아이디")
+            @RequestParam(value = "archiveId", required = false)
+            Long archiveId
+    ){
+        if(principal == null ){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        archiveService.deleteArchive(archiveId, principal.getName());
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+    }
+
     @PostMapping("/saveArchive")
     public ResponseEntity<BaseResponse<Long>> saveArchive(
             Principal principal,

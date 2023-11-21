@@ -175,6 +175,30 @@ public class ReviewController {
         return ResponseEntity.ok(new BaseResponse<>(this.reviewService.checkReviewEditable(reviewId, principal.getName())));
     }
 
+    @Operation(summary = "후기 삭제", description = """
+            삭제 버튼 눌르면 권한이 있는지 체크해준다.
+           
+            \n 권한이 없으면 아래 코드 처럼 나옴 \n
+            {\n
+              "isSuccess": false,\n
+              "code": 1002,\n
+              "message": "작성자가 아닙니다."\n
+            }
+            """)
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponse> delArchive(
+            Principal principal,
+
+            @Parameter(description = "후기 아이디")
+            @RequestParam(value = "reviewId", required = false)
+            Long reviewId
+    ){
+        if(principal == null ){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        reviewService.deleteReivew(reviewId, principal.getName());
+        return ResponseEntity.ok(new BaseResponse<>(BaseResponseStatus.SUCCESS));
+    }
 
     @Operation(summary = "지원후기 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")

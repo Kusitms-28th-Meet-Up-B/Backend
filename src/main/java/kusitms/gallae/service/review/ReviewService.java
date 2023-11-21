@@ -112,6 +112,18 @@ public class ReviewService {
         return saveReview.getId();
     }
 
+    public void deleteReivew(Long reviewId, String username) {
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(review.getUser().getId() != user.getId()){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        if(review.getFileUrl() != null ){
+            s3Service.deleteFile(review.getFileUrl());
+        }
+        reviewRepository.delete(review);
+    }
+
     public ReviewDetailRes checkReviewEditable(Long reviewId, String username) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         User user = userRepository.findById(Long.valueOf(username)).orElse(null);

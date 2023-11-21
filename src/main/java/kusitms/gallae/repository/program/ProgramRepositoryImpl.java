@@ -137,19 +137,21 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
     private BooleanBuilder createSimiliarProgramCondition(ProgramSimilarReq programSimilarReq) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
+        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+
+        if(programSimilarReq.getId() != null) {
+            booleanBuilder.and(program.id.ne(programSimilarReq.getId()));
+        }
+
         if(programSimilarReq.getLocation() != null) {
-            booleanBuilder.or(program.location.contains(programSimilarReq.getLocation()));
+            booleanBuilder.and(program.location.contains(programSimilarReq.getLocation()));
         }
 
         if(programSimilarReq.getProgramType() != null) {
             booleanBuilder.or(program.programType.eq(programSimilarReq.getProgramType()));
         }
 
-        if(programSimilarReq.getId() != null) {
-            booleanBuilder.and(program.id.ne(programSimilarReq.getId()));
-        }
 
-        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
 
         return booleanBuilder;
     }

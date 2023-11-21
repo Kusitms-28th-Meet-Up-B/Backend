@@ -76,6 +76,18 @@ public class ArchiveService {
         return convertArchive(archive,user);
     }
 
+    public void deleteArchive(Long archiveId, String username) {
+        Archive archive = archiveRepository.findById(archiveId).orElse(null);
+        User user = userRepository.findById(Long.valueOf(username)).orElse(null);
+        if(archive.getUser().getId() != user.getId()){
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+        if(archive.getFileUrl() != null ){
+            s3Service.deleteFile(archive.getFileUrl());
+        }
+        archiveRepository.delete(archive);
+    }
+
     public Long editArchive(ArchiveEditReq archiveEditReq) {
         Archive archive = archiveRepository.findById(archiveEditReq.getArchiveId()).orElse(null);
         if(archive.getFileUrl() != null ){

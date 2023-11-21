@@ -83,9 +83,10 @@ public class ProgramServiceImpl implements ProgramService {
         ProgramSimilarReq programSimilarReq = new ProgramSimilarReq();
         programSimilarReq.setLocation(program.getLocation());
         programSimilarReq.setProgramType(program.getProgramType());
+        programSimilarReq.setId(programId);
         User user = null;
         if(username != null){
-            user = userRepository.findById(Long.valueOf(username)).get();
+            user = userRepository.findById(Long.valueOf(username)).orElse(null);
         }
         List<Program> temp = programRepositoryCustom.getDynamicSimilar(programSimilarReq);
         List<ProgramMainRes> programs = new ArrayList<>();
@@ -171,6 +172,8 @@ public class ProgramServiceImpl implements ProgramService {
                     program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
             String strRemainDay = DurationCalcurator.getDuration(localDate);
             programMainRes.setRemainDay(strRemainDay);
+            programMainRes.setRecruitStartDate(program.getRecruitStartDate());
+            programMainRes.setRecruitEndDate(program.getRecruitEndDate());
             programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
                     .collect(Collectors.toList()));
             return programMainRes;
