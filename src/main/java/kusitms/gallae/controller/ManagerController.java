@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
+import kusitms.gallae.dto.model.EditModel;
 import kusitms.gallae.dto.model.PostModel;
 import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.ProgramDetailRes;
@@ -188,6 +189,47 @@ public class ManagerController {
         PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
         programManagerReq.setPageable(pageRequest);
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.getManagerPrograms(programManagerReq, principal.getName())));
+    }
+
+    @Operation(summary = "프로그램 편집", description = """
+            프로그램 저장을 합니다.
+            사진 뻬고는 다 필수 값입니다.
+            다른 API와 다르게 파일과 json Data를 구분해야합니다.
+            프론트엔드 분은 아래 링크를 참고 해주세요
+            그냥 편집
+            https://leeggmin.tistory.com/7
+            
+            """)
+    @PostMapping(value = "/editSave")
+    public ResponseEntity<BaseResponse<Long>> tempSaveProgram(
+            Principal principal,
+
+            @ModelAttribute
+            EditModel model
+    ) throws IOException {
+        String photoUrl = null;
+        if(model.getPhoto() != null && !model.getPhoto().isEmpty()) {
+            photoUrl = s3Service.upload(model.getPhoto());
+        }
+        ProgramPostReq programPostReq = new ProgramPostReq();
+        programPostReq.setProgramId(model.getId());
+        programPostReq.setProgramName(model.getProgramName());
+        programPostReq.setPhotoUrl(photoUrl);
+        programPostReq.setLocation(model.getLocation());
+        programPostReq.setProgramType(model.getProgramType());
+        programPostReq.setProgramDetailType(model.getProgramDetailType());
+        programPostReq.setRecruitStartDate(model.getRecruitStartDate());
+        programPostReq.setRecruitEndDate(model.getRecruitEndDate());
+        programPostReq.setActiveStartDate(model.getActiveStartDate());
+        programPostReq.setActiveEndDate(model.getActiveEndDate());
+        programPostReq.setContact(model.getContact());
+        programPostReq.setContactPhone(model.getContactPhone());
+        programPostReq.setLink(model.getLink());
+        programPostReq.setHashtag(model.getHashtag());
+        programPostReq.setBody(model.getBody());
+
+
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.postTempProgram(programPostReq, principal.getName())));
     }
 
     @Operation(summary = "프로그램 임시저장", description = """

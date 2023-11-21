@@ -9,6 +9,8 @@ public interface ManagerService {
 
     Long postProgram(ProgramPostReq programPostReq,String username);
 
+    Long editProgram(ProgramPostReq programPostReq,String username);
+
     Long postTempProgram(ProgramPostReq programPostReq,String username);
 
     ProgramPostReq getTempProgram(String username);

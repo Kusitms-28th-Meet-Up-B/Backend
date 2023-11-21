@@ -116,6 +116,20 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    public Long editProgram(ProgramPostReq programPostReq ,String username) {
+        User user = userRepository.findById(Long.valueOf(username)).get();
+        Program tempProgram = programRespository.findById(programPostReq.getProgramId()).orElse(null);
+        if(user.getId() != tempProgram.getUser().getId()) {
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+
+        Program saveProgram = this.getProgramEntity(tempProgram,programPostReq);
+        saveProgram.setStatus(Program.ProgramStatus.SAVE);
+        Program programId = programRespository.save(saveProgram);
+        return programId.getId();
+    }
+
+    @Override
     public Long postTempProgram(ProgramPostReq programPostReq , String username) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
