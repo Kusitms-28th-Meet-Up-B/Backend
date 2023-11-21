@@ -29,7 +29,7 @@ public class AuthenticationService {
     @Autowired
     private UserRepository userRepository;
 
-    public User login(LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
+    public LoginResponse login(LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
         // 사용자 정보 조회
         User user = userRepository.findByLoginIdAndLoginPw(loginRequestDto.getLoginId(), loginRequestDto.getLoginPw())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -45,7 +45,22 @@ public class AuthenticationService {
         AuthUtil.setRefreshTokenCookie(httpServletResponse, user.getRefreshToken());
 
         // 로그인 응답 생성 및 반환
-        return user;
+        return LoginResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .loginId(user.getLoginId())
+                .imageUrl(user.getProfileImageUrl())
+                .nickName(user.getNickName())
+                .phoneNumber(user.getPhoneNumber())
+                .name(user.getName())
+                .accessToken(accessToken)
+                .birth(user.getBirth())
+                .registrationNum(user.getRegistrationNum())
+                .point(user.getPoint())
+                .department(user.getDepartment())
+                .refreshToken(user.getRefreshToken())
+                .role(user.getRole().toString())
+                .build();
 
     }
 

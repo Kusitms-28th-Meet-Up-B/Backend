@@ -31,7 +31,7 @@ public class AuthenticationController {
 
     // 로그인 요청을 처리하는 메서드
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<User>> login(
+    public ResponseEntity<BaseResponse<LoginResponse>> login(
             @Parameter(description = "아이디", example = "아이")
             @RequestParam(value = "loginId", required = true)
             String loginId,
