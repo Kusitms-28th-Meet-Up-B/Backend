@@ -85,7 +85,7 @@ public class ArchiveService {
         if(archive.getFileUrl() != null ){
             s3Service.deleteFile(archive.getFileUrl());
         }
-        archiveRepository.delete(archive);
+        archiveRepository.deleteById(archiveId);
     }
 
     public Long editArchive(ArchiveEditReq archiveEditReq) {

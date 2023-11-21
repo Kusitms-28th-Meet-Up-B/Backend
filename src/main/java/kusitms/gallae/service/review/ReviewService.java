@@ -121,7 +121,7 @@ public class ReviewService {
         if(review.getFileUrl() != null ){
             s3Service.deleteFile(review.getFileUrl());
         }
-        reviewRepository.delete(review);
+        reviewRepository.deleteById(reviewId);
     }
 
     public ReviewDetailRes checkReviewEditable(Long reviewId, String username) {
