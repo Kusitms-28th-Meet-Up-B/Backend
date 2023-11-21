@@ -55,6 +55,7 @@ public class AuthenticationService {
                 .name(user.getName())
                 .accessToken(accessToken)
                 .refreshToken(user.getRefreshToken())
+                .role(user.getRole().toString())
                 .build();
 
     }

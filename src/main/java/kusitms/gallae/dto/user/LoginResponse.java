@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class LoginResponse {
     private Long id;
-
+    private String role;
     private String loginId;
     private String nickName;
     private String email;
@@ -21,7 +21,7 @@ public class LoginResponse {
     private String refreshToken;
 
     @Builder
-    public LoginResponse(Long id, String name,String loginId, String phoneNumber, String nickName, String email, String imageUrl, String accessToken, String refreshToken) {
+    public LoginResponse(Long id, String name,String loginId, String phoneNumber, String nickName, String email, String imageUrl, String accessToken, String refreshToken,  String role) {
         this.id = id;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
@@ -31,6 +31,7 @@ public class LoginResponse {
         this.imageUrl = imageUrl;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.role = role;
     }
 
 }
