@@ -1,5 +1,6 @@
 package kusitms.gallae.service.review;
 
+import jakarta.persistence.EntityNotFoundException;
 import kusitms.gallae.domain.Review;
 
 import kusitms.gallae.domain.User;
@@ -114,8 +115,9 @@ public class ReviewService {
 
     public ReviewDetailRes updateReview(Long reviewId, ReviewModel reviewModel, String currentLoginId) {
         Review existingReview = findReviewById(reviewId);
-        User user = userRepository.findById(Long.valueOf(currentLoginId)).orElse(null);
-        //.orElseThrow(() -> new EntityNotFoundException("ID가 " + currentLoginId + "인 사용자를 찾을 수 없습니다."));
+        User user = userRepository.findById(Long.valueOf(currentLoginId))
+                .orElse(null);
+               // .orElseThrow(() -> new EntityNotFoundException("ID가 " + currentLoginId + "인 사용자를 찾을 수 없습니다."));
         if (!existingReview.getUser().getId().equals(user.getId())) {
             throw new AccessDeniedException("이 리뷰를 수정할 권한이 없습니다.");
         }

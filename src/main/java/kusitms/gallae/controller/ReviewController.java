@@ -137,12 +137,7 @@ public class ReviewController {
             Principal principal) {
 
         String currentLoginId = principal.getName();
-        Review existingReview = reviewService.findReviewById(reviewId);
-        if (!existingReview.getUser().getLoginId().equals(currentLoginId)) {
-            BaseResponseStatus status = BaseResponseStatus.FORBIDDEN;
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponse<>(status));
-        }
-        ReviewDetailRes reviewDetail  = reviewService.getReviewById(reviewId, principal.getName());
+        ReviewDetailRes reviewDetail = reviewService.updateReview(reviewId, reviewModel, currentLoginId);
         return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
     }
 
