@@ -119,7 +119,7 @@ public class ReviewController {
 
     @Operation(summary = "지원후기 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")
-    public ResponseEntity<BaseResponse<List<ReviewDtoRes>>> getAllReviewsSortedByLikes(
+    public ResponseEntity<BaseResponse<ReviewPageRes>> getAllReviewsSortedByLikes(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
 
@@ -128,14 +128,12 @@ public class ReviewController {
         List<ReviewDtoRes> reviewDtos = reviewPage.getContent().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-        BaseResponse<List<ReviewDtoRes>> response = new BaseResponse<>(
-                true,
-                "Success",
-                reviewPage.getNumber(),
-                reviewDtos
-        );
 
-        return ResponseEntity.ok(response);
+        ReviewPageRes reviewPageRes = new ReviewPageRes();
+        reviewPageRes.setReviews(reviewDtos);
+        reviewPageRes.setTotalSize(reviewPage.getTotalPages());
+
+        return ResponseEntity.ok(new BaseResponse<>(reviewPageRes));
     }
 
     // Review 엔티티를 ReviewDtoRes로 변환하는 메소드

@@ -116,7 +116,7 @@ public class ArchiveController {
 
     @Operation(summary = "자료실 좋아요순으로 게시판 내용들 가져오기")
     @GetMapping("/sorted/likes")
-    public ResponseEntity<BaseResponse<List<ArchiveDtoRes>>> getAllReviewsSortedByLikes(
+    public ResponseEntity<BaseResponse<ArchivePageRes>> getAllReviewsSortedByLikes(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
 
@@ -125,14 +125,10 @@ public class ArchiveController {
         List<ArchiveDtoRes> archiveDtos = archivePage.getContent().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-        BaseResponse<List<ArchiveDtoRes>> response = new BaseResponse<>(
-                true,
-                "Success",
-                archivePage.getNumber(),
-                archiveDtos
-        );
-
-        return ResponseEntity.ok(response);
+        ArchivePageRes archivePageRes = new ArchivePageRes();
+        archivePageRes.setArchives(archiveDtos);
+        archivePageRes.setTotalSize(archivePage.getTotalPages());
+        return ResponseEntity.ok(new BaseResponse<>(archivePageRes));
     }
 
     // Review 엔티티를 ReviewDtoRes로 변환하는 메소드
