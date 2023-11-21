@@ -8,9 +8,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.Review;
-import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.review.*;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.review.ReviewService;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,11 +93,11 @@ public class ReviewController {
 
     }
 
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
-        ReviewDetailRes reviewDetail = reviewService.getReviewById(id);
-        return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
-    }
+//    @GetMapping("/{id}/detail")
+//    public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(@PathVariable Long id) {
+//        ReviewDetailRes reviewDetail = reviewService.getReviewById(id, principal.getName());
+//        return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+//    }
 
     @GetMapping("/sorted/likes")
     public ResponseEntity<BaseResponse<List<ReviewDtoRes>>> getAllReviewsSortedByLikes(
@@ -130,5 +129,22 @@ public class ReviewController {
         dto.setCreatedDate(review.getCreatedAt());
         return dto;
     }
+
+    @PutMapping("/update/{reviewId}")
+    public ResponseEntity<BaseResponse<ReviewDetailRes>> updateReview(
+            @PathVariable Long reviewId,
+            @ModelAttribute ReviewModel reviewModel,
+            Principal principal) {
+
+        String currentLoginId = principal.getName();
+        Review existingReview = reviewService.findReviewById(reviewId);
+        if (!existingReview.getUser().getLoginId().equals(currentLoginId)) {
+            BaseResponseStatus status = BaseResponseStatus.FORBIDDEN;
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BaseResponse<>(status));
+        }
+        ReviewDetailRes reviewDetail  = reviewService.getReviewById(reviewId, principal.getName());
+        return ResponseEntity.ok(new BaseResponse<>(reviewDetail));
+    }
+
 
 }

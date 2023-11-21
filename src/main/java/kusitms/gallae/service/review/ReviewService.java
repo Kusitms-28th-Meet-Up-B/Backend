@@ -1,13 +1,11 @@
 package kusitms.gallae.service.review;
+
 import kusitms.gallae.domain.Review;
 
 import kusitms.gallae.domain.User;
-import kusitms.gallae.dto.review.ReviewDetailRes;
-import kusitms.gallae.dto.review.ReviewDtoRes;
-import kusitms.gallae.dto.review.ReviewPageRes;
-import kusitms.gallae.dto.review.ReviewPostReq;
+import kusitms.gallae.dto.review.*;
 import kusitms.gallae.repository.review.ReviewRepository;
-
+import org.springframework.security.access.AccessDeniedException;
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
 import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +65,7 @@ public class ReviewService {
     }
 
 
-    public ReviewDetailRes getReviewById(Long id) {
+    public ReviewDetailRes getReviewById(Long id, String name) {
         return reviewRepository.findById(id)
                 .map(review -> {
                     ReviewDetailRes detailRes = new ReviewDetailRes();
@@ -108,4 +106,45 @@ public class ReviewService {
     public Page<Review> getAllReviewsSortedByLikes(Pageable pageable) {
         return reviewRepository.findAllByOrderByLikesDesc(pageable);
     }
+
+    public Review findReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElse(null);
+    }
+
+    public ReviewDetailRes updateReview(Long reviewId, ReviewModel reviewModel, String currentLoginId) {
+        Review existingReview = findReviewById(reviewId);
+        User user = userRepository.findById(Long.valueOf(currentLoginId)).orElse(null);
+        //.orElseThrow(() -> new EntityNotFoundException("ID가 " + currentLoginId + "인 사용자를 찾을 수 없습니다."));
+        if (!existingReview.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("이 리뷰를 수정할 권한이 없습니다.");
+        }
+        existingReview.setTitle(reviewModel.getTitle());
+        existingReview.setBody(reviewModel.getBody());
+        existingReview.setHashtag(reviewModel.getHashTags());
+        reviewRepository.save(existingReview);
+
+        return convertToReviewDetailRes(existingReview);
+    }
+
+    private ReviewDetailRes convertToReviewDetailRes(Review review) {
+        ReviewDetailRes detailRes = new ReviewDetailRes();
+
+        detailRes.setId(review.getId());
+        detailRes.setCategory(review.getCategory());
+        detailRes.setTitle(review.getTitle());
+        detailRes.setWriter(review.getWriter());
+        detailRes.setFileName(review.getFileName());
+        detailRes.setFileUrl(review.getFileUrl());
+        detailRes.setHashtag(review.getHashtag());
+        detailRes.setBody(review.getBody());
+        detailRes.setCreatedDate(review.getCreatedAt());
+        Long prevId = getPreviousReviewId(review.getId());
+        Long nextId = getNextReviewId(review.getId());
+        detailRes.setPreviousId(prevId);
+        detailRes.setNextId(nextId);
+
+        return detailRes;
+    }
+
 }
