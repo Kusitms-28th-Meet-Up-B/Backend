@@ -1,6 +1,7 @@
 package kusitms.gallae.service.user;
 
 import kusitms.gallae.domain.Archive;
+import kusitms.gallae.domain.Point;
 import kusitms.gallae.domain.Review;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.ManagerRegistratiorDto;
@@ -9,6 +10,7 @@ import kusitms.gallae.dto.user.UserPostsPageRes;
 import kusitms.gallae.dto.user.UserRegistrationDto;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.repository.archive.ArchiveRepository;
+import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.review.ReviewRepository;
 import kusitms.gallae.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,6 +39,9 @@ public class UserService {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private PointRepository pointRepository;
 
     private final ArchiveRepository archiveRepository;
     private final ReviewRepository reviewRepository;
@@ -67,7 +74,17 @@ public class UserService {
                 .point(100L)
                 .build();
 
+        newUser.setPoint(100L);
         userRepository.save(newUser);
+        Point point = new Point();
+        point.setDate(LocalDate.now());
+        point.setPointCategory("적립");
+        point.setPointActivity("회원가입");
+        point.setTime(LocalTime.now());
+        point.setPointScore(100);
+        point.setUser(newUser);
+        pointRepository.save(point);
+
 
     }
 
@@ -92,7 +109,17 @@ public class UserService {
                 .point(100L)
                 .build();
 
+        newUser.setPoint(100L);
         userRepository.save(newUser);
+        Point point = new Point();
+        point.setDate(LocalDate.now());
+        point.setPointCategory("적립");
+        point.setPointActivity("회원가입");
+        point.setTime(LocalTime.now());
+        point.setPointScore(100);
+        point.setUser(newUser);
+        pointRepository.save(point);
+
     }
 
     public Boolean checkDuplicateLoginId(String loginId) {
