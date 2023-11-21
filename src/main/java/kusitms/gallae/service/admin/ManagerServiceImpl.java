@@ -5,6 +5,8 @@ import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.model.PostModel;
+import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.global.S3Service;
@@ -39,26 +41,28 @@ public class ManagerServiceImpl implements ManagerService {
 
 
     @Override
-    public ProgramDetailRes getProgramDetail(Long id){
+    public PostModelGet getProgramDetail(Long id){
         Program program = programRespository.findById(id).orElse(null);
         if(program == null) {
             throw new BaseException(BaseResponseStatus.BAD_REQUEST);
         }else{
-            ProgramDetailRes programDetailRes = new ProgramDetailRes();
-            programDetailRes.setId(program.getId());
-            programDetailRes.setProgramName(program.getProgramName());
-            programDetailRes.setProgramLink(program.getProgramLink());
-            programDetailRes.setContact(program.getContact());
-            programDetailRes.setContactNumber(program.getContactNumber());
-            programDetailRes.setDescription(program.getDescription());
-            programDetailRes.setLocation(program.getLocation());
-            programDetailRes.setActiveStartDate(program.getActiveStartDate());
-            programDetailRes.setActiveEndDate(program.getActiveEndDate());
-            programDetailRes.setRecruitStartDate(program.getRecruitStartDate());
-            programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
-            programDetailRes.setTripStartDate(program.getTripStartDate());
-            programDetailRes.setTripEndDate(program.getTripEndDate());
-            return programDetailRes;
+            PostModelGet postModel = new PostModelGet();
+            postModel.setProgramName(program.getProgramName());
+            postModel.setLocation(program.getLocation());
+            postModel.setProgramType(program.getProgramType());
+            postModel.setProgramDetailType(program.getDetailType());
+            postModel.setRecruitStartDate(program.getRecruitStartDate());
+            postModel.setRecruitEndDate(program.getRecruitEndDate());
+            postModel.setActiveStartDate(program.getActiveStartDate());
+            postModel.setActiveEndDate(program.getActiveEndDate());
+            postModel.setContact(program.getContact());
+            postModel.setContactPhone(program.getContactNumber());
+            postModel.setLink(program.getProgramLink());
+            postModel.setHashtag(program.getHashTags());
+            postModel.setBody(program.getDescription());
+            postModel.setPhoto(program.getPhotoUrl());
+
+            return postModel;
         }
     }
 

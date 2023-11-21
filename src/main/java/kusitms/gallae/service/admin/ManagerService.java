@@ -1,5 +1,7 @@
 package kusitms.gallae.service.admin;
 
+import kusitms.gallae.dto.model.PostModel;
+import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.*;
 
 public interface ManagerService {
@@ -11,7 +13,7 @@ public interface ManagerService {
 
     ProgramPostReq getTempProgram(String username);
 
-    ProgramDetailRes getProgramDetail(Long id);
+    PostModelGet getProgramDetail(Long id);
 
     ProgramPageMangagerRes getManagerPrograms(ProgramManagerReq programManagerReq, String username);
 

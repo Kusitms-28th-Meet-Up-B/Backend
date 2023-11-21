@@ -9,6 +9,7 @@ import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.dto.model.PostModel;
+import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.ProgramDetailRes;
 import kusitms.gallae.dto.program.ProgramManagerReq;
 import kusitms.gallae.dto.program.ProgramPageMangagerRes;
@@ -120,7 +121,7 @@ public class ManagerController {
             postProgram으로 저장하시면 됩니다. 
             """)
     @GetMapping("/program")
-    public ResponseEntity<BaseResponse<ProgramDetailRes>> findProgramDetail(
+    public ResponseEntity<BaseResponse<PostModelGet>> findProgramDetail(
             @Parameter(description = "프로그램 ID")
             @RequestParam(value = "id", required = true) Long id
     ){
