@@ -229,7 +229,7 @@ public class ManagerController {
         programPostReq.setBody(model.getBody());
 
 
-        return ResponseEntity.ok(new BaseResponse<>(this.managerService.postTempProgram(programPostReq, principal.getName())));
+        return ResponseEntity.ok(new BaseResponse<>(this.managerService.editProgram(programPostReq, principal.getName())));
     }
 
     @Operation(summary = "프로그램 임시저장", description = """
