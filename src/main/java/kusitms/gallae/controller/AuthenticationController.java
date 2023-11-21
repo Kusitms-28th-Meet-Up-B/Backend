@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.LoginRequestDto;
 import kusitms.gallae.dto.user.LoginResponse;
 import kusitms.gallae.dto.user.RenewTokenResponse;
@@ -30,7 +31,7 @@ public class AuthenticationController {
 
     // 로그인 요청을 처리하는 메서드
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<LoginResponse>> login(
+    public ResponseEntity<BaseResponse<User>> login(
             @Parameter(description = "아이디", example = "아이")
             @RequestParam(value = "loginId", required = true)
             String loginId,
