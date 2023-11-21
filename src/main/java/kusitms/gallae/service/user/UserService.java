@@ -80,7 +80,7 @@ public class UserService {
         point.setDate(LocalDate.now());
         point.setPointCategory("적립");
         point.setPointActivity("회원가입");
-        point.setTime(LocalTime.now());
+        point.setTime(LocalTime.now().plusHours(9));
         point.setPointScore(100);
         point.setUser(newUser);
         pointRepository.save(point);
@@ -115,7 +115,7 @@ public class UserService {
         point.setDate(LocalDate.now());
         point.setPointCategory("적립");
         point.setPointActivity("회원가입");
-        point.setTime(LocalTime.now());
+        point.setTime(LocalTime.now().plusHours(9));
         point.setPointScore(100);
         point.setUser(newUser);
         pointRepository.save(point);
