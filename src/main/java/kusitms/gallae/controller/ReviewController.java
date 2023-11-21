@@ -185,8 +185,8 @@ public class ReviewController {
               "message": "작성자가 아닙니다."\n
             }
             """)
-    @DeleteMapping("/delete")
-    public ResponseEntity<BaseResponse> delArchive(
+    @DeleteMapping("/delReview")
+    public ResponseEntity<BaseResponse> delReview(
             Principal principal,
 
             @Parameter(description = "후기 아이디")

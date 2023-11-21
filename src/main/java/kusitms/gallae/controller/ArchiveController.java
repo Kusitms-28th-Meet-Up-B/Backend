@@ -99,7 +99,7 @@ public class ArchiveController {
               "message": "작성자가 아닙니다."\n
             }
             """)
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delArchive")
     public ResponseEntity<BaseResponse> delArchive(
             Principal principal,
 
