@@ -5,7 +5,7 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "favoriteArchive")
+@Table(name = "userArchive")
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)

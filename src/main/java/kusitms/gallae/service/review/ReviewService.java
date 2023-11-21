@@ -5,6 +5,7 @@ import kusitms.gallae.domain.Point;
 import kusitms.gallae.domain.Review;
 
 import kusitms.gallae.domain.User;
+import kusitms.gallae.domain.UserReview;
 import kusitms.gallae.dto.review.ReviewDetailRes;
 import kusitms.gallae.dto.review.ReviewDtoRes;
 import kusitms.gallae.dto.review.ReviewPageRes;
@@ -15,6 +16,7 @@ import kusitms.gallae.repository.review.ReviewRepository;
 
 import kusitms.gallae.repository.review.ReviewRepositoryCustom;
 import kusitms.gallae.repository.user.UserRepository;
+import kusitms.gallae.repository.userReview.UserReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +44,9 @@ public class ReviewService {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @Autowired
+    private UserReviewRepository userReviewRepository;
 
 
     public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
@@ -98,7 +103,7 @@ public class ReviewService {
         User user = userRepository.findById(Long.valueOf(username)).orElse(null);
         if(user.getPoint()<10) throw new BaseException(BaseResponseStatus.POINT_TRIBE);
         Review review = reviewRepository.findById(reviewId).orElse(null);
-        if(review.getUser().getId() != user.getId()) {
+        if(review.getUser().getId() != user.getId() && !userReviewRepository.existsByUserAndReview(user,review)) {
             //포인트 적립
             Point point = new Point();
             point.setDate(LocalDate.now());
@@ -110,6 +115,10 @@ public class ReviewService {
             pointRepository.save(point);
             user.setPoint(user.getPoint() - 10);
             userRepository.save(user);
+            UserReview userReview = new UserReview();
+            userReview.setUser(user);
+            userReview.setReview(review);
+            userReviewRepository.save(userReview);
         }
         return convertReview(review,user);
     }

@@ -3,10 +3,7 @@ package kusitms.gallae.service.archive;
 
 import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.domain.Archive;
-import kusitms.gallae.domain.Point;
-import kusitms.gallae.domain.Review;
-import kusitms.gallae.domain.User;
+import kusitms.gallae.domain.*;
 import kusitms.gallae.dto.archive.ArchiveDetailRes;
 import kusitms.gallae.dto.archive.ArchiveDtoRes;
 import kusitms.gallae.dto.archive.ArchivePageRes;
@@ -16,6 +13,7 @@ import kusitms.gallae.repository.archive.ArchiveRespositoryCustom;
 import kusitms.gallae.repository.favoriteArchiveRepository.FavoriteArchiveRepository;
 import kusitms.gallae.repository.point.PointRepository;
 import kusitms.gallae.repository.user.UserRepository;
+import kusitms.gallae.repository.userArchive.UserArchiveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +41,9 @@ public class ArchiveService {
 
     @Autowired
     private PointRepository pointRepository;
+
+    @Autowired
+    private UserArchiveRepository userArchiveRepository;
 
     public ArchivePageRes getArchivesByCategory(String category, Pageable pageable) {
         Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,pageable);
@@ -96,7 +97,7 @@ public class ArchiveService {
         User user = userRepository.findById(Long.valueOf(username)).orElse(null);
         if(user.getPoint() < 15 ) throw new BaseException(BaseResponseStatus.POINT_TRIBE);
         Archive archive = archiveRepository.findById(archiveId).orElse(null);
-        if(archive.getUser().getId() != user.getId()) {
+        if(archive.getUser().getId() != user.getId() && !userArchiveRepository.existsByUserAndArchive(user,archive)) {
             //포인트 적립
             Point point = new Point();
             point.setDate(LocalDate.now());
@@ -108,6 +109,11 @@ public class ArchiveService {
             pointRepository.save(point);
             user.setPoint(user.getPoint() - 15);
             userRepository.save(user);
+
+            UserArchive userArchive = new UserArchive();
+            userArchive.setUser(user);
+            userArchive.setArchive(archive);
+            userArchiveRepository.save(userArchive);
         }
 
         return convertArchive(archive,user);

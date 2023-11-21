@@ -102,7 +102,8 @@ public class ReviewController {
             이 반환합니다. 
             \n
             로그인한 유저는 포인트 10포인트 차감되고 포인트 컬럼 생성됩니다.\n
-            *주의* 지원후기 작성한 유저가 열람 할때는 포인트 차감이 되지 않습니다.
+            *주의* 지원후기 작성한 유저가 열람 할때는 포인트 차감이 되지 않습니다.\n
+            이미 열랆한 자료실을 열어도 포인트 차감이 안됩니다.
             """)
     @GetMapping("/detail")
     public ResponseEntity<BaseResponse<ReviewDetailRes>> getReviewDetail(
