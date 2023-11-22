@@ -55,7 +55,7 @@ public class AuthenticationService {
                 .name(user.getName())
                 .accessToken(accessToken)
                 .birth(user.getBirth())
-                .registrationNum(user.getRegistrationNum())
+                .registNum(user.getRegistrationNum())
                 .point(user.getPoint())
                 .department(user.getDepartment())
                 .refreshToken(user.getRefreshToken())
