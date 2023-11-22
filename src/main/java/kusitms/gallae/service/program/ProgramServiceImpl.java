@@ -172,6 +172,8 @@ public class ProgramServiceImpl implements ProgramService {
                     program.getRecruitEndDate().getMonth(),program.getRecruitEndDate().getDayOfMonth());
             String strRemainDay = DurationCalcurator.getDuration(localDate);
             programMainRes.setRemainDay(strRemainDay);
+            programMainRes.setLatitude(program.getLatitude());
+            programMainRes.setLongitude(program.getLongitude());
             programMainRes.setRecruitStartDate(program.getRecruitStartDate());
             programMainRes.setRecruitEndDate(program.getRecruitEndDate());
             programMainRes.setHashTag(Arrays.stream(program.getHashTags().split(","))
