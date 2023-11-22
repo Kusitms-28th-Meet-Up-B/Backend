@@ -50,8 +50,8 @@ public class ReviewService {
     private S3Service s3Service;
 
 
-    public ReviewPageRes getReviewsByCategory(String category, Pageable pageable) {
-        Page<Review> reviews = reviewRepositoryCustom.findReviewDynamicCategory(category,pageable);
+    public ReviewPageRes getReviewsByCategoryAndTitle(String category,String title, Pageable pageable) {
+        Page<Review> reviews = reviewRepositoryCustom.findReviewDynamicCategory(category, title, pageable);
         List<ReviewDtoRes> reviewDtos = reviews.getContent().stream()
                 .map(review -> {
                     ReviewDtoRes reviewDtoRes =new ReviewDtoRes();
