@@ -51,6 +51,9 @@ public class ReviewController {
             @RequestParam(value = "category", required = false)
             String category,
 
+            @Parameter(description = "타이틀 검색")
+            @RequestParam(value = "title", required = false) String title,
+
             @Parameter(description = "페이지 번호")
             @Positive(message = "must be greater than 0")
             @RequestParam(value = "page", defaultValue = "0")
@@ -61,9 +64,9 @@ public class ReviewController {
             @Max(value = 100, message = "must be less than or equal to 100")
             @RequestParam(value = "size", defaultValue = "20")
             Integer pagingSize){
-
-        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.reviewService.getReviewsByCategory(category,pageRequest)));
+        PageRequest pageRequest = PageRequest.of(pageNumber, pagingSize);
+         ReviewPageRes reviewPageRes = reviewService.getReviewsByCategoryAndTitle(category, title, pageRequest);
+        return ResponseEntity.ok(new BaseResponse<>(reviewPageRes));
     }
 
     @PostMapping("/saveReview")

@@ -37,10 +37,11 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
     }
 
     @Override
-    public Page<Review> findReviewDynamicCategory(String category, Pageable pageable) {
-        List<Review> reviews = this.jpaQueryFactory
+    public Page<Review> findReviewDynamicCategory(String category, String title, Pageable pageable) {
+        BooleanBuilder condition = createReviewCondition(category, title);
+        List<Review> reviews = jpaQueryFactory
                 .selectFrom(review)
-                .where(createReviewCondition(category))
+                .where(condition)
                 .orderBy(new OrderSpecifier<>(Order.DESC,review.createdAt))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -49,16 +50,19 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
         Long totalSize = this.jpaQueryFactory
                 .select(Wildcard.count)
                 .from(review)
-                .where(createReviewCondition(category))
+                .where(condition)
                 .fetchOne();
         return new PageImpl<>(reviews, pageable, Objects.requireNonNull(totalSize));
     }
 
-    private BooleanBuilder createReviewCondition(String category) {
+    private BooleanBuilder createReviewCondition(String category, String title) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if(category != null) {
             booleanBuilder.and(review.category.eq(category));
+        }
+        if (title != null && !title.trim().isEmpty()) {
+            booleanBuilder.and(review.title.contains(title));
         }
 
         return booleanBuilder;
