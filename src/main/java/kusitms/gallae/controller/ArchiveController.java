@@ -7,10 +7,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
-import kusitms.gallae.dto.archive.ArchiveDetailRes;
-import kusitms.gallae.dto.archive.ArchiveModel;
-import kusitms.gallae.dto.archive.ArchivePageRes;
-import kusitms.gallae.dto.archive.ArchivePostReq;
+import kusitms.gallae.domain.Archive;
+import kusitms.gallae.dto.archive.*;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +41,9 @@ public class ArchiveController {
             @RequestParam(value = "category", required = false)
             String category,
 
+            @Parameter(description = "타이틀 검색")
+            @RequestParam(value = "title", required = false) String title,
+
             @Parameter(description = "페이지 번호")
             @Positive(message = "must be greater than 0")
             @RequestParam(value = "page", defaultValue = "0")
@@ -53,8 +55,9 @@ public class ArchiveController {
             @RequestParam(value = "size", defaultValue = "20")
             Integer pagingSize){
 
-        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.archiveService.getArchivesByCategory(category,pageRequest)));
+        PageRequest pageRequest = PageRequest.of(pageNumber, pagingSize);
+        ArchivePageRes archivePageRes = archiveService.getArchivesByCategoryAndTitle(category, title, pageRequest);
+        return ResponseEntity.ok(new BaseResponse<>(archivePageRes));
     }
 
     @PostMapping("/saveArchive")
@@ -91,6 +94,7 @@ public class ArchiveController {
 
         }
     }
+
 
 }
 

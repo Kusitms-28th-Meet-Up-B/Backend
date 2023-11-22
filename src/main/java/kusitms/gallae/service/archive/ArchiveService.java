@@ -31,8 +31,8 @@ public class ArchiveService {
     private UserRepository userRepository;
 
 
-    public ArchivePageRes getArchivesByCategory(String category, Pageable pageable) {
-        Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,pageable);
+    public ArchivePageRes getArchivesByCategoryAndTitle(String category, String title, Pageable pageable) {
+        Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,title, pageable);
         List<ArchiveDtoRes> archiveDtos = archives.getContent().stream()
                 .map(archive -> {
                     ArchiveDtoRes archiveDtoRes =new ArchiveDtoRes();

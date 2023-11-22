@@ -7,6 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface ArchiveRespositoryCustom {
 
-    Page<Archive> findArchiveDynamicCategory(String category, Pageable pageable);
+    Page<Archive> findArchiveDynamicCategory(String category, String title, Pageable pageable);
 
 }
