@@ -7,6 +7,7 @@ import kusitms.gallae.domain.*;
 import kusitms.gallae.dto.archive.*;
 import kusitms.gallae.dto.review.ReviewEditReq;
 import kusitms.gallae.global.S3Service;
+
 import kusitms.gallae.repository.archive.ArchiveRepository;
 import kusitms.gallae.repository.archive.ArchiveRespositoryCustom;
 import kusitms.gallae.repository.favoriteArchiveRepository.FavoriteArchiveRepository;
@@ -50,8 +51,8 @@ public class ArchiveService {
     @Autowired
     private S3Service s3Service;
 
-    public ArchivePageRes getArchivesByCategory(String category, Pageable pageable) {
-        Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,pageable);
+    public ArchivePageRes getArchivesByCategoryAndTitle(String category, String title, Pageable pageable) {
+        Page<Archive> archives = archiveRespositoryCustom.findArchiveDynamicCategory(category,title, pageable);
         List<ArchiveDtoRes> archiveDtos = archives.getContent().stream()
                 .map(archive -> {
                     ArchiveDtoRes archiveDtoRes =new ArchiveDtoRes();
@@ -175,6 +176,7 @@ public class ArchiveService {
                 .map(Archive::getId)
                 .orElse(null);
     }
+
 
     public Page<Archive> getAllArchivesSortedByLikes(Pageable pageable) {
         return archiveRepository.findAllByOrderByLikesDesc(pageable);

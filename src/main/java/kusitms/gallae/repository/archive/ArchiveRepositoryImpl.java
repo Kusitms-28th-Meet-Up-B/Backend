@@ -27,29 +27,36 @@ public class ArchiveRepositoryImpl implements ArchiveRespositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
 
+
     @Override
-    public Page<Archive> findArchiveDynamicCategory(String category, Pageable pageable) {
-        List<Archive> archives = this.jpaQueryFactory
+    public Page<Archive> findArchiveDynamicCategory(String category, String title, Pageable pageable) {
+        BooleanBuilder condition = createArchiveCondition(category, title);
+
+        List<Archive> archives = jpaQueryFactory
                 .selectFrom(archive)
-                .where(createArchiveCondition(category))
-                .orderBy(new OrderSpecifier<>(Order.DESC,archive.createdAt))
+                .where(condition)
+                .orderBy(new OrderSpecifier<>(Order.DESC, archive.createdAt))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long totalSize = this.jpaQueryFactory
+        Long totalSize = jpaQueryFactory
                 .select(Wildcard.count)
                 .from(archive)
-                .where(createArchiveCondition(category))
+                .where(condition)
                 .fetchOne();
+
         return new PageImpl<>(archives, pageable, Objects.requireNonNull(totalSize));
     }
 
-    private BooleanBuilder createArchiveCondition(String category) {
+    private BooleanBuilder createArchiveCondition(String category, String title) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        if(category != null) {
+        if (category != null) {
             booleanBuilder.and(archive.category.eq(category));
+        }
+        if (title != null && !title.trim().isEmpty()) {
+            booleanBuilder.and(archive.title.contains(title));
         }
 
         return booleanBuilder;

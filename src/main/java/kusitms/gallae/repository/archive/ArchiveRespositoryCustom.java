@@ -11,6 +11,6 @@ import java.util.Optional;
 
 public interface ArchiveRespositoryCustom {
 
-    Page<Archive> findArchiveDynamicCategory(String category, Pageable pageable);
+    Page<Archive> findArchiveDynamicCategory(String category, String title, Pageable pageable);
 
 }

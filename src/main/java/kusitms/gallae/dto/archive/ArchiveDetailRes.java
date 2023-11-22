@@ -18,6 +18,7 @@ public class ArchiveDetailRes {
 
     private String hashtag;
     private String body;
+
     private Long previousId;
     private Long nextId;
 

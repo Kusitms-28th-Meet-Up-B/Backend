@@ -9,11 +9,8 @@ import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Archive;
-import kusitms.gallae.domain.Review;
+
 import kusitms.gallae.dto.archive.*;
-import kusitms.gallae.dto.review.ReviewDtoRes;
-import kusitms.gallae.dto.review.ReviewEditModel;
-import kusitms.gallae.dto.review.ReviewEditReq;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.service.archive.ArchiveService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +48,9 @@ public class ArchiveController {
             @RequestParam(value = "category", required = false)
             String category,
 
+            @Parameter(description = "타이틀 검색")
+            @RequestParam(value = "title", required = false) String title,
+
             @Parameter(description = "페이지 번호")
             @Positive(message = "must be greater than 0")
             @RequestParam(value = "page", defaultValue = "0")
@@ -60,8 +62,9 @@ public class ArchiveController {
             @RequestParam(value = "size", defaultValue = "20")
             Integer pagingSize){
 
-        PageRequest pageRequest = PageRequest.of(pageNumber,pagingSize);
-        return ResponseEntity.ok(new BaseResponse<>(this.archiveService.getArchivesByCategory(category,pageRequest)));
+        PageRequest pageRequest = PageRequest.of(pageNumber, pagingSize);
+        ArchivePageRes archivePageRes = archiveService.getArchivesByCategoryAndTitle(category, title, pageRequest);
+        return ResponseEntity.ok(new BaseResponse<>(archivePageRes));
     }
 
     @Operation(summary = "편집 버튼 눌렀을 때 사용자와 일치하는지 체크 및 정보 반환", description = """
@@ -168,6 +171,7 @@ public class ArchiveController {
         return ResponseEntity.ok(new BaseResponse<>(archiveService.editArchive(archiveEditReq)));
 
     }
+
     @Operation(summary = "자료실 정보 가져오기", description = """
             포인트가 부족하면
             \n
@@ -224,6 +228,7 @@ public class ArchiveController {
         dto.setWriter(archive.getWriter());
         dto.setCreatedDate(archive.getCreatedAt());
         return dto;
+
     }
 
 
