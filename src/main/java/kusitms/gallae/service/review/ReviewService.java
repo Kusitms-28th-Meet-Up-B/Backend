@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,11 +87,14 @@ public class ReviewService {
         Review saveReview = reviewRepository.save(review);
 
         //포인트 적립
+        LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localDate = dateTime.toLocalDate();
+        LocalTime localTime = dateTime.toLocalTime();
         Point point = new Point();
-        point.setDate(LocalDate.now());
+        point.setDate(localDate);
         point.setPointCategory("적립");
         point.setPointActivity("후기 작성");
-        point.setTime(LocalTime.now());
+        point.setTime(localTime);
         point.setPointScore(20);
         point.setUser(user);
         pointRepository.save(point);
@@ -145,11 +149,14 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId).orElse(null);
         if(review.getUser().getId() != user.getId() && !userReviewRepository.existsByUserAndReview(user,review)) {
             //포인트 적립
+            LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+            LocalDate localDate = dateTime.toLocalDate();
+            LocalTime localTime = dateTime.toLocalTime();
             Point point = new Point();
-            point.setDate(LocalDate.now());
+            point.setDate(localDate);
             point.setPointCategory("사용");
             point.setPointActivity("후기 열람");
-            point.setTime(LocalTime.now());
+            point.setTime(localTime);
             point.setPointScore(-10);
             point.setUser(user);
             pointRepository.save(point);

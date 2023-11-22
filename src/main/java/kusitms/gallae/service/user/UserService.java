@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -76,11 +77,14 @@ public class UserService {
 
         newUser.setPoint(100L);
         userRepository.save(newUser);
+        LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localDate = dateTime.toLocalDate();
+        LocalTime localTime = dateTime.toLocalTime();
         Point point = new Point();
-        point.setDate(LocalDate.now());
+        point.setDate(localDate);
         point.setPointCategory("적립");
         point.setPointActivity("회원가입");
-        point.setTime(LocalTime.now());
+        point.setTime(localTime);
         point.setPointScore(100);
         point.setUser(newUser);
         pointRepository.save(point);
@@ -111,11 +115,14 @@ public class UserService {
 
         newUser.setPoint(100L);
         userRepository.save(newUser);
+        LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localDate = dateTime.toLocalDate();
+        LocalTime localTime = dateTime.toLocalTime();
         Point point = new Point();
-        point.setDate(LocalDate.now());
+        point.setDate(localDate);
         point.setPointCategory("적립");
         point.setPointActivity("회원가입");
-        point.setTime(LocalTime.now());
+        point.setTime(localTime);
         point.setPointScore(100);
         point.setUser(newUser);
         pointRepository.save(point);
