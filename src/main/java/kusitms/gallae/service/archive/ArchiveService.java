@@ -129,7 +129,7 @@ public class ArchiveService {
         point.setDate(LocalDate.now());
         point.setPointCategory("적립");
         point.setPointActivity("보고서 작성");
-        point.setTime(LocalTime.now().plusHours(9));
+        point.setTime(LocalTime.now());
         point.setPointScore(30);
         point.setUser(user);
         pointRepository.save(point);
@@ -148,7 +148,7 @@ public class ArchiveService {
             point.setDate(LocalDate.now());
             point.setPointCategory("사용");
             point.setPointActivity("보고서 열람");
-            point.setTime(LocalTime.now().plusHours(9));
+            point.setTime(LocalTime.now());
             point.setPointScore(-15);
             point.setUser(user);
             pointRepository.save(point);

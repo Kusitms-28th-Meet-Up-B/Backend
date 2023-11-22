@@ -90,7 +90,7 @@ public class ReviewService {
         point.setDate(LocalDate.now());
         point.setPointCategory("적립");
         point.setPointActivity("후기 작성");
-        point.setTime(LocalTime.now().plusHours(9));
+        point.setTime(LocalTime.now());
         point.setPointScore(20);
         point.setUser(user);
         pointRepository.save(point);
@@ -149,7 +149,7 @@ public class ReviewService {
             point.setDate(LocalDate.now());
             point.setPointCategory("사용");
             point.setPointActivity("후기 열람");
-            point.setTime(LocalTime.now().plusHours(9));
+            point.setTime(LocalTime.now());
             point.setPointScore(-10);
             point.setUser(user);
             pointRepository.save(point);
