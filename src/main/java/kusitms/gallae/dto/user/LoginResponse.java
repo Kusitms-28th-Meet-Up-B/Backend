@@ -16,7 +16,7 @@ public class LoginResponse {
 
     private String nickName;   //기업이면 이게 기관명
 
-    private String registrationNum;
+    private String registNum;
 
     private String department;  //담당 부서
 
@@ -36,7 +36,7 @@ public class LoginResponse {
     private String refreshToken;
 
     @Builder
-    public LoginResponse(Long id, String name,String department,String registrationNum,
+    public LoginResponse(Long id, String name,String department,String registNum,
                          String loginId, String phoneNumber, String nickName, String email, Long point, LocalDate birth,
                          String imageUrl, String accessToken, String refreshToken,  String role) {
         this.id = id;
@@ -50,7 +50,7 @@ public class LoginResponse {
         this.refreshToken = refreshToken;
         this.role = role;
         this.department = department;
-        this.registrationNum = registrationNum;
+        this.registNum = registNum;
         this.point = point;
         this.birth = birth;
     }
