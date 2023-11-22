@@ -203,7 +203,7 @@ public class ManagerServiceImpl implements ManagerService {
             program.setPhotoUrl(programPostReq.getPhotoUrl());
         }else{
             s3Service.deleteFile(program.getPhotoUrl());
-            program.setPhotoUrl(program.getPhotoUrl());
+            program.setPhotoUrl(programPostReq.getPhotoUrl());
         }
         program.setLocation(programPostReq.getLocation());
         program.setRecruitStartDate(programPostReq.getRecruitStartDate());

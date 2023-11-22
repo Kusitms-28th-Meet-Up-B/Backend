@@ -208,7 +208,7 @@ public class ManagerController {
             EditModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null && !model.getPhoto().isEmpty()) {
+        if(model.getPhoto() != null) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
