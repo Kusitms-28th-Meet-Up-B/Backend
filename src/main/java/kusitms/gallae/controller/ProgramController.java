@@ -130,10 +130,16 @@ public class ProgramController {
     @Operation(summary = "프로그램 세부내용 가져오기")
     @GetMapping("/program")
     public ResponseEntity<BaseResponse<ProgramDetailRes>> findProgramDetail(
+            Principal principal,
+
             @Parameter(description = "프로그램 ID")
             @RequestParam(value = "id", required = true) Long id
     ){
-        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id)));
+        String username = null;
+        if(principal != null) {
+            username = principal.getName();
+        }
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getProgramDetail(id,username)));
     }
 
     @Operation(summary = "프로그램 지역에 맞게 여행 추천해주기")
@@ -143,6 +149,15 @@ public class ProgramController {
             @RequestParam(value = "id", required = true) Long id
     ){
         return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourDatas(id)));
+    }
+
+    @Operation(summary = "프로그램 지역에 맞게 숙소 추천해주기")
+    @GetMapping("/regionLodgment")
+    public ResponseEntity<BaseResponse<List<TourApiDto>>> findTourbyProgramLodgment(
+            @Parameter(description = "프로그램 ID")
+            @RequestParam(value = "id", required = true) Long id
+    ){
+        return ResponseEntity.ok(new BaseResponse<>(this.programService.getTourLodgment(id)));
     }
 
     @Operation(summary = "유사한 프로그램 추천", description = """

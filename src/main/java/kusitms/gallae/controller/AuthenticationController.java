@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusitms.gallae.config.BaseResponse;
 import kusitms.gallae.config.BaseResponseStatus;
+import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.user.LoginRequestDto;
 import kusitms.gallae.dto.user.LoginResponse;
 import kusitms.gallae.dto.user.RenewTokenResponse;

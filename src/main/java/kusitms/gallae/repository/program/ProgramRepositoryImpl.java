@@ -37,11 +37,10 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
 
-    public Page<ProgramMainRes> getDynamicSearch(ProgramSearchReq programSearchReq){
-        List<Tuple> tuples = this.jpaQueryFactory
-                .select(program,favorite)
-                .from(favorite)
-                .rightJoin(favorite.program,program)
+    public Page<Program> getDynamicSearch(ProgramSearchReq programSearchReq){
+        List<Program> programs = this.jpaQueryFactory
+                .select(program)
+                .from(program)
                 .where(createSearchCondition(programSearchReq))
                 .orderBy(createOrderSpecifier(programSearchReq))
                 .offset(programSearchReq.getPageable().getOffset())
@@ -54,7 +53,6 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
                 .where(createSearchCondition(programSearchReq))
                 .fetchOne();
 
-        List<ProgramMainRes> programs = this.getProgramMainRes(tuples, programSearchReq.getUser());
         return new PageImpl<>(programs, programSearchReq.getPageable(), Objects.requireNonNull(totalSize));
     }
 
@@ -76,17 +74,14 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         return new PageImpl<>(programs, programManagerReq.getPageable(), Objects.requireNonNull(totalSize));
     }
 
-    public List<ProgramMainRes> getDynamicSimilar(ProgramSimilarReq programSimilarReq){
-        List<Tuple> tuples = this.jpaQueryFactory
-                .select(program,favorite)
-                .from(favorite)
-                .rightJoin(favorite.program,program)
+    public List<Program> getDynamicSimilar(ProgramSimilarReq programSimilarReq){
+        List<Program> programs = this.jpaQueryFactory
+                .select(program)
+                .from(program)
                 .where(createSimiliarProgramCondition(programSimilarReq))
                 .offset(0)
                 .limit(4)
                 .fetch();
-
-        List<ProgramMainRes> programs = this.getProgramMainRes(tuples, programSimilarReq.getUser());
         return programs;
     }
 
@@ -142,15 +137,21 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
     private BooleanBuilder createSimiliarProgramCondition(ProgramSimilarReq programSimilarReq) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
+        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+
+        if(programSimilarReq.getId() != null) {
+            booleanBuilder.and(program.id.ne(programSimilarReq.getId()));
+        }
+
         if(programSimilarReq.getLocation() != null) {
-            booleanBuilder.or(program.location.contains(programSimilarReq.getLocation()));
+            booleanBuilder.and(program.location.contains(programSimilarReq.getLocation()));
         }
 
         if(programSimilarReq.getProgramType() != null) {
             booleanBuilder.or(program.programType.eq(programSimilarReq.getProgramType()));
         }
 
-        booleanBuilder.and(program.status.eq(Program.ProgramStatus.SAVE));
+
 
         return booleanBuilder;
     }
@@ -166,28 +167,6 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         }else{
             return new OrderSpecifier<>(Order.DESC,program.createdAt);
         }
-    }
-
-    private List<ProgramMainRes> getProgramMainRes(List<Tuple> programs , User u){
-        return programs.stream().map(tuple -> {
-            ProgramMainRes programMainRes = new ProgramMainRes();
-            Program p = tuple.get(program);
-            Favorite f = tuple.get(favorite);
-            programMainRes.setId(p.getId());
-            programMainRes.setProgramName(p.getProgramName());
-            programMainRes.setLike(p.getProgramLike());
-            programMainRes.setPhotoUrl(p.getPhotoUrl());
-            LocalDate localDate = LocalDate.of(p.getRecruitEndDate().getYear(),
-                    p.getRecruitEndDate().getMonth(),p.getRecruitEndDate().getDayOfMonth());
-            String strRemainDay = DurationCalcurator.getDuration(localDate);
-            programMainRes.setRemainDay(strRemainDay);
-            programMainRes.setHashTag(Arrays.stream(p.getHashTags().split(","))
-                    .collect(Collectors.toList()));
-            if(f != null && f.getUser() != null && f.getUser().equals(u)) {
-                programMainRes.setUserLikeCheck(true);
-            }
-            return programMainRes;
-        }).collect(Collectors.toList());
     }
 
 }

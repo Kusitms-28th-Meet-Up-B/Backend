@@ -26,9 +26,4 @@ public class ExceptionHandlerAdvice {
         return ResponseEntity.status(e.getStatus().getHttpStatus()).body(new BaseResponse<>(e.getStatus()));
     }
 
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<BaseResponse<?>> handleIOException(BaseException e, HttpServletRequest request) {
-
-        return ResponseEntity.status(e.getStatus().getHttpStatus()).body(new BaseResponse<>(e.getStatus()));
-    }
 }

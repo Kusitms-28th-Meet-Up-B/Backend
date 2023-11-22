@@ -64,6 +64,7 @@ public class S3Service {
     }
 
     public void deleteFile(String fileName) {
-        s3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        String delFileName = fileName.replace(CLOUD_FRONT_DOMAIN_NAME+"/","");
+        s3Client.deleteObject(new DeleteObjectRequest(bucket, delFileName));
     }
 }

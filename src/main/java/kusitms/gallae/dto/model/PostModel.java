@@ -1,5 +1,6 @@
 package kusitms.gallae.dto.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.ToString;
@@ -21,20 +22,16 @@ public class PostModel {
 
     private String programDetailType;
 
-    @Schema(description = "모집 시작", example = "2021-11-03", type = "string")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate recruitStartDate;
 
-    @Schema(description = "모집 끝", example = "2021-11-03", type = "string")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate recruitEndDate;
 
-    @Schema(description = "활동 시작", example = "2021-11-03", type = "string")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate activeStartDate;
 
-    @Schema(description = "활동 ", example = "2021-11-03", type = "string")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate activeEndDate;
 
     private String contact;

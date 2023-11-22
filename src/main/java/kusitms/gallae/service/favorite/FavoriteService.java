@@ -10,4 +10,8 @@ public interface FavoriteService {
     void postFavorite(String username,Long programId);
 
     List<ProgramMainRes> getFavoriteByUser(String username, FavoriteSearchReq favoriteSearchReq);
+
+    void postFavoriteReview(String username, Long reviewId);
+
+    void postFavoriteArchive(String username, Long reviewId);
 }

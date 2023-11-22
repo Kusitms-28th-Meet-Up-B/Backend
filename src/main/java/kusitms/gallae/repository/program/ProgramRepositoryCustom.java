@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface ProgramRepositoryCustom {
 
-    Page<ProgramMainRes> getDynamicSearch(ProgramSearchReq programSearchReq);
+    Page<Program> getDynamicSearch(ProgramSearchReq programSearchReq);
 
     Page<Program> getDynamicMananger(ProgramManagerReq programManagerReq);
 
-    List<ProgramMainRes> getDynamicSimilar(ProgramSimilarReq programSimilarReq);
+    List<Program> getDynamicSimilar(ProgramSimilarReq programSimilarReq);
 }

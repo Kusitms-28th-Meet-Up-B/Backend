@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class UserRegistrationDto  {
     private String phoneNumber;
     private String email;
     private String loginPw;
+    private LocalDate birth;
     private MultipartFile profileImage;
 
     public MultipartFile getProfileImage() {

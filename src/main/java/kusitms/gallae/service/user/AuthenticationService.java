@@ -48,12 +48,18 @@ public class AuthenticationService {
         return LoginResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
+                .loginId(user.getLoginId())
                 .imageUrl(user.getProfileImageUrl())
                 .nickName(user.getNickName())
                 .phoneNumber(user.getPhoneNumber())
                 .name(user.getName())
                 .accessToken(accessToken)
+                .birth(user.getBirth())
+                .registrationNum(user.getRegistrationNum())
+                .point(user.getPoint())
+                .department(user.getDepartment())
                 .refreshToken(user.getRefreshToken())
+                .role(user.getRole().toString())
                 .build();
 
     }
@@ -68,7 +74,7 @@ public class AuthenticationService {
         user.renewRefreshToken();
         userRepository.save(user);
         RenewTokenResponse response = new RenewTokenResponse();
-        response.setAccessToken(this.jwtProvider.createToken(user.getName(), List.of(user.getRole())));
+        response.setAccessToken(this.jwtProvider.createToken(String.valueOf(user.getId()), List.of(user.getRole())));
         response.setRefreshToken(user.getRefreshToken());
         return response;
     }

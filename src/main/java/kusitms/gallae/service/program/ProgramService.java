@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ProgramService {
 
-    ProgramDetailRes getProgramDetail(Long id);
+    ProgramDetailRes getProgramDetail(Long id, String username);
 
     ProgramPageMainRes getProgramsByDynamicQuery(ProgramSearchReq programSearchReq, String username);
 
@@ -18,5 +18,7 @@ public interface ProgramService {
     List<ProgramMainRes> getSimilarPrograms(Long ProgramId,String username);
 
     List<TourApiDto> getTourDatas(Long programId);
+
+    List<TourApiDto> getTourLodgment(Long programId);
 
 }

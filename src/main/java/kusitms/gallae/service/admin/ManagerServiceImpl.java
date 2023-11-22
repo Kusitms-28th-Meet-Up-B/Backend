@@ -5,10 +5,13 @@ import kusitms.gallae.config.BaseException;
 import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
+import kusitms.gallae.dto.model.PostModel;
+import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.global.jwt.AuthUtil;
+import kusitms.gallae.repository.favorite.FavoriteRepository;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
 import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
@@ -37,28 +40,32 @@ public class ManagerServiceImpl implements ManagerService {
 
     private final UserRepository userRepository;
 
+    private final FavoriteRepository favoriteRepository;
+
 
     @Override
-    public ProgramDetailRes getProgramDetail(Long id){
+    public PostModelGet getProgramDetail(Long id){
         Program program = programRespository.findById(id).orElse(null);
         if(program == null) {
             throw new BaseException(BaseResponseStatus.BAD_REQUEST);
         }else{
-            ProgramDetailRes programDetailRes = new ProgramDetailRes();
-            programDetailRes.setId(program.getId());
-            programDetailRes.setProgramName(program.getProgramName());
-            programDetailRes.setProgramLink(program.getProgramLink());
-            programDetailRes.setContact(program.getContact());
-            programDetailRes.setContactNumber(program.getContactNumber());
-            programDetailRes.setDescription(program.getDescription());
-            programDetailRes.setLocation(program.getLocation());
-            programDetailRes.setActiveStartDate(program.getActiveStartDate());
-            programDetailRes.setActiveEndDate(program.getActiveEndDate());
-            programDetailRes.setRecruitStartDate(program.getRecruitStartDate());
-            programDetailRes.setRecruitEndDate(program.getRecruitEndDate());
-            programDetailRes.setTripStartDate(program.getTripStartDate());
-            programDetailRes.setTripEndDate(program.getTripEndDate());
-            return programDetailRes;
+            PostModelGet postModel = new PostModelGet();
+            postModel.setProgramName(program.getProgramName());
+            postModel.setLocation(program.getLocation());
+            postModel.setProgramType(program.getProgramType());
+            postModel.setProgramDetailType(program.getDetailType());
+            postModel.setRecruitStartDate(program.getRecruitStartDate());
+            postModel.setRecruitEndDate(program.getRecruitEndDate());
+            postModel.setActiveStartDate(program.getActiveStartDate());
+            postModel.setActiveEndDate(program.getActiveEndDate());
+            postModel.setContact(program.getContact());
+            postModel.setContactPhone(program.getContactNumber());
+            postModel.setLink(program.getProgramLink());
+            postModel.setHashtag(program.getHashTags());
+            postModel.setBody(program.getDescription());
+            postModel.setPhoto(program.getPhotoUrl());
+
+            return postModel;
         }
     }
 
@@ -72,6 +79,7 @@ public class ManagerServiceImpl implements ManagerService {
             ProgramPostReq programPostReq = new ProgramPostReq();
             programPostReq.setProgramId(tempProgram.getId());
             programPostReq.setProgramName(tempProgram.getProgramName());
+            programPostReq.setProgramType(tempProgram.getProgramType());
             programPostReq.setPhotoUrl(tempProgram.getPhotoUrl());
             programPostReq.setLocation(tempProgram.getLocation());
             programPostReq.setRecruitStartDate(tempProgram.getRecruitStartDate());
@@ -88,7 +96,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
     }
     @Override
-    public void postProgram(ProgramPostReq programPostReq ,String username) {
+    public Long postProgram(ProgramPostReq programPostReq ,String username) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
@@ -98,33 +106,55 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
-            programRespository.save(saveProgram);
+            Program programId = programRespository.save(saveProgram);
+            return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
+            return tempProgram.getId();
         }
     }
 
     @Override
-    public void postTempProgram(ProgramPostReq programPostReq , String username) {
+    public Long editProgram(ProgramPostReq programPostReq ,String username) {
+
+        User user = userRepository.findById(Long.valueOf(username)).get();
+        Program tempProgram = programRespository.findById(programPostReq.getProgramId()).orElse(null);
+        if(user.getId() != tempProgram.getUser().getId()) {
+            throw new BaseException(BaseResponseStatus.NOT_WRITER);
+        }
+
+        Program saveProgram = this.getProgramEntity(tempProgram,programPostReq);
+        saveProgram.setStatus(Program.ProgramStatus.SAVE);
+        Program programId = programRespository.save(saveProgram);
+        return programId.getId();
+    }
+
+    @Override
+    public Long postTempProgram(ProgramPostReq programPostReq , String username) {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
-        System.out.println(tempProgram);
+
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-            programRespository.save(saveProgram);
+            Program programId = programRespository.save(saveProgram);
+            return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-        };
+            return saveProgram.getId();
+        }
     }
 
     @Override
+    @Transactional
     public void deleteTempProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        favoriteRepository.deleteAllByProgram(program);
         programRespository.deleteByIdAndStatus(programId, Program.ProgramStatus.TEMP);
     }
 
@@ -147,7 +177,10 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public void deleteProgram(Long programId) {
+        Program program = programRespository.findById(programId).orElse(null);
+        favoriteRepository.deleteAllByProgram(program);
         programRespository.deleteById(programId);
     }
 
