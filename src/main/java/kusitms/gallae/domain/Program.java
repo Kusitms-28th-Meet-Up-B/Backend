@@ -32,6 +32,8 @@ public class Program {
 
     private String location;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private Float latitude;

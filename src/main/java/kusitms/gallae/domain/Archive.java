@@ -36,6 +36,8 @@ public class Archive {
 
     private String fileUrl;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String body;
 
     private String hashtag;

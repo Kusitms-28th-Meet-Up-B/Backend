@@ -37,6 +37,8 @@ public class Review {
 
     private String fileUrl;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String body;
 
     private String hashtag;
