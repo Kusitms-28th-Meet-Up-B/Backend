@@ -76,7 +76,7 @@ public class UserService {
                 .point(100L)
                 .build();
 
-        newUser.setPoint(100L);
+        newUser.setPoint(99999L);
         userRepository.save(newUser);
         LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
         LocalDate localDate = dateTime.toLocalDate();
@@ -86,7 +86,7 @@ public class UserService {
         point.setPointCategory("적립");
         point.setPointActivity("회원가입");
         point.setTime(localTime);
-        point.setPointScore(100);
+        point.setPointScore(99999);
         point.setUser(newUser);
         pointRepository.save(point);
 
