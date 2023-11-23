@@ -125,11 +125,14 @@ public class ArchiveService {
         Archive saveArchive = archiveRepository.save(archive);
 
         //포인트 적립
+        LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localDate = dateTime.toLocalDate();
+        LocalTime localTime = dateTime.toLocalTime();
         Point point = new Point();
-        point.setDate(LocalDate.now());
+        point.setDate(localDate);
         point.setPointCategory("적립");
         point.setPointActivity("보고서 작성");
-        point.setTime(LocalTime.now().plusHours(9));
+        point.setTime(localTime);
         point.setPointScore(30);
         point.setUser(user);
         pointRepository.save(point);
@@ -144,11 +147,14 @@ public class ArchiveService {
         Archive archive = archiveRepository.findById(archiveId).orElse(null);
         if(archive.getUser().getId() != user.getId() && !userArchiveRepository.existsByUserAndArchive(user,archive)) {
             //포인트 적립
+            LocalDateTime dateTime = LocalDateTime.now().plusHours(9);
+            LocalDate localDate = dateTime.toLocalDate();
+            LocalTime localTime = dateTime.toLocalTime();
             Point point = new Point();
-            point.setDate(LocalDate.now());
+            point.setDate(localDate);
             point.setPointCategory("사용");
             point.setPointActivity("보고서 열람");
-            point.setTime(LocalTime.now().plusHours(9));
+            point.setTime(localTime);
             point.setPointScore(-15);
             point.setUser(user);
             pointRepository.save(point);

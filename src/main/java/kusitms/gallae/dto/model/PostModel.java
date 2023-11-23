@@ -45,4 +45,6 @@ public class PostModel {
     private String body;
 
     private MultipartFile photo;
+
+    private String photoCheck;
 }

@@ -13,9 +13,4 @@ public class GallaeApplication {
 		SpringApplication.run(GallaeApplication.class, args);
 	}
 
-	@PostConstruct
-	public void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
-
 }

@@ -43,4 +43,6 @@ public class EditModel {
     private String body;
 
     private MultipartFile photo;
+
+    private String photoCheck;
 }
