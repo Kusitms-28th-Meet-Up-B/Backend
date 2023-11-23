@@ -6,20 +6,17 @@ import kusitms.gallae.config.BaseResponseStatus;
 import kusitms.gallae.domain.Program;
 import kusitms.gallae.domain.User;
 import kusitms.gallae.dto.program.*;
-import kusitms.gallae.global.DurationCalcurator;
+import kusitms.gallae.global.GeocoderService;
 import kusitms.gallae.global.S3Service;
-import kusitms.gallae.global.jwt.AuthUtil;
 import kusitms.gallae.repository.program.ProgramRepositoryCustom;
-import kusitms.gallae.repository.program.ProgramRepositoryImpl;
 import kusitms.gallae.repository.program.ProgramRespository;
 import kusitms.gallae.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,6 +33,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final S3Service s3Service;
 
     private final UserRepository userRepository;
+
+    private final GeocoderService geocoderService;
 
 
     @Override
@@ -99,6 +98,9 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
+            Map<String, String> map = geocoderService.getGeoDataByAddress(programPostReq.getLocation());
+            saveProgram.setLatitude(Float.valueOf(map.get("lat")));
+            saveProgram.setLongitude(Float.valueOf(map.get("lng")));
             Program programId = programRespository.save(saveProgram);
             return programId.getId();
         }else {      //임시 저장이 있으면
