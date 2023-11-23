@@ -17,5 +17,5 @@ public class ProgramManagerRes {
     private LocalDate recruitStartDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate recuritEndDate;
+    private LocalDate recruitEndDate;
 }
