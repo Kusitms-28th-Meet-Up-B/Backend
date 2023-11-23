@@ -9,6 +9,7 @@ import kusitms.gallae.dto.model.PostModel;
 import kusitms.gallae.dto.model.PostModelGet;
 import kusitms.gallae.dto.program.*;
 import kusitms.gallae.global.DurationCalcurator;
+import kusitms.gallae.global.GeocoderService;
 import kusitms.gallae.global.S3Service;
 import kusitms.gallae.global.jwt.AuthUtil;
 import kusitms.gallae.repository.favorite.FavoriteRepository;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserRepository userRepository;
 
     private final FavoriteRepository favoriteRepository;
+
+    private final GeocoderService geocoderService;
 
 
     @Override
@@ -112,6 +116,9 @@ public class ManagerServiceImpl implements ManagerService {
             if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
+            Map<String, String> map = geocoderService.getGeoDataByAddress(programPostReq.getLocation());
+            saveProgram.setLatitude(Float.valueOf(map.get("lat")));
+            saveProgram.setLongitude(Float.valueOf(map.get("lng")));
             Program programId = programRespository.save(saveProgram);
             return programId.getId();
         }else {      //임시 저장이 있으면
@@ -120,6 +127,9 @@ public class ManagerServiceImpl implements ManagerService {
             if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
+            Map<String, String> map = geocoderService.getGeoDataByAddress(programPostReq.getLocation());
+            saveProgram.setLatitude(Float.valueOf(map.get("lat")));
+            saveProgram.setLongitude(Float.valueOf(map.get("lng")));
             return tempProgram.getId();
         }
     }
@@ -138,6 +148,9 @@ public class ManagerServiceImpl implements ManagerService {
         if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
             saveProgram.setStatus(Program.ProgramStatus.FINISH);
         }
+        Map<String, String> map = geocoderService.getGeoDataByAddress(programPostReq.getLocation());
+        saveProgram.setLatitude(Float.valueOf(map.get("lat")));
+        saveProgram.setLongitude(Float.valueOf(map.get("lng")));
         saveProgram.setStatus(Program.ProgramStatus.SAVE);
         Program programId = programRespository.save(saveProgram);
         return programId.getId();
