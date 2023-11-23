@@ -199,10 +199,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     private Program getProgramEntity(Program program ,ProgramPostReq programPostReq) {
         program.setProgramName(programPostReq.getProgramName());
-        if(program.getPhotoUrl()==null) {
-            program.setPhotoUrl(programPostReq.getPhotoUrl());
-        }else{
-            s3Service.deleteFile(program.getPhotoUrl());
+        if(programPostReq.getPhotoCheck().equals("1")) {
+            if (program.getPhotoUrl() != null) {
+                s3Service.deleteFile(program.getPhotoUrl());
+            }
             program.setPhotoUrl(programPostReq.getPhotoUrl());
         }
         program.setLocation(programPostReq.getLocation());

@@ -93,7 +93,7 @@ public class ManagerController {
             PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null  && !model.getPhoto().isEmpty()) {
+        if(model.getPhoto() != null  && model.getPhotoCheck().equals("1")) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
 
@@ -112,6 +112,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
+        programPostReq.setPhotoCheck(model.getPhotoCheck());
 
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.postProgram(programPostReq, principal.getName())));
     }
@@ -208,7 +209,7 @@ public class ManagerController {
             EditModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null) {
+        if(model.getPhoto() != null  && model.getPhotoCheck().equals("1")) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
@@ -227,6 +228,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
+        programPostReq.setPhotoCheck(model.getPhotoCheck());
 
 
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.editProgram(programPostReq, principal.getName())));
@@ -249,7 +251,7 @@ public class ManagerController {
             PostModel model
     ) throws IOException {
         String photoUrl = null;
-        if(model.getPhoto() != null && !model.getPhoto().isEmpty()) {
+        if(model.getPhoto() != null  && model.getPhotoCheck().equals("1")) {
             photoUrl = s3Service.upload(model.getPhoto());
         }
         ProgramPostReq programPostReq = new ProgramPostReq();
@@ -267,7 +269,7 @@ public class ManagerController {
         programPostReq.setLink(model.getLink());
         programPostReq.setHashtag(model.getHashtag());
         programPostReq.setBody(model.getBody());
-
+        programPostReq.setPhotoCheck(model.getPhotoCheck());
 
         return ResponseEntity.ok(new BaseResponse<>(this.managerService.postTempProgram(programPostReq, principal.getName())));
     }

@@ -44,4 +44,6 @@ public class ProgramPostReq {
     private String hashtag;
 
     private String body;
+
+    private String photoCheck;
 }
