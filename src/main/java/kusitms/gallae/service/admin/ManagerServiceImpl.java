@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,8 @@ public class ManagerServiceImpl implements ManagerService {
     }
     @Override
     public Long postProgram(ProgramPostReq programPostReq ,String username) {
+        LocalDateTime localDateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localdate = localDateTime.toLocalDate();
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
@@ -106,18 +109,25 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
+            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+                saveProgram.setStatus(Program.ProgramStatus.FINISH);
+            }
             Program programId = programRespository.save(saveProgram);
             return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
+            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+                saveProgram.setStatus(Program.ProgramStatus.FINISH);
+            }
             return tempProgram.getId();
         }
     }
 
     @Override
     public Long editProgram(ProgramPostReq programPostReq ,String username) {
-
+        LocalDateTime localDateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localdate = localDateTime.toLocalDate();
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findById(programPostReq.getProgramId()).orElse(null);
         if(user.getId() != tempProgram.getUser().getId()) {
@@ -125,6 +135,9 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         Program saveProgram = this.getProgramEntity(tempProgram,programPostReq);
+        if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+            saveProgram.setStatus(Program.ProgramStatus.FINISH);
+        }
         saveProgram.setStatus(Program.ProgramStatus.SAVE);
         Program programId = programRespository.save(saveProgram);
         return programId.getId();
@@ -135,17 +148,24 @@ public class ManagerServiceImpl implements ManagerService {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
-
+        LocalDateTime localDateTime = LocalDateTime.now().plusHours(9);
+        LocalDate localdate = localDateTime.toLocalDate();
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
+            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+                saveProgram.setStatus(Program.ProgramStatus.FINISH);
+            }
             Program programId = programRespository.save(saveProgram);
             return programId.getId();
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
+            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+                saveProgram.setStatus(Program.ProgramStatus.FINISH);
+            }
             return saveProgram.getId();
         }
     }
@@ -219,6 +239,7 @@ public class ManagerServiceImpl implements ManagerService {
         program.setDescription(programPostReq.getBody());
         program.setProgramLike(0L);
         program.setViewCount(0L);
+
         return program;
     }
 }
