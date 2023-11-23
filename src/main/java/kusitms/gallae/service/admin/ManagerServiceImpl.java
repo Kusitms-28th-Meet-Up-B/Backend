@@ -212,7 +212,7 @@ public class ManagerServiceImpl implements ManagerService {
             programManagerRes.setLike(program.getProgramLike());
             programManagerRes.setViewCount(program.getViewCount());
             programManagerRes.setRecruitStartDate(program.getRecruitStartDate());
-            programManagerRes.setRecuritEndDate(program.getRecruitEndDate());
+            programManagerRes.setRecruitEndDate(program.getRecruitEndDate());
             return programManagerRes;
         }).collect(Collectors.toList());
     }
