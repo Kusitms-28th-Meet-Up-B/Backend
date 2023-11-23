@@ -9,4 +9,7 @@ public class TourApiDto {
     private String title;
 
     private String photoUrl;
-}
+
+    private String link;
+
+   }

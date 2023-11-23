@@ -78,6 +78,7 @@ public class TourApiService {
                     JSONObject itemIndex = (JSONObject) item.get(i);
                     tourApiDto.setTitle(itemIndex.getString("title"));
                     tourApiDto.setPhotoUrl(itemIndex.getString("firstimage"));
+                    tourApiDto.setLink("https://parks.seoul.go.kr/template/sub/cheonho.do");
                     data.add(tourApiDto);
                 }
 
@@ -136,6 +137,7 @@ public class TourApiService {
                     JSONObject itemIndex = (JSONObject) item.get(i);
                     tourApiDto.setTitle(itemIndex.getString("title"));
                     tourApiDto.setPhotoUrl(itemIndex.getString("firstimage"));
+                    tourApiDto.setLink("https://www.marriott.com/ko/hotels/seljw-jw-marriott-hotel-seoul/overview/");
                     data.add(tourApiDto);
                 }
 
