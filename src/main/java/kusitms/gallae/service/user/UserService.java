@@ -68,6 +68,7 @@ public class UserService {
                 .email(registrationDto.getEmail()) // 선택적 입력
                 .department(registrationDto.getDepartment())
                 .birth(registrationDto.getBirth())
+                .registNum(registrationDto.getRegistNum())
                 .refreshToken("")  // 회원가입은 토큰 없음
                 .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 추가
                 .signUpStatus(User.UserSignUpStatus.MANAGER)

@@ -28,7 +28,7 @@ public class User {
 
     private String nickName;   //기업이면 이게 기관명
 
-    private String registrationNum;
+    private String registNum;
 
     private String department;  //담당 부서
 
