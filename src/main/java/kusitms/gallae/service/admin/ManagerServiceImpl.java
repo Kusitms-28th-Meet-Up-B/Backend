@@ -98,7 +98,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
     @Override
     public Long postProgram(ProgramPostReq programPostReq ,String username) {
-        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1).plusHours(9);
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1).plusHours(9);
         LocalDate localdate = localDateTime.toLocalDate();
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
@@ -126,7 +126,7 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Long editProgram(ProgramPostReq programPostReq ,String username) {
-        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1).plusHours(9);
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1).plusHours(9);
         LocalDate localdate = localDateTime.toLocalDate();
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findById(programPostReq.getProgramId()).orElse(null);
@@ -148,7 +148,7 @@ public class ManagerServiceImpl implements ManagerService {
         User user = userRepository.findById(Long.valueOf(username)).get();
         Program tempProgram = programRespository.findByUserIdAndStatus(user.getId(),  //나중에 유저 생기면 수정 필요
                 Program.ProgramStatus.TEMP);
-        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1).plusHours(9);
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1).plusHours(9);
         LocalDate localdate = localDateTime.toLocalDate();
         if(tempProgram == null) { //임시 저장이 없으면
             Program program = new Program();
