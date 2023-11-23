@@ -30,7 +30,7 @@ public class ProgramScheduler {
     public void programFinishScheduler(){
         List<Program> programList = programRespository.findAll();
         //KTC로 바꾸기
-        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1).plusHours(9);
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1).plusHours(9);
         LocalDate localDate = localDateTime.toLocalDate();
         programList.forEach(program -> {
             if(program.getRecruitEndDate().isBefore(localDate)) {
