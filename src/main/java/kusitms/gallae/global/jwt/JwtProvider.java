@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import kusitms.gallae.global.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +24,9 @@ public class JwtProvider{
 
     private static final String AUTHORITIES_KEY = "authorities";
 
-    private final String secret="wewef23fewfwfwfeefkalefalekfalekfaef2iweifejslqeqwew";
+
+    @Value("${jwt.security.jwt-secret}")
+    private String secret;
     private final long durationSeconds= 60*60;
 
 
