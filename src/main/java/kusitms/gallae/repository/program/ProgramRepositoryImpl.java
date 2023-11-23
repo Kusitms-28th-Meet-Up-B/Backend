@@ -109,10 +109,10 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         }
 
         if(programSearchReq.getProgramType() != null) {
-            booleanBuilder.and(program.programType.eq(programSearchReq.getProgramType()));
+            booleanBuilder.and(program.programType.contains(programSearchReq.getProgramType()));
         }
         if(programSearchReq.getDetailType() != null) {
-            booleanBuilder.and(program.detailType.eq(programSearchReq.getDetailType()));
+            booleanBuilder.and(program.detailType.contains(programSearchReq.getDetailType()));
         }
         if(programSearchReq.getLocation() != null) {
             booleanBuilder.and(program.location.contains(programSearchReq.getLocation()));
@@ -148,7 +148,7 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom{
         }
 
         if(programSimilarReq.getProgramType() != null) {
-            booleanBuilder.or(program.programType.eq(programSimilarReq.getProgramType()));
+            booleanBuilder.or(program.programType.contains(programSimilarReq.getProgramType()));
         }
 
 
