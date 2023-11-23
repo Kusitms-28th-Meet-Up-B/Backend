@@ -109,7 +109,7 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
-            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+            if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
             Program programId = programRespository.save(saveProgram);
@@ -117,7 +117,7 @@ public class ManagerServiceImpl implements ManagerService {
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.SAVE);
-            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+            if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
             return tempProgram.getId();
@@ -135,7 +135,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         Program saveProgram = this.getProgramEntity(tempProgram,programPostReq);
-        if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+        if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
             saveProgram.setStatus(Program.ProgramStatus.FINISH);
         }
         saveProgram.setStatus(Program.ProgramStatus.SAVE);
@@ -155,7 +155,7 @@ public class ManagerServiceImpl implements ManagerService {
             Program saveProgram = this.getProgramEntity(program,programPostReq);
             saveProgram.setUser(user);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+            if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
             Program programId = programRespository.save(saveProgram);
@@ -163,7 +163,7 @@ public class ManagerServiceImpl implements ManagerService {
         }else {      //임시 저장이 있으면
             Program saveProgram = this.getProgramEntity(tempProgram, programPostReq);
             saveProgram.setStatus(Program.ProgramStatus.TEMP);
-            if(saveProgram.getRecruitEndDate().isBefore(localdate)){
+            if(saveProgram.getRecruitEndDate() != null && saveProgram.getRecruitEndDate().isBefore(localdate)){
                 saveProgram.setStatus(Program.ProgramStatus.FINISH);
             }
             return saveProgram.getId();
