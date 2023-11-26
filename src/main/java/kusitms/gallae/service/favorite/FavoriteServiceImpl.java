@@ -57,7 +57,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public void postFavorite(String username, Long programId) {
         User user = userRepository.findById(Long.valueOf(username)).get();
-        Program program = programRespository.findById(programId).get();
+        Program program = programRespository.findWithIdForUpdate(programId).get();
         Favorite favorite = favoriteRepository.findByUserAndProgram(user,program).orElse(null);
         if(favorite == null ) {
             program.setProgramLike(program.getProgramLike() + 1);
